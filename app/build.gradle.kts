@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.kotlinx.serialization)
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -80,4 +81,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.richeditor.compose)
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
 }
