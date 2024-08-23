@@ -3,7 +3,8 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.kotlinx.serialization)
-    id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
+    kotlin("kapt")
 }
 
 android {
@@ -56,6 +57,23 @@ android {
 
 dependencies {
 
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+
+    // Hilt ViewModel
+    implementation(libs.androidx.hilt.lifecycle.viewmodel)
+    kapt(libs.androidx.hilt.compiler)
+
+    // Room
+    implementation(libs.androidx.room.runtime.v260)
+    kapt(libs.androidx.room.compiler.v260)
+
+    // Room Kotlin Extensions and Coroutines support
+    implementation(libs.androidx.room.ktx.v260)
+
+    // Kotlin Standard Library
+    implementation(libs.kotlin.stdlib)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -75,15 +93,14 @@ dependencies {
 
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
-    implementation(libs.koin.android)
-    implementation(libs.koin.androidx.compose)
+
 
     implementation(libs.androidx.navigation.compose)
 
     implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.richeditor.compose)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
+
+
+    implementation(libs.kodeview)
 }

@@ -102,10 +102,11 @@ fun FolderScreen(
                                     .fillMaxSize()
                                     .clickable {
                                         navController.navigate(
-                                            Routes.CodeScreen
+                                            Routes.CodeScreen(file.path)
                                         )
                                     }
-                                    .padding(8.dp)) {
+                                    .padding(8.dp)
+                            ) {
                                 Text(text = getFormattedName(getFileName(file.name)))
                             }
                         }
@@ -114,5 +115,4 @@ fun FolderScreen(
             }
         }
     }
-
 }

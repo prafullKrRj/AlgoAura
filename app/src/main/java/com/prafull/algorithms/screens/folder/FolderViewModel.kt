@@ -9,15 +9,15 @@ import com.prafull.algorithms.data.FirebaseHelper
 import com.prafull.algorithms.models.FileInfo
 import com.prafull.algorithms.models.FolderInfo
 import com.prafull.algorithms.utils.BaseClass
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.koin.core.component.KoinComponent
 
-class FolderViewModel : ViewModel(), KoinComponent {
+class FolderViewModel : ViewModel() {
 
     private var cachedFolders by mutableStateOf(CachedState())
 

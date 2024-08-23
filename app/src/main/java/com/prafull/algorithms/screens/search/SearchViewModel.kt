@@ -1,9 +1,9 @@
-package com.prafull.algorithms.screens.history
+package com.prafull.algorithms.screens.search
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 
-class HistoryViewModel : ViewModel() {
+class SearchViewModel: ViewModel() {
 
 
 }

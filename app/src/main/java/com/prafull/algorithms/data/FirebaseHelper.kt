@@ -11,9 +11,8 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
-import org.koin.core.component.KoinComponent
 
-object FirebaseHelper : KoinComponent {
+object FirebaseHelper {
     private val storage = FirebaseStorage.getInstance()
 
     fun getFromLanguage(language: ProgrammingLanguage): Flow<BaseClass<List<FolderInfo>>> {

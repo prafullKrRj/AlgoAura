@@ -5,9 +5,6 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -29,10 +26,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -48,9 +45,12 @@ import com.prafull.algorithms.screens.folder.FolderViewModel
 import com.prafull.algorithms.screens.history.HistoryScreen
 import com.prafull.algorithms.screens.home.AlgoViewModel
 import com.prafull.algorithms.screens.home.HomeScreen
+import com.prafull.algorithms.screens.search.SearchScreen
 import com.prafull.algorithms.ui.theme.AlgorithmsTheme
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.Serializable
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,11 +88,7 @@ fun App() {
             startDestination = Routes.Home
         ) {
             composable<Routes.Search> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Green)
-                )
+                SearchScreen()
             }
             navigation<Routes.Home>(startDestination = Routes.HomeScreen) {
                 composable<Routes.HomeScreen> {
@@ -109,7 +105,9 @@ fun App() {
                 HistoryScreen()
             }
             composable<Routes.CodeScreen> {
+                val path = it.toRoute<Routes.CodeScreen>()
                 val codeViewModel: CodeViewModel = viewModel()
+
                 CodeScreen(viewModel = codeViewModel)
             }
         }
@@ -194,7 +192,9 @@ sealed interface Routes {
     data object History : Routes
 
     @Serializable
-    data object CodeScreen : Routes
+    data class CodeScreen(
+        val path: String
+    ) : Routes
 
     @Serializable
     data object ChatBot : Routes
