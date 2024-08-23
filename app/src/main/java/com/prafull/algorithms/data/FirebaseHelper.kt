@@ -1,7 +1,12 @@
-package com.prafull.algorithms
+package com.prafull.algorithms.data
 
 import android.util.Log
 import com.google.firebase.storage.FirebaseStorage
+import com.prafull.algorithms.models.FileInfo
+import com.prafull.algorithms.models.FolderInfo
+import com.prafull.algorithms.models.ProgrammingLanguage
+import com.prafull.algorithms.utils.BaseClass
+import com.prafull.algorithms.utils.getLanguageFromString
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -49,18 +54,4 @@ object FirebaseHelper : KoinComponent {
     }
 }
 
-fun getLanguageFromString(str: String): ProgrammingLanguage {
-    val extension = str.removeSuffix(".md").split(".").last()
-    ProgrammingLanguage.entries.forEach { lang ->
-        if (lang.extension == extension) {
-            return lang
-        }
-    }
-    return ProgrammingLanguage.UNKNOWN
-}
 
-sealed interface BaseClass<out T> {
-    data class Error(val message: String) : BaseClass<Nothing>
-    data class Success<T>(val data: T) : BaseClass<T>
-    data object Loading : BaseClass<Nothing>
-}
