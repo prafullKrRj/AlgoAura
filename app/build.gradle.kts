@@ -46,7 +46,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
     packaging {
         resources {
@@ -57,12 +57,9 @@ android {
 
 dependencies {
 
-    implementation(libs.hilt.android)
-    kapt(libs.hilt.android.compiler)
-
-    // Hilt ViewModel
-    implementation(libs.androidx.hilt.lifecycle.viewmodel)
-    kapt(libs.androidx.hilt.compiler)
+    implementation(libs.hilt.android.v249)
+    kapt(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     // Room
     implementation(libs.androidx.room.runtime.v260)
@@ -100,7 +97,10 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.richeditor.compose)
-
-
     implementation(libs.kodeview)
+    implementation(libs.commonmark)
+
+}
+kapt {
+    correctErrorTypes = true
 }

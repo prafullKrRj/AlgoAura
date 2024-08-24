@@ -16,7 +16,16 @@ class AlgoViewModel : ViewModel() {
     private val _state = MutableStateFlow<BaseClass<List<FolderInfo>>>(BaseClass.Loading)
     val state = _state.asStateFlow()
 
+    private val _cachedData = hashMapOf<ProgrammingLanguage, List<FolderInfo>>()
+
+
     fun getFromLanguage(language: ProgrammingLanguage) {
+        if (_cachedData.containsKey(language)) {
+            _state.update {
+                BaseClass.Success(_cachedData[language]!!)
+            }
+            return
+        }
         viewModelScope.launch(Dispatchers.IO) {
             _state.update {
                 BaseClass.Loading
@@ -24,6 +33,9 @@ class AlgoViewModel : ViewModel() {
             FirebaseHelper.getFromLanguage(language).collect { resp ->
                 _state.update {
                     resp
+                }
+                if (resp is BaseClass.Success) {
+                    _cachedData[language] = resp.data
                 }
             }
         }

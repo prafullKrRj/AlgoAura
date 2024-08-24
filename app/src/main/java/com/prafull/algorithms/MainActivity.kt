@@ -27,9 +27,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -38,11 +38,14 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.google.firebase.FirebaseApp
+import com.prafull.algorithms.data.local.AlgorithmEntity
+import com.prafull.algorithms.screens.ai.AskAi
 import com.prafull.algorithms.screens.code.CodeScreen
 import com.prafull.algorithms.screens.code.CodeViewModel
+import com.prafull.algorithms.screens.favourites.FavouriteCodeScreen
+import com.prafull.algorithms.screens.favourites.FavouriteScreen
 import com.prafull.algorithms.screens.folder.FolderScreen
 import com.prafull.algorithms.screens.folder.FolderViewModel
-import com.prafull.algorithms.screens.history.HistoryScreen
 import com.prafull.algorithms.screens.home.AlgoViewModel
 import com.prafull.algorithms.screens.home.HomeScreen
 import com.prafull.algorithms.screens.search.SearchScreen
@@ -74,11 +77,15 @@ fun App() {
     LaunchedEffect(key1 = currentRoute) {
         Log.d("CurrentRoute", currentRoute.toString())
     }
+    val selected = rememberSaveable {
+        mutableIntStateOf(0)
+    }
     Scaffold(modifier = Modifier.systemBarsPadding(), bottomBar = {
         if (canShowBottomBar(currentRoute.toString())) {
-            BottomNavigationBar {
+            BottomNavigationBar(selected.intValue) { route, index ->
                 navController.popBackStack()
-                navController.navigate(it)
+                navController.navigate(route)
+                selected.intValue = index
             }
         }
     }) { paddingValues ->
@@ -102,36 +109,39 @@ fun App() {
                 }
             }
             composable<Routes.History> {
-                HistoryScreen()
+                FavouriteScreen(navController = navController)
             }
             composable<Routes.CodeScreen> {
                 val path = it.toRoute<Routes.CodeScreen>()
-                val codeViewModel: CodeViewModel = viewModel()
-
-                CodeScreen(viewModel = codeViewModel)
+                val codeViewModel: CodeViewModel = hiltViewModel()
+                codeViewModel.addPath(path.path)
+                CodeScreen(viewModel = codeViewModel, navController)
+            }
+            composable<Routes.FavouriteCodeScreen> {
+                val data = it.toRoute<Routes.FavouriteCodeScreen>()
+                FavouriteCodeScreen(algo = data.toAlgorithmEntity(), hiltViewModel(), navController)
+            }
+            composable<Routes.AskAi> {
+                AskAi()
             }
         }
     }
 }
 
 @Composable
-fun BottomNavigationBar(onClick: (Routes) -> Unit) {
-    val selected = rememberSaveable {
-        mutableIntStateOf(0)
-    }
+fun BottomNavigationBar(selected: Int, onClick: (Routes, Int) -> Unit) {
 
     NavigationBar(Modifier.fillMaxWidth()) {
         BottomBarItems().items.forEachIndexed { index, item ->
             NavigationBarItem(icon = {
                 Icon(
-                    imageVector = if (item.selected) item.selectedIcon else item.unselectedIcon,
+                    imageVector = if (index == selected) item.selectedIcon else item.unselectedIcon,
                     contentDescription = null
                 )
             }, label = {
                 Text(text = item.title)
-            }, selected = index == selected.intValue, onClick = {
-                selected.intValue = index
-                onClick(item.route)
+            }, selected = index == selected, onClick = {
+                onClick(item.route, index)
             })
         }
     }
@@ -197,13 +207,33 @@ sealed interface Routes {
     ) : Routes
 
     @Serializable
-    data object ChatBot : Routes
+    data object AskAi : Routes
+
+    @Serializable
+    data class FavouriteCodeScreen(
+        val id: Int,
+        val code: String,
+        val language: String,
+        val extension: String,
+        val title: String = ""
+    ) : Routes {
+        fun toAlgorithmEntity(): AlgorithmEntity {
+            return AlgorithmEntity(
+                id = id,
+                code = code,
+                language = language,
+                extension = extension,
+                title = title
+            )
+        }
+    }
 }
 
 fun canShowBottomBar(current: String): Boolean {
     return current != "com.prafull.algorithms.Routes.FolderScreen/{path}/{name}"
-            && current != "com.prafull.algorithms.Routes.CodeScreen"
-            && current != "com.prafull.algorithms.Routes.ChatBot"
+            && current != "com.prafull.algorithms.Routes.CodeScreen/{path}"
+            && current != "com.prafull.algorithms.Routes.FavouriteCodeScreen/{id}/{code}/{language}/{extension}?title={title}"
+            && current != "com.prafull.algorithms.Routes.AskAi"
 }
 
 fun NavController.goBackStack() {

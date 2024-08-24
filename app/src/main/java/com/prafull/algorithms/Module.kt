@@ -2,6 +2,8 @@ package com.prafull.algorithms
 
 import android.content.Context
 import androidx.room.Room
+import com.prafull.algorithms.data.RoomHelper
+import com.prafull.algorithms.data.RoomHelperImpl
 import com.prafull.algorithms.data.local.AlgoDao
 import com.prafull.algorithms.data.local.AlgoDatabase
 import dagger.Module
@@ -30,4 +32,10 @@ object Module {
     fun provideAlgoDao(appDatabase: AlgoDatabase): AlgoDao {
         return appDatabase.algoDao()
     }
+
+    @Provides
+    fun providesRoomHelper(dao: AlgoDao): RoomHelper {
+        return RoomHelperImpl(dao)
+    }
+
 }

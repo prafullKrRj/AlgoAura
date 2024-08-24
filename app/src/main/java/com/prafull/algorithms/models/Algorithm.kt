@@ -3,7 +3,7 @@ package com.prafull.algorithms.models
 import com.prafull.algorithms.data.local.AlgorithmEntity
 
 
-data class Algorithms(
+data class Algorithm(
     val code: String,
     val language: ProgrammingLanguage,
     val langName: String = language.fileName,

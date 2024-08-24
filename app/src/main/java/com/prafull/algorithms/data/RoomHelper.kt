@@ -1,14 +1,11 @@
 package com.prafull.algorithms.data
 
-import com.prafull.algorithms.data.local.AlgoDao
-import com.prafull.algorithms.models.Algorithms
-import javax.inject.Inject
+import com.prafull.algorithms.data.local.AlgorithmEntity
+import com.prafull.algorithms.models.Algorithm
+import kotlinx.coroutines.flow.Flow
 
-class RoomHelper @Inject constructor(
-    private val dao: AlgoDao
-) {
-
-    suspend fun insert(algo: Algorithms) = dao.insert(algo.toEntity())
-    suspend fun delete(algo: Algorithms) = dao.delete(algo.toEntity())
-    fun getAllAlgorithms() = dao.getAllAlgorithms()
+interface RoomHelper {
+    suspend fun insert(algo: Algorithm)
+    suspend fun delete(algo: Algorithm)
+    fun getAllAlgorithms(): Flow<List<AlgorithmEntity>>
 }
