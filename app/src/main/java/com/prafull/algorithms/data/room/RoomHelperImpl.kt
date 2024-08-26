@@ -1,10 +1,9 @@
-package com.prafull.algorithms.data
+package com.prafull.algorithms.data.room
 
 import com.prafull.algorithms.data.local.AlgoDao
 import com.prafull.algorithms.models.Algorithm
-import javax.inject.Inject
 
-class RoomHelperImpl @Inject constructor(
+class RoomHelperImpl(
     private val dao: AlgoDao
 ) : RoomHelper {
 

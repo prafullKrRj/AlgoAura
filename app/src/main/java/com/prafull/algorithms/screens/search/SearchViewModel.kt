@@ -1,12 +1,9 @@
 package com.prafull.algorithms.screens.search
 
 import androidx.lifecycle.ViewModel
-import com.prafull.algorithms.data.RoomHelper
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import com.prafull.algorithms.data.room.RoomHelper
 
-@HiltViewModel
-class SearchViewModel @Inject constructor(
+class SearchViewModel(
     private val roomHelper: RoomHelper
 ) : ViewModel() {
 

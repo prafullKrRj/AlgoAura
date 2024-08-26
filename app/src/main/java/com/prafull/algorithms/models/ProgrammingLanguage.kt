@@ -14,7 +14,6 @@ enum class ProgrammingLanguage(
     C_SHARP("cs", "C-Sharp", "C#", R.drawable.c_sharp),
     C("c", "C", "C", R.drawable.c),
     DART("dart", "Dart", "Dart", R.drawable.dart),
-    GO("go", "Go", "Go", R.drawable.go),
     JAVA("java", "Java", "Java", R.drawable.java),
     JAVASCRIPT("js", "JavaScript", "JavaScript", R.drawable.javascript),
     JULIA("jl", "Julia", "Julia", R.drawable.julia),

@@ -25,13 +25,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.prafull.algorithms.Routes
 import com.prafull.algorithms.commons.AskAiChip
@@ -40,6 +41,7 @@ import com.prafull.algorithms.commons.CodeScreenTopAppBar
 import com.prafull.algorithms.data.local.AlgorithmEntity
 import com.prafull.algorithms.goBackStack
 import com.prafull.algorithms.models.ProgrammingLanguage
+import com.prafull.algorithms.screens.code.GoToAiDialog
 import com.prafull.algorithms.utils.getKodeViewLanguageFromLanguage
 import dev.snipme.highlights.Highlights
 import dev.snipme.highlights.model.SyntaxThemes
@@ -48,7 +50,7 @@ import dev.snipme.kodeview.view.CodeTextView
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavouriteScreen(
-    favouritesViewModel: FavouritesViewModel = hiltViewModel(), navController: NavController
+    favouritesViewModel: FavouritesViewModel, navController: NavController
 ) {
     val algos by favouritesViewModel.favouriteAlgorithms.collectAsState()
     Scaffold(topBar = {
@@ -116,6 +118,9 @@ fun FavouriteCodeScreen(
             viewModel.toggle(algo)
         }
     }
+    var goToAiDialogBox by remember {
+        mutableStateOf(false)
+    }
     Scaffold(topBar = {
         CodeScreenTopAppBar(
             isFavorite = true,
@@ -128,7 +133,7 @@ fun FavouriteCodeScreen(
         CodeScreenBottomBar(algo.code)
     }, floatingActionButton = {
         AskAiChip {
-            navController.navigate(Routes.AskAi)
+            goToAiDialogBox = true
         }
     }) { paddingValues ->
         Column(
@@ -149,5 +154,17 @@ fun FavouriteCodeScreen(
             }
             CodeTextView(highlights = highlights)
         }
+    }
+    if (goToAiDialogBox) {
+        GoToAiDialog(
+            onDismiss = {
+                goToAiDialogBox = false
+            }, navController = navController, Routes.AskAi(
+                code = algo.code,
+                programName = algo.title,
+                message = "I need help with this code",
+                language = algo.language
+            )
+        )
     }
 }

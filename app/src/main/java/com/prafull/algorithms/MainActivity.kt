@@ -5,17 +5,21 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -25,11 +29,11 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -38,8 +42,11 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.google.firebase.FirebaseApp
+import com.google.firebase.appcheck.FirebaseAppCheck
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.prafull.algorithms.data.local.AlgorithmEntity
 import com.prafull.algorithms.screens.ai.AskAi
+import com.prafull.algorithms.screens.ai.ChatViewModel
 import com.prafull.algorithms.screens.code.CodeScreen
 import com.prafull.algorithms.screens.code.CodeViewModel
 import com.prafull.algorithms.screens.favourites.FavouriteCodeScreen
@@ -50,16 +57,20 @@ import com.prafull.algorithms.screens.home.AlgoViewModel
 import com.prafull.algorithms.screens.home.HomeScreen
 import com.prafull.algorithms.screens.search.SearchScreen
 import com.prafull.algorithms.ui.theme.AlgorithmsTheme
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.Serializable
+import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         FirebaseApp.initializeApp(this)
+        FirebaseAppCheck.getInstance().installAppCheckProviderFactory(
+            PlayIntegrityAppCheckProviderFactory.getInstance()
+        )
         setContent {
             AlgorithmsTheme {
                 App()
@@ -71,9 +82,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun App() {
     val navController = rememberNavController()
-    val viewModel: AlgoViewModel = viewModel()
-    val currentRoute =
-        navController.currentBackStackEntryAsState().value?.destination?.route
+    val viewModel: AlgoViewModel = koinViewModel()
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     LaunchedEffect(key1 = currentRoute) {
         Log.d("CurrentRoute", currentRoute.toString())
     }
@@ -95,7 +105,7 @@ fun App() {
             startDestination = Routes.Home
         ) {
             composable<Routes.Search> {
-                SearchScreen()
+                SearchScreen(getViewModel())
             }
             navigation<Routes.Home>(startDestination = Routes.HomeScreen) {
                 composable<Routes.HomeScreen> {
@@ -103,26 +113,35 @@ fun App() {
                 }
                 composable<Routes.FolderScreen> {
                     val path = it.toRoute<Routes.FolderScreen>()
-                    val folderViewModel: FolderViewModel = viewModel()
-                    folderViewModel.getFies(path.path)
+                    val folderViewModel: FolderViewModel = koinViewModel()
+                    folderViewModel.getFiles(path.path)
                     FolderScreen(folderViewModel, path, navController)
                 }
             }
             composable<Routes.History> {
-                FavouriteScreen(navController = navController)
+                FavouriteScreen(favouritesViewModel = getViewModel(), navController = navController)
             }
             composable<Routes.CodeScreen> {
                 val path = it.toRoute<Routes.CodeScreen>()
-                val codeViewModel: CodeViewModel = hiltViewModel()
+                val codeViewModel: CodeViewModel = koinViewModel()
                 codeViewModel.addPath(path.path)
                 CodeScreen(viewModel = codeViewModel, navController)
             }
             composable<Routes.FavouriteCodeScreen> {
                 val data = it.toRoute<Routes.FavouriteCodeScreen>()
-                FavouriteCodeScreen(algo = data.toAlgorithmEntity(), hiltViewModel(), navController)
+                FavouriteCodeScreen(algo = data.toAlgorithmEntity(), koinViewModel(), navController)
             }
             composable<Routes.AskAi> {
-                AskAi()
+                val data = it.toRoute<Routes.AskAi>()
+                val chatViewModel: ChatViewModel = koinViewModel { parametersOf(data) }
+                AskAi(chatViewModel, navController)
+            }
+            composable<Routes.SearchWeb> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Center) {
+                    Text(
+                        text = "Under Development 🚧", style = MaterialTheme.typography.headlineLarge
+                    )
+                }
             }
         }
     }
@@ -134,10 +153,17 @@ fun BottomNavigationBar(selected: Int, onClick: (Routes, Int) -> Unit) {
     NavigationBar(Modifier.fillMaxWidth()) {
         BottomBarItems().items.forEachIndexed { index, item ->
             NavigationBarItem(icon = {
-                Icon(
-                    imageVector = if (index == selected) item.selectedIcon else item.unselectedIcon,
-                    contentDescription = null
-                )
+                if (item.drawableIcon != null) {
+                    Icon(
+                        painter = painterResource(id = item.drawableIcon),
+                        contentDescription = item.title
+                    )
+                } else {
+                    Icon(
+                        imageVector = if (item.selected) item.selectedIcon!! else item.unselectedIcon!!,
+                        contentDescription = item.title
+                    )
+                }
             }, label = {
                 Text(text = item.title)
             }, selected = index == selected, onClick = {
@@ -163,11 +189,16 @@ data class BottomBarItems(
             unselectedIcon = Icons.Outlined.Search,
             route = Routes.Search
         ), BottomBarItem(
-            title = "History",
+            title = "Favourites",
             selected = false,
-            selectedIcon = Icons.Filled.Refresh,
-            unselectedIcon = Icons.Outlined.Refresh,
+            selectedIcon = Icons.Filled.Favorite,
+            unselectedIcon = Icons.Outlined.FavoriteBorder,
             route = Routes.History
+        ), BottomBarItem(
+            title = "Search Web",
+            selected = false,
+            route = Routes.SearchWeb,
+            drawableIcon = R.drawable.baseline_web_24
         )
     )
 )
@@ -176,9 +207,10 @@ data class BottomBarItems(
 data class BottomBarItem(
     val title: String,
     val selected: Boolean,
-    val selectedIcon: ImageVector,
-    val unselectedIcon: ImageVector,
-    val route: Routes
+    val selectedIcon: ImageVector? = null,
+    val unselectedIcon: ImageVector? = null,
+    val route: Routes,
+    @DrawableRes val drawableIcon: Int? = null
 )
 
 
@@ -207,7 +239,12 @@ sealed interface Routes {
     ) : Routes
 
     @Serializable
-    data object AskAi : Routes
+    data class AskAi(
+        val code: String, val programName: String, val message: String, val language: String
+    ) : Routes
+
+    @Serializable
+    data object SearchWeb : Routes
 
     @Serializable
     data class FavouriteCodeScreen(
@@ -219,21 +256,14 @@ sealed interface Routes {
     ) : Routes {
         fun toAlgorithmEntity(): AlgorithmEntity {
             return AlgorithmEntity(
-                id = id,
-                code = code,
-                language = language,
-                extension = extension,
-                title = title
+                id = id, code = code, language = language, extension = extension, title = title
             )
         }
     }
 }
 
 fun canShowBottomBar(current: String): Boolean {
-    return current != "com.prafull.algorithms.Routes.FolderScreen/{path}/{name}"
-            && current != "com.prafull.algorithms.Routes.CodeScreen/{path}"
-            && current != "com.prafull.algorithms.Routes.FavouriteCodeScreen/{id}/{code}/{language}/{extension}?title={title}"
-            && current != "com.prafull.algorithms.Routes.AskAi"
+    return current != "com.prafull.algorithms.Routes.FolderScreen/{path}/{name}" && current != "com.prafull.algorithms.Routes.CodeScreen/{path}" && current != "com.prafull.algorithms.Routes.FavouriteCodeScreen/{id}/{code}/{language}/{extension}?title={title}" && current != "com.prafull.algorithms.Routes.AskAi/{code}/{programName}/{message}/{language}"
 }
 
 fun NavController.goBackStack() {

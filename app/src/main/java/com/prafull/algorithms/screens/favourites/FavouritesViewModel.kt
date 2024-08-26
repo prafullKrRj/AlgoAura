@@ -2,15 +2,12 @@ package com.prafull.algorithms.screens.favourites
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.prafull.algorithms.data.RoomHelper
 import com.prafull.algorithms.data.local.AlgorithmEntity
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.prafull.algorithms.data.room.RoomHelper
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
-import javax.inject.Inject
 
-@HiltViewModel
-class FavouritesViewModel @Inject constructor(
+class FavouritesViewModel(
     private val room: RoomHelper
 ) : ViewModel() {
 

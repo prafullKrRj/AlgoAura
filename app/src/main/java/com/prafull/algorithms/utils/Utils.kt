@@ -33,7 +33,6 @@ fun getKodeViewLanguageFromLanguage(language: ProgrammingLanguage): SyntaxLangua
         ProgrammingLanguage.C_SHARP -> SyntaxLanguage.CSHARP
         ProgrammingLanguage.C -> SyntaxLanguage.C
         ProgrammingLanguage.DART -> SyntaxLanguage.MIXED
-        ProgrammingLanguage.GO -> SyntaxLanguage.MIXED
         ProgrammingLanguage.JAVA -> SyntaxLanguage.JAVA
         ProgrammingLanguage.JAVASCRIPT -> SyntaxLanguage.JAVASCRIPT
         ProgrammingLanguage.JULIA -> SyntaxLanguage.MIXED

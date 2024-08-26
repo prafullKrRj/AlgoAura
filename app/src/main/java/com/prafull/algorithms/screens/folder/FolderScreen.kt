@@ -68,7 +68,7 @@ fun FolderScreen(
                 val message = (files as BaseClass.Error).message
                 Text(text = message)
                 Button(onClick = {
-                    viewModel.getFies(folderScreen.path)
+                    viewModel.getFiles(folderScreen.path)
                 }) {
                     Text(text = "Retry")
                 }

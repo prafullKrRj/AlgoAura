@@ -2,7 +2,7 @@ package com.prafull.algorithms.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.prafull.algorithms.data.FirebaseHelper
+import com.prafull.algorithms.data.firebase.FirebaseHelper
 import com.prafull.algorithms.models.FolderInfo
 import com.prafull.algorithms.models.ProgrammingLanguage
 import com.prafull.algorithms.utils.BaseClass
@@ -12,9 +12,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class AlgoViewModel : ViewModel() {
+class AlgoViewModel(
+    private val firebaseHelper: FirebaseHelper
+) : ViewModel() {
     private val _state = MutableStateFlow<BaseClass<List<FolderInfo>>>(BaseClass.Loading)
     val state = _state.asStateFlow()
+
 
     private val _cachedData = hashMapOf<ProgrammingLanguage, List<FolderInfo>>()
 
@@ -30,7 +33,7 @@ class AlgoViewModel : ViewModel() {
             _state.update {
                 BaseClass.Loading
             }
-            FirebaseHelper.getFromLanguage(language).collect { resp ->
+            firebaseHelper.getAlgoGroups(language).collect { resp ->
                 _state.update {
                     resp
                 }

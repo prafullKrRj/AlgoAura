@@ -1,12 +1,14 @@
-package com.prafull.algorithms.data
+package com.prafull.algorithms.data.firebase
 
 import android.util.Log
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.prafull.algorithms.models.Algorithm
 import com.prafull.algorithms.models.FileInfo
 import com.prafull.algorithms.models.FolderInfo
 import com.prafull.algorithms.models.ProgrammingLanguage
 import com.prafull.algorithms.utils.BaseClass
+import com.prafull.algorithms.utils.Const
 import com.prafull.algorithms.utils.getFileName
 import com.prafull.algorithms.utils.getFormattedName
 import com.prafull.algorithms.utils.getLanguageFromString
@@ -18,49 +20,34 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import java.io.File
 
-object FirebaseHelper {
-    private val storage = FirebaseStorage.getInstance()
+class FirebaseHelperImpl(
+    private val storage: FirebaseStorage,
+    private val db: FirebaseFirestore
+) : FirebaseHelper {
 
-    fun getFromLanguage(language: ProgrammingLanguage): Flow<BaseClass<List<FolderInfo>>> {
+    override fun getAlgorithms(path: String): Flow<BaseClass<List<FileInfo>>> {
         return callbackFlow {
-            trySend(BaseClass.Loading)
             try {
-                val ref = storage.reference.child(language.fileName)
-                val list = ref.listAll().await()
-                val folderInfoList = list.prefixes.map { folderRef ->
-                    FolderInfo(name = folderRef.name, path = folderRef.path)
-                }
-                trySend(BaseClass.Success(folderInfoList))
-            } catch (e: Exception) {
-                trySend(BaseClass.Error(e.message ?: "An error occurred"))
-            }
-            awaitClose { }
-        }.flowOn(Dispatchers.IO)
-    }
-
-    fun getAlgorithms(path: String): Flow<BaseClass<List<FileInfo>>> {
-        return callbackFlow {
-            trySend(BaseClass.Loading)
-            try {
-                val files = storage.reference.child(path)
-                val list = files.listAll().await()
-                val fileInfoList = list.items.map { fileRef ->
+                val pathDetails = path.split("/")
+                Log.d("FirebaseHelper", "Path: $pathDetails")
+                val docRef = db.collection(Const.LANGUAGES).document(pathDetails[0])
+                    .collection(pathDetails[1]).get().await()
+                val fileInfoList = docRef.documents.map { doc ->
                     FileInfo(
-                        name = fileRef.name,
-                        path = fileRef.path,
-                        language = getLanguageFromString(fileRef.name)
+                        name = doc.id,
+                        path = "${path}/${doc.id}",
+                        language = getLanguageFromString(doc.id)
                     )
                 }
                 trySend(BaseClass.Success(fileInfoList))
             } catch (e: Exception) {
-                Log.d("FirebaseHelper", "Error: ${e.message}")
                 trySend(BaseClass.Error(e.message ?: "An error occurred"))
             }
             awaitClose { }
-        }.flowOn(Dispatchers.IO)
+        }
     }
 
-    fun getAlgorithm(path: String): Flow<BaseClass<Algorithm>> {
+    override fun getAlgorithm(path: String): Flow<BaseClass<Algorithm>> {
         return callbackFlow {
             trySend(BaseClass.Loading)
             try {
@@ -86,4 +73,32 @@ object FirebaseHelper {
             awaitClose { }
         }.flowOn(Dispatchers.IO)
     }
+
+    override fun getAlgoGroups(language: ProgrammingLanguage): Flow<BaseClass<List<FolderInfo>>> {
+        return callbackFlow {
+            try {
+                val docRef =
+                    db.collection(Const.LANGUAGES).document(language.fileName).get().await()
+                val languageResponse = LanguageResponse(
+                    name = docRef.getString("name") ?: "",
+                    algos = docRef.get("algos") as List<String>,
+                    extension = docRef.getString("extension") ?: ""
+                )
+                val folderInfoList = languageResponse.algos?.map { algo ->
+                    FolderInfo(name = algo, path = "${language.fileName}/$algo")
+                } ?: emptyList()
+                trySend(BaseClass.Success(folderInfoList))
+            } catch (e: Exception) {
+                trySend(BaseClass.Error(e.message ?: "An error occurred"))
+            }
+
+            awaitClose { }
+        }
+    }
 }
+
+data class LanguageResponse(
+    val name: String,
+    val algos: List<String>?,
+    val extension: String
+)

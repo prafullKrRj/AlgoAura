@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.prafull.algorithms.data.FirebaseHelper
+import com.prafull.algorithms.data.firebase.FirebaseHelper
 import com.prafull.algorithms.models.FileInfo
 import com.prafull.algorithms.models.FolderInfo
 import com.prafull.algorithms.utils.BaseClass
@@ -16,22 +16,30 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class FolderViewModel : ViewModel() {
+class FolderViewModel(
+    private val firebaseHelper: FirebaseHelper
+) : ViewModel() {
 
     private var cachedFolders by mutableStateOf(CachedState())
 
     private val _files = MutableStateFlow<BaseClass<List<FileInfo>>>(BaseClass.Loading)
     val files = _files.asStateFlow()
 
-    fun getFies(folder: String) {
+
+    /**
+     *      Get the files in a folder
+     *      @param folder: The folder path
+     * */
+    fun getFiles(folder: String) {
         if (cachedFolders.folders.any { it.folder.path == folder }) {
             val cachedFolder = cachedFolders.folders.first { it.folder.path == folder }
             _files.update {
                 BaseClass.Success(cachedFolder.files)
             }
         } else {
+
             viewModelScope.launch(Dispatchers.IO) {
-                FirebaseHelper.getAlgorithms(path = folder).collectLatest { resp ->
+                firebaseHelper.getAlgorithms(path = folder).collectLatest { resp ->
                     _files.update {
                         resp
                     }
@@ -46,13 +54,14 @@ class FolderViewModel : ViewModel() {
                 }
             }
         }
-
     }
 }
 
+// Path: app/src/main/java/com/prafull/algorithms/screens/folder/FolderViewModel.kt
 data class CachedState(
     val folders: Set<CachedFolder> = emptySet()
 )
+// Path: app/src/main/java/com/prafull/algorithms/screens/folder/FolderViewModel.kt
 
 data class CachedFolder(
     val folder: FolderInfo,

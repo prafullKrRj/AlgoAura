@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.kotlinx.serialization)
-    id("com.google.dagger.hilt.android")
     kotlin("kapt")
 }
 
@@ -22,6 +21,11 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        buildConfigField(
+            type = "String",
+            name = "API_KEY",
+            value = project.findProperty("API_KEY").toString()
+        )
     }
     sourceSets {
         getByName("main").java.srcDirs("build/generated/ksp/main/kotlin")
@@ -44,6 +48,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.7"
@@ -57,11 +62,10 @@ android {
 
 dependencies {
 
-    implementation(libs.hilt.android.v249)
-    kapt(libs.hilt.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
 
-    // Room
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.appcheck.playintegrity)
+
     implementation(libs.androidx.room.runtime.v260)
     kapt(libs.androidx.room.compiler.v260)
 
@@ -100,6 +104,16 @@ dependencies {
     implementation(libs.kodeview)
     implementation(libs.commonmark)
 
+    // Jsoup
+    implementation(libs.jsoup)
+    implementation(libs.generativeai)
+
+    // koin
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.core)
+    implementation(libs.koin.androidx.navigation)
+    implementation(libs.compose.shimmer)
 }
 kapt {
     correctErrorTypes = true

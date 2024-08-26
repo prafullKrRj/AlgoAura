@@ -5,12 +5,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.prafull.algorithms.data.FirebaseHelper
-import com.prafull.algorithms.data.RoomHelper
+import com.prafull.algorithms.data.firebase.FirebaseHelper
+import com.prafull.algorithms.data.room.RoomHelper
 import com.prafull.algorithms.models.Algorithm
 import com.prafull.algorithms.utils.BaseClass
 import com.prafull.algorithms.utils.getAlgoNameFromCompletePath
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,11 +17,10 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-@HiltViewModel
-class CodeViewModel @Inject constructor(
-    private val room: RoomHelper
+class CodeViewModel(
+    private val room: RoomHelper,
+    private val firebaseHelper: FirebaseHelper
 ) : ViewModel() {
 
     private var path by mutableStateOf("")
@@ -35,7 +33,7 @@ class CodeViewModel @Inject constructor(
     private fun getCode() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                FirebaseHelper.getAlgorithm(path).collectLatest { resp ->
+                firebaseHelper.getAlgorithm(path).collectLatest { resp ->
                     _state.update {
                         resp
                     }
@@ -48,7 +46,7 @@ class CodeViewModel @Inject constructor(
     }
 
     fun addPath(path: String) {
-        this.path = path;
+        this.path = path
         getCode()
         programName = getAlgoNameFromCompletePath(path)
     }

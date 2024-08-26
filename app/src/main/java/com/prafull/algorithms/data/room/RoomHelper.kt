@@ -1,4 +1,4 @@
-package com.prafull.algorithms.data
+package com.prafull.algorithms.data.room
 
 import com.prafull.algorithms.data.local.AlgorithmEntity
 import com.prafull.algorithms.models.Algorithm
