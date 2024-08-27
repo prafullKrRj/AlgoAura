@@ -5,8 +5,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.prafull.algorithms.data.firebase.FirebaseHelper
 import com.prafull.algorithms.data.firebase.FirebaseHelperImpl
-import com.prafull.algorithms.data.gemini.GeminiRepo
-import com.prafull.algorithms.data.gemini.GeminiRepoImpl
 import com.prafull.algorithms.data.local.AlgoDao
 import com.prafull.algorithms.data.local.AlgoDatabase
 import com.prafull.algorithms.data.room.RoomHelper
@@ -43,19 +41,16 @@ val appModule = module {
     single<RoomHelper> {
         RoomHelperImpl(get())
     }
-    single<GeminiRepo> {
-        GeminiRepoImpl()
+    viewModel {
+        AlgoViewModel()
     }
     viewModel {
-        AlgoViewModel(get())
-    }
-    viewModel {
-        CodeViewModel(get(), get())
+        CodeViewModel(get())
     }
     viewModel {
         FolderViewModel(get())
     }
-    viewModel { ChatViewModel(get(), get()) }
-    viewModel { SearchViewModel(get()) }
-    viewModel { FavouritesViewModel(get()) }
+    viewModel { ChatViewModel(get()) }
+    viewModel { SearchViewModel() }
+    viewModel { FavouritesViewModel() }
 }

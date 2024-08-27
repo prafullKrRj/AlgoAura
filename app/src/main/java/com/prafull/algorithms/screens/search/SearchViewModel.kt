@@ -1,53 +1,63 @@
 package com.prafull.algorithms.screens.search
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.prafull.algorithms.data.firebase.FirebaseHelper
 import com.prafull.algorithms.data.room.RoomHelper
+import com.prafull.algorithms.models.FileInfo
+import com.prafull.algorithms.utils.BaseClass
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class SearchViewModel(
-    private val roomHelper: RoomHelper
-) : ViewModel() {
+class SearchViewModel : ViewModel(), KoinComponent {
 
-    private val sampleData = listOf(
-        "Apple",
-        "Banana",
-        "Cherry",
-        "Date",
-        "Elderberry",
-        "Fig",
-        "Grape",
-        "Honeydew",
-        "Jackfruit",
-        "Kiwi",
-        "Lemon",
-        "Mango",
-        "Nectarine",
-        "Orange",
-        "Papaya",
-        "Quince",
-        "Raspberry",
-        "Strawberry",
-        "Tangerine",
-        "Ugli",
-        "Vanilla",
-        "Watermelon",
-        "Ximenia",
-        "Yuzu",
-        "Zucchini"
-    )
+    private val room: RoomHelper by inject()
+    private val firebase: FirebaseHelper by inject()
+    var query by mutableStateOf("")
+    var searchResults by mutableStateOf(emptyList<FileInfo>())
+    var loading by mutableStateOf(false)
+    var error by mutableStateOf("")
 
-    val searchResults = mutableListOf<String>()
-
-    fun search(value: String) {
-        if (value.isEmpty()) {
-            searchResults.clear()
+    fun search() {
+        if (query.isEmpty()) {
             return
         }
-        searchResults.clear()
-        sampleData.forEach {
-            if (it.contains(value, ignoreCase = true)) {
-                searchResults.add(it)
+        viewModelScope.launch(Dispatchers.IO) {
+            loading = true
+            searchResults = emptyList()
+            error = ""
+            firebase.getListOfDocuments(query.lowercase()).collectLatest { resp ->
+                when (resp) {
+                    is BaseClass.Success -> {
+                        searchResults = resp.data
+                        loading = false
+                    }
+
+                    is BaseClass.Error -> {
+                        resp.message.let {
+                            error = it
+                        }
+                        loading = false
+                    }
+
+                    is BaseClass.Loading -> {
+                        loading = true
+                    }
+                }
             }
         }
     }
+}
 
+sealed interface SearchState {
+    data object Loading : SearchState
+    data class Success(val data: List<FileInfo>) : SearchState
+    data class Error(val message: String) : SearchState
+    data object Initial : SearchState
 }

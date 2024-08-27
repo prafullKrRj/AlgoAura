@@ -11,17 +11,18 @@ import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.asTextOrNull
 import com.google.ai.client.generativeai.type.content
 import com.prafull.algorithms.Routes
-import com.prafull.algorithms.data.gemini.GeminiRepo
 import com.prafull.algorithms.utils.Const
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
 import java.util.UUID
 
 class ChatViewModel(
-    private val askAi: Routes.AskAi, private val gemini: GeminiRepo
-) : ViewModel() {
+    private val askAi: Routes.AskAi
+) : ViewModel(), KoinComponent {
+
 
     val language: String by mutableStateOf(askAi.language)
     var code by mutableStateOf(askAi.code)

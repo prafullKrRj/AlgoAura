@@ -8,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.prafull.algorithms.data.firebase.FirebaseHelper
 import com.prafull.algorithms.data.room.RoomHelper
 import com.prafull.algorithms.models.Algorithm
+import com.prafull.algorithms.models.FileInfo
 import com.prafull.algorithms.utils.BaseClass
-import com.prafull.algorithms.utils.getAlgoNameFromCompletePath
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,23 +17,43 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class CodeViewModel(
-    private val room: RoomHelper,
-    private val firebaseHelper: FirebaseHelper
-) : ViewModel() {
+    private val fileInfo: FileInfo
+) : ViewModel(), KoinComponent {
+    private val room: RoomHelper by inject()
+    private val firebaseHelper: FirebaseHelper by inject()
 
-    private var path by mutableStateOf("")
-    var programName by mutableStateOf("")
+    var programName by mutableStateOf(fileInfo.name)
+    var isFav by mutableStateOf(false)
+
     private val _state = MutableStateFlow<BaseClass<Algorithm>>(BaseClass.Loading)
     val state get() = _state.asStateFlow()
 
     var algorithm by mutableStateOf<Algorithm?>(null)
 
+    fun toggleFav() {
+        isFav = !isFav
+        if (algorithm != null) {
+            viewModelScope.launch(Dispatchers.Default) {
+                room.toggle(algorithm!!)
+            }
+        }
+    }
+
+    init {
+        viewModelScope.launch(Dispatchers.Default) {
+            isFav = room.checkIfAlgoExists(fileInfo.id)
+        }
+        getCode()
+    }
+
     private fun getCode() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                firebaseHelper.getAlgorithm(path).collectLatest { resp ->
+                firebaseHelper.getAlgorithm(fileInfo).collectLatest { resp ->
                     _state.update {
                         resp
                     }
@@ -45,12 +65,6 @@ class CodeViewModel(
         }
     }
 
-    fun addPath(path: String) {
-        this.path = path
-        getCode()
-        programName = getAlgoNameFromCompletePath(path)
-    }
-
     fun addToDb() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -60,5 +74,4 @@ class CodeViewModel(
             }
         }
     }
-
 }

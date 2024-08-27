@@ -102,7 +102,7 @@ fun FolderScreen(
                                     .fillMaxSize()
                                     .clickable {
                                         navController.navigate(
-                                            Routes.CodeScreen(file.path)
+                                            file.toCodeScreen()
                                         )
                                     }
                                     .padding(8.dp)

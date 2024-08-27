@@ -45,6 +45,8 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.prafull.algorithms.data.local.AlgorithmEntity
+import com.prafull.algorithms.models.FileInfo
+import com.prafull.algorithms.models.ProgrammingLanguage
 import com.prafull.algorithms.screens.ai.AskAi
 import com.prafull.algorithms.screens.ai.ChatViewModel
 import com.prafull.algorithms.screens.code.CodeScreen
@@ -56,6 +58,7 @@ import com.prafull.algorithms.screens.folder.FolderViewModel
 import com.prafull.algorithms.screens.home.AlgoViewModel
 import com.prafull.algorithms.screens.home.HomeScreen
 import com.prafull.algorithms.screens.search.SearchScreen
+import com.prafull.algorithms.screens.search.SearchViewModel
 import com.prafull.algorithms.ui.theme.AlgorithmsTheme
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.getViewModel
@@ -83,6 +86,7 @@ class MainActivity : ComponentActivity() {
 fun App() {
     val navController = rememberNavController()
     val viewModel: AlgoViewModel = koinViewModel()
+    val searchViewModel: SearchViewModel = koinViewModel()
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     LaunchedEffect(key1 = currentRoute) {
         Log.d("CurrentRoute", currentRoute.toString())
@@ -105,7 +109,7 @@ fun App() {
             startDestination = Routes.Home
         ) {
             composable<Routes.Search> {
-                SearchScreen(getViewModel())
+                SearchScreen(searchViewModel, navController)
             }
             navigation<Routes.Home>(startDestination = Routes.HomeScreen) {
                 composable<Routes.HomeScreen> {
@@ -123,8 +127,7 @@ fun App() {
             }
             composable<Routes.CodeScreen> {
                 val path = it.toRoute<Routes.CodeScreen>()
-                val codeViewModel: CodeViewModel = koinViewModel()
-                codeViewModel.addPath(path.path)
+                val codeViewModel: CodeViewModel = koinViewModel { parametersOf(path.toFileInfo()) }
                 CodeScreen(viewModel = codeViewModel, navController)
             }
             composable<Routes.FavouriteCodeScreen> {
@@ -235,8 +238,16 @@ sealed interface Routes {
 
     @Serializable
     data class CodeScreen(
-        val path: String
-    ) : Routes
+        val id: String,
+        val name: String,
+        val path: String,
+        val langName: String
+    ) : Routes {
+        fun toFileInfo() = FileInfo(
+            id = id, name = name, path = path, language = ProgrammingLanguage.valueOf(langName)
+        )
+
+    }
 
     @Serializable
     data class AskAi(
@@ -248,7 +259,7 @@ sealed interface Routes {
 
     @Serializable
     data class FavouriteCodeScreen(
-        val id: Int,
+        val id: String,
         val code: String,
         val language: String,
         val extension: String,
@@ -263,7 +274,7 @@ sealed interface Routes {
 }
 
 fun canShowBottomBar(current: String): Boolean {
-    return current != "com.prafull.algorithms.Routes.FolderScreen/{path}/{name}" && current != "com.prafull.algorithms.Routes.CodeScreen/{path}" && current != "com.prafull.algorithms.Routes.FavouriteCodeScreen/{id}/{code}/{language}/{extension}?title={title}" && current != "com.prafull.algorithms.Routes.AskAi/{code}/{programName}/{message}/{language}"
+    return current != "com.prafull.algorithms.Routes.FolderScreen/{path}/{name}" && current != "com.prafull.algorithms.Routes.CodeScreen/{id}/{name}/{path}/{langName}" && current != "com.prafull.algorithms.Routes.FavouriteCodeScreen/{id}/{code}/{language}/{extension}?title={title}" && current != "com.prafull.algorithms.Routes.AskAi/{code}/{programName}/{message}/{language}"
 }
 
 fun NavController.goBackStack() {

@@ -4,6 +4,7 @@ import com.prafull.algorithms.data.local.AlgorithmEntity
 
 
 data class Algorithm(
+    val id: String,
     val code: String,
     val language: ProgrammingLanguage,
     val langName: String = language.fileName,
@@ -12,6 +13,7 @@ data class Algorithm(
 ) {
     fun toEntity(): AlgorithmEntity {
         return AlgorithmEntity(
+            id = id,
             code = code,
             language = language.name,
             extension = language.extension,

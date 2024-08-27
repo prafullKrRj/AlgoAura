@@ -8,8 +8,10 @@ import com.prafull.algorithms.utils.BaseClass
 import kotlinx.coroutines.flow.Flow
 
 interface FirebaseHelper {
-    fun getAlgorithm(path: String): Flow<BaseClass<Algorithm>>      // Get the algorithm
+    fun getAlgorithm(fileInfo: FileInfo): Flow<BaseClass<Algorithm>>      // Get the algorithm
 
     fun getAlgorithms(path: String): Flow<BaseClass<List<FileInfo>>>        // Get all the algorithms in a group
     fun getAlgoGroups(language: ProgrammingLanguage): Flow<BaseClass<List<FolderInfo>>> // Get all the groups of algorithms
+
+    suspend fun getListOfDocuments(query: String): Flow<BaseClass<List<FileInfo>>>
 }

@@ -38,6 +38,8 @@ import com.prafull.algorithms.commons.CodeScreenTopAppBar
 import com.prafull.algorithms.goBackStack
 import com.prafull.algorithms.screens.ai.PromptField
 import com.prafull.algorithms.utils.BaseClass
+import com.prafull.algorithms.utils.getFileName
+import com.prafull.algorithms.utils.getFormattedName
 import com.prafull.algorithms.utils.getKodeViewLanguageFromLanguage
 import dev.snipme.highlights.Highlights
 import dev.snipme.highlights.model.SyntaxThemes
@@ -48,19 +50,19 @@ fun CodeScreen(viewModel: CodeViewModel, navController: NavController) {
     val state by viewModel.state.collectAsState()
     val onFavClick = remember {
         {
-            viewModel.addToDb()
+            viewModel.toggleFav()
         }
     }
-    val selected = false        // TODO: Implement this
+    // TODO: Implement this
     var goToAiDialogBox by remember {
         mutableStateOf(false)
     }
     Scaffold(topBar = {
         CodeScreenTopAppBar(
-            isFavorite = selected,
+            isFavorite = viewModel.isFav,
             onFavClick = onFavClick,
             onBackClick = navController::goBackStack,
-            title = viewModel.programName,
+            title = getFormattedName(getFileName(viewModel.programName)),
             showToggle = viewModel.algorithm != null
         )
     }, bottomBar = {

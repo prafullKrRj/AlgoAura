@@ -8,4 +8,6 @@ interface RoomHelper {
     suspend fun insert(algo: Algorithm)
     suspend fun delete(algo: Algorithm)
     fun getAllAlgorithms(): Flow<List<AlgorithmEntity>>
+    suspend fun checkIfAlgoExists(id: String): Boolean
+    suspend fun toggle(algorithm: Algorithm)
 }

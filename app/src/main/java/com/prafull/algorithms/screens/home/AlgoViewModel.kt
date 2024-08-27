@@ -11,10 +11,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class AlgoViewModel(
-    private val firebaseHelper: FirebaseHelper
-) : ViewModel() {
+class AlgoViewModel : ViewModel(), KoinComponent {
+    private val firebaseHelper: FirebaseHelper by inject()
+
     private val _state = MutableStateFlow<BaseClass<List<FolderInfo>>>(BaseClass.Loading)
     val state = _state.asStateFlow()
 

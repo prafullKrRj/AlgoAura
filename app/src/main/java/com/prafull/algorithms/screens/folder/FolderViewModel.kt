@@ -37,7 +37,6 @@ class FolderViewModel(
                 BaseClass.Success(cachedFolder.files)
             }
         } else {
-
             viewModelScope.launch(Dispatchers.IO) {
                 firebaseHelper.getAlgorithms(path = folder).collectLatest { resp ->
                     _files.update {

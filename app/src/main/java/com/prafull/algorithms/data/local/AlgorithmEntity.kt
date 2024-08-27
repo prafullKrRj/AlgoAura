@@ -9,8 +9,8 @@ import com.prafull.algorithms.models.ProgrammingLanguage
 
 @Entity
 data class AlgorithmEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    @PrimaryKey
+    val id: String,
     val code: String,
     val language: String,
     val extension: String,
@@ -19,6 +19,7 @@ data class AlgorithmEntity(
 ) {
     fun toAlgorithms(): Algorithm {
         return Algorithm(
+            id = id,
             code = code,
             language = ProgrammingLanguage.valueOf(language),
             langName = ProgrammingLanguage.valueOf(language).fileName,

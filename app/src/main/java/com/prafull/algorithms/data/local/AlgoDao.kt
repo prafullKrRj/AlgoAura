@@ -16,4 +16,7 @@ interface AlgoDao {
 
     @Delete
     suspend fun delete(algo: AlgorithmEntity)
+
+    @Query("SELECT * FROM AlgorithmEntity WHERE id = :id")
+    suspend fun checkIfAlgoExists(id: String): List<AlgorithmEntity>
 }

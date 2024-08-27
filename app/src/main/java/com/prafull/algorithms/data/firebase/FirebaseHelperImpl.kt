@@ -34,8 +34,9 @@ class FirebaseHelperImpl(
                     .collection(pathDetails[1]).get().await()
                 val fileInfoList = docRef.documents.map { doc ->
                     FileInfo(
+                        id = doc.get("id") as String,
                         name = doc.id,
-                        path = "${path}/${doc.id}",
+                        path = doc.get("path") as String,
                         language = getLanguageFromString(doc.id)
                     )
                 }
@@ -47,22 +48,24 @@ class FirebaseHelperImpl(
         }
     }
 
-    override fun getAlgorithm(path: String): Flow<BaseClass<Algorithm>> {
+    override fun getAlgorithm(fileInfo: FileInfo): Flow<BaseClass<Algorithm>> {
         return callbackFlow {
             trySend(BaseClass.Loading)
             try {
-                val file = storage.reference.child(path)
+                val file = storage.reference.child(fileInfo.path)
                 val localFile = File.createTempFile("tempMarkdown", ".md")
                 val x = file.getFile(localFile).await()
                 if (x != null) {
                     val code = localFile.readText()
                     val language = getLanguageFromString(file.name)
                     val algorithm = Algorithm(
+                        id = fileInfo.id,
                         code = code, language = language, title = getFormattedName(
                             getFileName(file.name)
                         ),
                         langName = language.languageGenerics, extension = language.extension
                     )
+                    Log.d("FirebaseHelper", "Algorithm: $algorithm")
                     trySend(BaseClass.Success(algorithm))
                 } else {
                     trySend(BaseClass.Error("File not found"))
@@ -81,8 +84,8 @@ class FirebaseHelperImpl(
                     db.collection(Const.LANGUAGES).document(language.fileName).get().await()
                 val languageResponse = LanguageResponse(
                     name = docRef.getString("name") ?: "",
-                    algos = docRef.get("algos") as List<String>,
-                    extension = docRef.getString("extension") ?: ""
+                    algos = docRef.get("folders") as List<String>,
+                    extension = docRef.getString("extension") ?: "",
                 )
                 val folderInfoList = languageResponse.algos?.map { algo ->
                     FolderInfo(name = algo, path = "${language.fileName}/$algo")
@@ -95,10 +98,59 @@ class FirebaseHelperImpl(
             awaitClose { }
         }
     }
+
+    override suspend fun getListOfDocuments(query: String): Flow<BaseClass<List<FileInfo>>> {
+        return callbackFlow {
+            try {
+                trySend(BaseClass.Loading)
+
+                val normalizedQuery = query.replace("_", " ").lowercase()
+                val regexQuery = Regex(".*${normalizedQuery.replace(" ", ".*")}.*")
+
+                val response = db.collection("Languages")
+                val documents = response.get().await()
+                val fileInfoList = mutableListOf<FileInfo>()
+
+                for (document in documents) {
+                    val folders = document.get("folders") as List<String>
+                    for (collection in folders) {
+                        val docRef =
+                            db.collection(Const.LANGUAGES).document(document.id)
+                                .collection(collection)
+                                .get()
+                                .await()
+                        for (doc in docRef) {
+                            val docName = doc.id.lowercase().replace("_", " ")
+                            if (regexQuery.matches(docName) || regexQuery.matches(
+                                    doc.getString("content")?.lowercase().orEmpty()
+                                )
+                            ) {
+                                fileInfoList.add(
+                                    FileInfo(
+                                        id = doc.get("id") as String,
+                                        name = doc.id,
+                                        path = doc.get("path") as String,
+                                        language = getLanguageFromString(doc.id)
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+
+                trySend(BaseClass.Success(fileInfoList))
+            } catch (e: Exception) {
+                Log.d("FirebaseHelper", "Error: ${e.message}")
+                trySend(BaseClass.Error(e.message ?: "An error occurred"))
+            }
+
+            awaitClose { }
+        }
+    }
 }
 
 data class LanguageResponse(
     val name: String,
     val algos: List<String>?,
-    val extension: String
+    val extension: String,
 )
