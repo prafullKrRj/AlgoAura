@@ -1,7 +1,9 @@
 package com.prafull.algorithms.data.room
 
 import com.prafull.algorithms.data.local.AlgoDao
+import com.prafull.algorithms.data.local.SearchedEntity
 import com.prafull.algorithms.models.Algorithm
+import kotlinx.coroutines.flow.Flow
 
 class RoomHelperImpl(
     private val dao: AlgoDao
@@ -21,4 +23,8 @@ class RoomHelperImpl(
             insert(algorithm)
         }
     }
+
+    override fun getSearchedAlgorithms(): Flow<List<SearchedEntity>> = dao.getAllSearched()
+    override suspend fun insertSearchedText(searchedEntity: SearchedEntity) =
+        dao.insertSearchedText(searchedEntity)
 }
