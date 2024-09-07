@@ -50,10 +50,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.prafull.algorithms.R
+import com.prafull.algorithms.commons.CustomSearchBar
 import com.prafull.algorithms.data.local.SearchedEntity
 import com.prafull.algorithms.models.FileInfo
 import com.prafull.algorithms.models.ProgrammingLanguage
-import com.prafull.algorithms.screens.searchWeb.CustomSearchBar
 import com.prafull.algorithms.utils.getFileName
 import com.prafull.algorithms.utils.getFormattedName
 import com.prafull.algorithms.utils.getLanguageFromString

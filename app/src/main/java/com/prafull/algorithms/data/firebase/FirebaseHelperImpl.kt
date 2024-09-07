@@ -4,6 +4,9 @@ import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.prafull.algorithms.models.Algorithm
+import com.prafull.algorithms.models.ComplexAlgorithm
+import com.prafull.algorithms.models.ComplexLanguageData
+import com.prafull.algorithms.models.ComplexLanguageFiles
 import com.prafull.algorithms.models.FileInfo
 import com.prafull.algorithms.models.FolderInfo
 import com.prafull.algorithms.models.ProgrammingLanguage
@@ -158,6 +161,71 @@ class FirebaseHelperImpl(
             } catch (e: Exception) {
                 trySend(BaseClass.Error(e.message ?: "Error"))
             }
+            awaitClose { }
+        }
+    }
+
+    override suspend fun getComplexSearchResults(query: String): Flow<BaseClass<List<String>>> {
+        return callbackFlow {
+            try {
+                val normalizedQuery = query.replace("_", " ").lowercase()
+                val regexQuery = Regex(".*${normalizedQuery.replace(" ", ".*")}.*")
+
+                val response = db.collection("rosettaAlgos").get().await()
+                val matchingDocuments = response.documents.filter { doc ->
+                    regexQuery.matches(
+                        doc.id.replace("+", " ").replace("-", " ").lowercase()
+                    ) || regexQuery.matches(
+                        doc.getString("content")?.lowercase().orEmpty()
+                    )
+                }.map { it.id }
+
+                trySend(BaseClass.Success(matchingDocuments))
+            } catch (e: Exception) {
+                trySend(BaseClass.Error(e.message ?: "Error", exception = e))
+            }
+            awaitClose { }
+        }
+    }
+
+    override suspend fun getComplexAlgo(algoName: String): Flow<BaseClass<ComplexAlgorithm>> {
+        return callbackFlow {
+            try {
+                val document = db.collection("rosettaAlgos").document(algoName).get().await()
+                val algo = ComplexAlgorithm(
+                    name = document.get("name") as String,
+                    task = document.get("task") as String,
+                    languages = document.get("languages") as List<String>,
+                )
+                trySend(BaseClass.Success(algo!!))
+            } catch (e: Exception) {
+                trySend(BaseClass.Error(e.message ?: "Error", exception = e))
+            }
+
+            awaitClose { }
+        }
+    }
+
+    override suspend fun getComplexLanguageData(lang: String): Flow<BaseClass<ComplexLanguageData>> {
+        return callbackFlow {
+            try {
+                val doc = db.collection("rosettalang").document(lang).get().await()
+                val data = ComplexLanguageData(
+                    name = doc.id,
+                    extension = doc.get("extension") as String,
+                    langDescription = doc.get("language") as String,
+                    files = (doc.get("files") as List<Map<String, String>>).map {
+                        ComplexLanguageFiles(
+                            name = it["name"] ?: "",
+                            content = it["content"] ?: ""
+                        )
+                    }
+                )
+                trySend(BaseClass.Success(data))
+            } catch (e: Exception) {
+                trySend(BaseClass.Error(e.message ?: "Error", exception = e))
+            }
+
             awaitClose { }
         }
     }

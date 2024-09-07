@@ -11,11 +11,13 @@ import com.prafull.algorithms.data.room.RoomHelper
 import com.prafull.algorithms.data.room.RoomHelperImpl
 import com.prafull.algorithms.screens.ai.ChatViewModel
 import com.prafull.algorithms.screens.code.CodeViewModel
+import com.prafull.algorithms.screens.complexSearch.ComplexLanguageViewModel
+import com.prafull.algorithms.screens.complexSearch.ComplexSearchAlgoVM
+import com.prafull.algorithms.screens.complexSearch.ComplexSearchVM
 import com.prafull.algorithms.screens.favourites.FavouritesViewModel
 import com.prafull.algorithms.screens.folder.FolderViewModel
 import com.prafull.algorithms.screens.home.AlgoViewModel
 import com.prafull.algorithms.screens.search.SearchViewModel
-import com.prafull.algorithms.screens.searchWeb.ComplexSearchViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -54,5 +56,7 @@ val appModule = module {
     viewModel { ChatViewModel(get()) }
     viewModel { SearchViewModel() }
     viewModel { FavouritesViewModel() }
-    viewModel { ComplexSearchViewModel() }
+    viewModel { ComplexSearchVM() }
+    viewModel { ComplexSearchAlgoVM(get()) }
+    viewModel { ComplexLanguageViewModel(get()) }
 }
