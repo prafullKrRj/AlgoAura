@@ -25,5 +25,5 @@ object Const {
                 "This is the code you have to revolve around this code only:"
 
 
-    const val apiKey = "AIzaSyCl7rs8Ib0gQincPEY19lPrgN_tMgbSVb8"
+    const val apiKey = "ft7"
 }
