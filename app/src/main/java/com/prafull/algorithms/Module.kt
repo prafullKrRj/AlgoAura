@@ -15,6 +15,7 @@ import com.prafull.algorithms.screens.favourites.FavouritesViewModel
 import com.prafull.algorithms.screens.folder.FolderViewModel
 import com.prafull.algorithms.screens.home.AlgoViewModel
 import com.prafull.algorithms.screens.search.SearchViewModel
+import com.prafull.algorithms.screens.searchWeb.ComplexSearchViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -53,4 +54,5 @@ val appModule = module {
     viewModel { ChatViewModel(get()) }
     viewModel { SearchViewModel() }
     viewModel { FavouritesViewModel() }
+    viewModel { ComplexSearchViewModel() }
 }

@@ -21,8 +21,7 @@ import kotlinx.coroutines.tasks.await
 import java.io.File
 
 class FirebaseHelperImpl(
-    private val storage: FirebaseStorage,
-    private val db: FirebaseFirestore
+    private val storage: FirebaseStorage, private val db: FirebaseFirestore
 ) : FirebaseHelper {
 
     override fun getAlgorithms(path: String): Flow<BaseClass<List<FileInfo>>> {
@@ -60,10 +59,13 @@ class FirebaseHelperImpl(
                     val language = getLanguageFromString(file.name)
                     val algorithm = Algorithm(
                         id = fileInfo.id,
-                        code = code, language = language, title = getFormattedName(
+                        code = code,
+                        language = language,
+                        title = getFormattedName(
                             getFileName(file.name)
                         ),
-                        langName = language.languageGenerics, extension = language.extension
+                        langName = language.languageGenerics,
+                        extension = language.extension
                     )
                     Log.d("FirebaseHelper", "Algorithm: $algorithm")
                     trySend(BaseClass.Success(algorithm))
@@ -114,11 +116,8 @@ class FirebaseHelperImpl(
                 for (document in documents) {
                     val folders = document.get("folders") as List<String>
                     for (collection in folders) {
-                        val docRef =
-                            db.collection(Const.LANGUAGES).document(document.id)
-                                .collection(collection)
-                                .get()
-                                .await()
+                        val docRef = db.collection(Const.LANGUAGES).document(document.id)
+                            .collection(collection).get().await()
                         for (doc in docRef) {
                             val docName = doc.id.lowercase().replace("_", " ")
                             if (regexQuery.matches(docName) || regexQuery.matches(
@@ -144,6 +143,21 @@ class FirebaseHelperImpl(
                 trySend(BaseClass.Error(e.message ?: "An error occurred"))
             }
 
+            awaitClose { }
+        }
+    }
+
+    override suspend fun getComplexLanguages(): Flow<BaseClass<List<String>>> {
+        return callbackFlow {
+            try {
+                val response = db.collection("rosettalang").get().await()
+                trySend(BaseClass.Success(response.documents.map {
+                    it.id
+                }))
+
+            } catch (e: Exception) {
+                trySend(BaseClass.Error(e.message ?: "Error"))
+            }
             awaitClose { }
         }
     }

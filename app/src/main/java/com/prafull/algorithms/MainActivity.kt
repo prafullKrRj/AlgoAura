@@ -6,8 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -19,7 +17,6 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -29,7 +26,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
@@ -59,6 +55,8 @@ import com.prafull.algorithms.screens.home.AlgoViewModel
 import com.prafull.algorithms.screens.home.HomeScreen
 import com.prafull.algorithms.screens.search.SearchScreen
 import com.prafull.algorithms.screens.search.SearchViewModel
+import com.prafull.algorithms.screens.searchWeb.ComplexSearch
+import com.prafull.algorithms.screens.searchWeb.ComplexSearchViewModel
 import com.prafull.algorithms.ui.theme.AlgorithmsTheme
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.getViewModel
@@ -139,12 +137,9 @@ fun App() {
                 val chatViewModel: ChatViewModel = koinViewModel { parametersOf(data) }
                 AskAi(chatViewModel, navController)
             }
-            composable<Routes.SearchWeb> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Center) {
-                    Text(
-                        text = "Under Development 🚧", style = MaterialTheme.typography.headlineLarge
-                    )
-                }
+            composable<Routes.ComplexSearch> {
+                val complexVM = getViewModel<ComplexSearchViewModel>()
+                ComplexSearch(viewModel = complexVM, navController = navController)
             }
         }
     }
@@ -198,9 +193,9 @@ data class BottomBarItems(
             unselectedIcon = Icons.Outlined.FavoriteBorder,
             route = Routes.History
         ), BottomBarItem(
-            title = "Search Web",
+            title = "Complex Search",
             selected = false,
-            route = Routes.SearchWeb,
+            route = Routes.ComplexSearch,
             drawableIcon = R.drawable.baseline_web_24
         )
     )
@@ -255,7 +250,8 @@ sealed interface Routes {
     ) : Routes
 
     @Serializable
-    data object SearchWeb : Routes
+    data object ComplexSearch : Routes
+
 
     @Serializable
     data class FavouriteCodeScreen(

@@ -20,20 +20,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -55,14 +47,13 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.prafull.algorithms.R
 import com.prafull.algorithms.data.local.SearchedEntity
 import com.prafull.algorithms.models.FileInfo
 import com.prafull.algorithms.models.ProgrammingLanguage
+import com.prafull.algorithms.screens.searchWeb.CustomSearchBar
 import com.prafull.algorithms.utils.getFileName
 import com.prafull.algorithms.utils.getFormattedName
 import com.prafull.algorithms.utils.getLanguageFromString
@@ -97,46 +88,14 @@ fun SearchScreen(viewModel: SearchViewModel, navController: NavController) {
                 .padding(paddingValues)
                 .focusRequester(focusRequester)
         ) {
-            OutlinedTextField(value = viewModel.query, onValueChange = {
+            CustomSearchBar(value = viewModel.query, onValueChange = {
                 viewModel.query = it
-            }, label = { Text("Search") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow
-                ),
-                leadingIcon = {
-                    Icon(imageVector = Icons.Default.Search, contentDescription = "Search Icon")
-                },
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Search,
-                    capitalization = KeyboardCapitalization.Sentences
-                ),
-                keyboardActions = KeyboardActions(
-                    onSearch = {
-                        viewModel.search(
-                            SearchedEntity(searchedText = viewModel.query)
-                        )
-                        focusManager.clearFocus()
-                    }
-                ),
-                singleLine = true,
-                shape = RoundedCornerShape(16.dp),
-                trailingIcon = {
-                    IconButton(onClick = {
-                        viewModel.search(
-                            SearchedEntity(searchedText = viewModel.query)
-                        )
-                        focusManager.clearFocus()
-                    }) {
-                        Icon(imageVector = Icons.Default.Send, contentDescription = "Search Icon")
-                    }
-                }
-            )
+            }) {
+                viewModel.search(
+                    SearchedEntity(searchedText = viewModel.query)
+                )
+                focusManager.clearFocus()
+            }
             if (viewModel.loading) {
                 LoadingShimmerSearchScreen()
             } else if (viewModel.error.isNotEmpty()) {

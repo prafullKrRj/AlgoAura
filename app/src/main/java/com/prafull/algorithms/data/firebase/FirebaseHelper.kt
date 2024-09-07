@@ -14,4 +14,7 @@ interface FirebaseHelper {
     fun getAlgoGroups(language: ProgrammingLanguage): Flow<BaseClass<List<FolderInfo>>> // Get all the groups of algorithms
 
     suspend fun getListOfDocuments(query: String): Flow<BaseClass<List<FileInfo>>>
+
+
+    suspend fun getComplexLanguages(): Flow<BaseClass<List<String>>> // Get all the languages
 }
