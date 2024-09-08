@@ -1,4 +1,4 @@
-package com.prafull.algorithms.screens.complexSearch.algo
+package com.prafull.algorithms.screens.complexSearch.searchedAlgo
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues

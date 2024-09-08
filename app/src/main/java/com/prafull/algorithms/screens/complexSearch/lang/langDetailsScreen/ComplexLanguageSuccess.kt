@@ -1,6 +1,5 @@
-package com.prafull.algorithms.screens.complexSearch.lang
+package com.prafull.algorithms.screens.complexSearch.lang.langDetailsScreen
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalFocusManager
@@ -45,7 +45,7 @@ fun ComplexLanguageSuccess(
     navController: NavController
 ) {
     val focusManager = LocalFocusManager.current
-    val value = rememberSaveable {
+    var value by rememberSaveable {
         mutableStateOf("")
     }
     val searchedResults by viewModel.searchedProblems.collectAsState()
@@ -68,10 +68,10 @@ fun ComplexLanguageSuccess(
             }
         } else {
             item("Search Problem") {
-                CustomSearchBar(label = "Search Problems", value = value.value, onValueChange = {
-                    value.value = it
+                CustomSearchBar(label = "Search Problems", value = value, onValueChange = {
+                    value = it
                 }) {
-                    viewModel.filterProblems(value.value)
+                    viewModel.filterProblems(value)
                     focusManager.clearFocus()
                 }
             }
@@ -89,7 +89,7 @@ fun ComplexLanguageSuccess(
 }
 
 @Composable
-fun ProblemCard(
+private fun ProblemCard(
     problemName: String,
     viewModel: ComplexLanguageViewModel,
     navController: NavController
@@ -99,7 +99,6 @@ fun ProblemCard(
             Modifier
                 .fillMaxWidth()
                 .clickable {
-                    Log.d("Bugger", "From nav $problemName ${viewModel.langName}")
                     navController.navigate(
                         ComplexRoutes.ComplexLanguageAlgoRoute(
                             problemName, viewModel.langName
@@ -115,20 +114,21 @@ fun ProblemCard(
 
 
 @Composable
-fun LanguageDescription(desc: String) {
+private fun LanguageDescription(desc: String) {
+    if (desc.isEmpty()) return
     val textState = rememberRichTextState()
-    val openingRequired = rememberSaveable {
+    var openingRequired by rememberSaveable {
         mutableStateOf(false)
     }
     LaunchedEffect(key1 = Unit) {
         if (desc.length >= 300) {
-            openingRequired.value = true
+            openingRequired = true
             textState.setMarkdown(desc.substring(0, 300) + "...")
         } else {
             textState.setMarkdown(desc)
         }
     }
-    val isOpen = rememberSaveable {
+    var isOpen by rememberSaveable {
         mutableStateOf(false)
     }
     Card(modifier = Modifier.fillMaxWidth()) {
@@ -136,31 +136,32 @@ fun LanguageDescription(desc: String) {
             Modifier
                 .fillMaxWidth()
                 .clickable(
-                    enabled = openingRequired.value
+                    enabled = openingRequired
                 ) {
-                    isOpen.value = isOpen.value.not()
-                    if (isOpen.value) textState.setMarkdown(desc)
+                    isOpen = isOpen.not()
+                    if (isOpen) textState.setMarkdown(desc)
                     else textState.setMarkdown(desc.substring(0, 300) + "...")
                 }
                 .padding(8.dp)
         ) {
+            Text(text = "Description", style = MaterialTheme.typography.headlineSmall)
             RichText(state = textState)
-            if (openingRequired.value) {
+            if (openingRequired) {
                 Spacer(modifier = Modifier.padding(8.dp))
                 Row(
                     Modifier
                         .fillMaxWidth(), horizontalArrangement = Arrangement.End
                 ) {
                     IconButton(onClick = {
-                        isOpen.value = isOpen.value.not()
-                        if (isOpen.value) textState.setMarkdown(desc)
+                        isOpen = isOpen.not()
+                        if (isOpen) textState.setMarkdown(desc)
                         else textState.setMarkdown(desc.substring(0, 300) + "...")
                     }) {
                         Icon(
                             imageVector = Icons.Default.ArrowDropDown,
                             contentDescription = null,
                             modifier = Modifier.rotate(
-                                if (isOpen.value) 180f else 0f
+                                if (isOpen) 180f else 0f
                             )
                         )
                     }

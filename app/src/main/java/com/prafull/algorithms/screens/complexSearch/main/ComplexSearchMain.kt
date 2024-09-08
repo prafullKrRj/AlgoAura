@@ -68,10 +68,12 @@ fun ComplexSearchMain(viewModel: ComplexSearchVM, navController: NavController) 
                 }
 
                 BaseClass.Loading -> {
-                    items(10) {
+                    items(15, key = { it }) {
                         Row(
-                            Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 6.dp),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
                             ShimmerCard(Modifier.weight(.5f))
                             ShimmerCard(Modifier.weight(.5f))
@@ -104,7 +106,6 @@ fun ComplexSearchMain(viewModel: ComplexSearchVM, navController: NavController) 
 fun ShimmerCard(modifier: Modifier = Modifier) {
     Card(
         modifier
-            .padding(6.dp)
             .clip(RoundedCornerShape(16.dp))
             .shimmer(),
         shape = RoundedCornerShape(16.dp)

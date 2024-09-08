@@ -9,7 +9,6 @@ data class ComplexLanguageData(
 
 data class ComplexLanguageFiles(
     val name: String,
-    val content: String
 )
 
 data class ComplexLanguageAlgo(

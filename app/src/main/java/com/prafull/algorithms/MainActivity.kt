@@ -45,13 +45,13 @@ import com.prafull.algorithms.screens.ai.AskAi
 import com.prafull.algorithms.screens.ai.ChatViewModel
 import com.prafull.algorithms.screens.code.CodeScreen
 import com.prafull.algorithms.screens.code.CodeViewModel
-import com.prafull.algorithms.screens.complexSearch.algo.ComplexSearchResultScreen
-import com.prafull.algorithms.screens.complexSearch.lang.ComplexLanguageAlgoVM
-import com.prafull.algorithms.screens.complexSearch.lang.ComplexLanguageData
-import com.prafull.algorithms.screens.complexSearch.lang.LanguageAlgoScreen
+import com.prafull.algorithms.screens.complexSearch.lang.algoScreen.ComplexLanguageAlgoVM
+import com.prafull.algorithms.screens.complexSearch.lang.algoScreen.LanguageAlgoScreen
+import com.prafull.algorithms.screens.complexSearch.lang.langDetailsScreen.ComplexLanguageData
 import com.prafull.algorithms.screens.complexSearch.main.ComplexSearchMain
 import com.prafull.algorithms.screens.complexSearch.main.ComplexSearchVM
 import com.prafull.algorithms.screens.complexSearch.search.ComplexSearchScreen
+import com.prafull.algorithms.screens.complexSearch.searchedAlgo.ComplexSearchResultScreen
 import com.prafull.algorithms.screens.favourites.FavouriteCodeScreen
 import com.prafull.algorithms.screens.favourites.FavouriteScreen
 import com.prafull.algorithms.screens.folder.FolderScreen
@@ -107,7 +107,7 @@ fun App() {
         NavHost(
             modifier = Modifier.padding(paddingValues),
             navController = navController,
-            startDestination = Routes.ComplexScreens
+            startDestination = Routes.Home
         ) {
             composable<Routes.Search> {
                 SearchScreen(searchViewModel, navController)

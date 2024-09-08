@@ -20,8 +20,9 @@ fun LanguageSuccess(
     languages: List<String>
 ) {
     Row(
-        Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         LanguageCard(languages[0], navController, Modifier.weight(.5f))
         if (languages.size > 1) {
@@ -34,12 +35,14 @@ fun LanguageSuccess(
 @Composable
 fun LanguageCard(languageName: String, navController: NavController, modifier: Modifier) {
     Card(
-        modifier
-            .padding(6.dp)
+        modifier, shape = RoundedCornerShape(16.dp)
+    ) {
+        Text(text = languageName, modifier = Modifier
+            .fillMaxWidth()
             .clickable {
                 navController.navigate(ComplexRoutes.ComplexSearchLanguage(languageName))
-            }, shape = RoundedCornerShape(16.dp)
-    ) {
-        Text(text = languageName, modifier = Modifier.padding(16.dp))
+            }
+            .padding(16.dp)
+        )
     }
 }

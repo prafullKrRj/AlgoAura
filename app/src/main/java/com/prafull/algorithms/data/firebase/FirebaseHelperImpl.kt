@@ -154,7 +154,7 @@ class FirebaseHelperImpl(
     override suspend fun getComplexLanguages(): Flow<BaseClass<List<String>>> {
         return callbackFlow {
             try {
-                val response = db.collection("rosettalang").get().await()
+                val response = db.collection("rosettalang").orderBy("priority").get().await()
                 trySend(BaseClass.Success(response.documents.map {
                     it.id
                 }))
@@ -192,6 +192,7 @@ class FirebaseHelperImpl(
     override suspend fun getComplexAlgo(algoName: String): Flow<BaseClass<ComplexAlgorithm>> {
         return callbackFlow {
             try {
+                Log.d("Bugger", algoName)
                 val document = db.collection("rosettaAlgos").document(algoName).get().await()
                 val algo = ComplexAlgorithm(
                     name = document.get("name") as String,
@@ -215,10 +216,9 @@ class FirebaseHelperImpl(
                     name = doc.id,
                     extension = doc.get("extension") as String,
                     langDescription = doc.get("language") as String,
-                    files = (doc.get("files") as List<Map<String, String>>).map {
+                    files = (doc.get("algos") as List<String>).map {
                         ComplexLanguageFiles(
-                            name = it["name"] ?: "",
-                            content = it["content"] ?: ""
+                            name = it
                         )
                     }
                 )
