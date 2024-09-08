@@ -2,6 +2,7 @@ package com.prafull.algorithms.data.firebase
 
 import com.prafull.algorithms.models.Algorithm
 import com.prafull.algorithms.models.ComplexAlgorithm
+import com.prafull.algorithms.models.ComplexLanguageAlgo
 import com.prafull.algorithms.models.ComplexLanguageData
 import com.prafull.algorithms.models.FileInfo
 import com.prafull.algorithms.models.FolderInfo
@@ -22,4 +23,8 @@ interface FirebaseHelper {
     suspend fun getComplexSearchResults(query: String): Flow<BaseClass<List<String>>>
     suspend fun getComplexAlgo(algoName: String): Flow<BaseClass<ComplexAlgorithm>>
     suspend fun getComplexLanguageData(lang: String): Flow<BaseClass<ComplexLanguageData>>
+    suspend fun getComplexLanguageAlgo(
+        lang: String,
+        algo: String
+    ): Flow<BaseClass<ComplexLanguageAlgo>>
 }

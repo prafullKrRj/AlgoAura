@@ -26,6 +26,7 @@ fun getAlgoNameFromCompletePath(path: String): String {
     return getFormattedName(getFileName(path.split("/").last()))
 }
 
+fun String.getFormattedNameExtension() = getFormattedName(this)
 
 fun getKodeViewLanguageFromLanguage(language: ProgrammingLanguage): SyntaxLanguage {
     return when (language) {

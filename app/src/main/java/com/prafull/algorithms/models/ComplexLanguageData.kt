@@ -11,3 +11,9 @@ data class ComplexLanguageFiles(
     val name: String,
     val content: String
 )
+
+data class ComplexLanguageAlgo(
+    val algoName: String,
+    val task: String,
+    val langCode: List<String>
+)

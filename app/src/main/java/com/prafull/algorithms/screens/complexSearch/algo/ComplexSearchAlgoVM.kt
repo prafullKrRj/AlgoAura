@@ -1,4 +1,4 @@
-package com.prafull.algorithms.screens.complexSearch
+package com.prafull.algorithms.screens.complexSearch.algo
 
 import android.util.Log
 import androidx.compose.runtime.getValue

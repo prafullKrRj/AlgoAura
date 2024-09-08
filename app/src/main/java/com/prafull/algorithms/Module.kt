@@ -11,9 +11,10 @@ import com.prafull.algorithms.data.room.RoomHelper
 import com.prafull.algorithms.data.room.RoomHelperImpl
 import com.prafull.algorithms.screens.ai.ChatViewModel
 import com.prafull.algorithms.screens.code.CodeViewModel
-import com.prafull.algorithms.screens.complexSearch.ComplexLanguageViewModel
-import com.prafull.algorithms.screens.complexSearch.ComplexSearchAlgoVM
-import com.prafull.algorithms.screens.complexSearch.ComplexSearchVM
+import com.prafull.algorithms.screens.complexSearch.algo.ComplexSearchAlgoVM
+import com.prafull.algorithms.screens.complexSearch.lang.ComplexLanguageAlgoVM
+import com.prafull.algorithms.screens.complexSearch.lang.ComplexLanguageViewModel
+import com.prafull.algorithms.screens.complexSearch.main.ComplexSearchVM
 import com.prafull.algorithms.screens.favourites.FavouritesViewModel
 import com.prafull.algorithms.screens.folder.FolderViewModel
 import com.prafull.algorithms.screens.home.AlgoViewModel
@@ -59,4 +60,5 @@ val appModule = module {
     viewModel { ComplexSearchVM() }
     viewModel { ComplexSearchAlgoVM(get()) }
     viewModel { ComplexLanguageViewModel(get()) }
+    viewModel { ComplexLanguageAlgoVM(get()) }
 }

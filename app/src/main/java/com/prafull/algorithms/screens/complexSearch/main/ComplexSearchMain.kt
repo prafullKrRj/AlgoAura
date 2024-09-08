@@ -1,7 +1,6 @@
-package com.prafull.algorithms.screens.complexSearch
+package com.prafull.algorithms.screens.complexSearch.main
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,7 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.prafull.algorithms.Routes
+import com.prafull.algorithms.ComplexRoutes
 import com.prafull.algorithms.commons.CustomSearchBar
 import com.prafull.algorithms.utils.BaseClass
 import com.valentinilk.shimmer.shimmer
@@ -58,7 +57,7 @@ fun ComplexSearchMain(viewModel: ComplexSearchVM, navController: NavController) 
                 }) {
                     viewModel.search()
                     focusManager.clearFocus()
-                    navController.navigate(Routes.ComplexSearchScreen)
+                    navController.navigate(ComplexRoutes.ComplexSearchScreen)
                 }
             }
             when (complexLanguagesState) {
@@ -100,36 +99,6 @@ fun ComplexSearchMain(viewModel: ComplexSearchVM, navController: NavController) 
     }
 }
 
-@Composable
-fun LanguageSuccess(
-    modifier: Modifier = Modifier,
-    navController: NavController,
-    languages: List<String>
-) {
-    Row(
-        Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        LanguageCard(languages[0], navController, Modifier.weight(.5f))
-        if (languages.size > 1) {
-            LanguageCard(languages[1], navController, Modifier.weight(.5f))
-        }
-    }
-}
-
-
-@Composable
-fun LanguageCard(languageName: String, navController: NavController, modifier: Modifier) {
-    Card(
-        modifier
-            .padding(6.dp)
-            .clickable {
-                navController.navigate(Routes.ComplexSearchLanguage(languageName))
-            }, shape = RoundedCornerShape(16.dp)
-    ) {
-        Text(text = languageName, modifier = Modifier.padding(16.dp))
-    }
-}
 
 @Composable
 fun ShimmerCard(modifier: Modifier = Modifier) {

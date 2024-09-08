@@ -1,4 +1,4 @@
-package com.prafull.algorithms.screens.complexSearch
+package com.prafull.algorithms.screens.complexSearch.search
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,12 +17,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import com.prafull.algorithms.Routes
+import androidx.navigation.NavController
+import com.prafull.algorithms.ComplexRoutes
 import com.prafull.algorithms.commons.CustomSearchBar
+import com.prafull.algorithms.screens.complexSearch.main.ComplexSearchVM
+import com.prafull.algorithms.screens.complexSearch.main.ShimmerCard
 
 @Composable
-fun ComplexSearchScreen(complexVm: ComplexSearchVM, navController: NavHostController) {
+fun ComplexSearchScreen(complexVm: ComplexSearchVM, navController: NavController) {
     val state by complexVm.uiState.collectAsState()
     val focusManager = LocalFocusManager.current
     LazyColumn(
@@ -52,7 +54,7 @@ fun ComplexSearchScreen(complexVm: ComplexSearchVM, navController: NavHostContro
                         .fillMaxWidth()
                         .padding(6.dp)
                         .clickable {
-                            navController.navigate(Routes.ComplexSearchResultScreen(it))
+                            navController.navigate(ComplexRoutes.ComplexSearchResultScreen(it))
                         }, shape = RoundedCornerShape(16.dp)
                 ) {
                     Text(

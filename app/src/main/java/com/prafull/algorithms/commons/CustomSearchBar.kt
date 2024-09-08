@@ -22,11 +22,12 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun CustomSearchBar(
+    label: String = "Search",
     value: String,
     onValueChange: (String) -> Unit,
     onSearch: () -> Unit
 ) {
-    OutlinedTextField(value = value, onValueChange = onValueChange, label = { Text("Search") },
+    OutlinedTextField(value = value, onValueChange = onValueChange, label = { Text(label) },
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),

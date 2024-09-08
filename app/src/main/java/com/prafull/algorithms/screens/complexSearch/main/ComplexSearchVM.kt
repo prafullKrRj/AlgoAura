@@ -1,4 +1,4 @@
-package com.prafull.algorithms.screens.complexSearch
+package com.prafull.algorithms.screens.complexSearch.main
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

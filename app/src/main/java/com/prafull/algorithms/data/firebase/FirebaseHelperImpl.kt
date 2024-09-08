@@ -5,6 +5,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.prafull.algorithms.models.Algorithm
 import com.prafull.algorithms.models.ComplexAlgorithm
+import com.prafull.algorithms.models.ComplexLanguageAlgo
 import com.prafull.algorithms.models.ComplexLanguageData
 import com.prafull.algorithms.models.ComplexLanguageFiles
 import com.prafull.algorithms.models.FileInfo
@@ -222,6 +223,40 @@ class FirebaseHelperImpl(
                     }
                 )
                 trySend(BaseClass.Success(data))
+            } catch (e: Exception) {
+                trySend(BaseClass.Error(e.message ?: "Error", exception = e))
+            }
+
+            awaitClose { }
+        }
+    }
+
+    override suspend fun getComplexLanguageAlgo(
+        lang: String,
+        algo: String
+    ): Flow<BaseClass<ComplexLanguageAlgo>> {
+        return callbackFlow {
+            try {
+                val doc = db.collection("rosettaAlgos").document(algo).get().await()
+                val task = doc.getString("task")
+                Log.d("Bugger", "Path: Task/$algo/$lang")
+                val stRef = storage.reference.child("Task").child(algo).child(lang)
+                val codes = stRef.listAll().await()
+                val res = codes.items.map {
+                    val localFile = File.createTempFile("tempFile", null)
+                    it.getFile(localFile).await()
+                    Log.d("Bugger", "File: ${localFile.extension}")
+                    localFile.readText()
+                }
+                trySend(
+                    BaseClass.Success(
+                        ComplexLanguageAlgo(
+                            algoName = algo,
+                            task = task ?: "",
+                            langCode = res
+                        )
+                    )
+                )
             } catch (e: Exception) {
                 trySend(BaseClass.Error(e.message ?: "Error", exception = e))
             }

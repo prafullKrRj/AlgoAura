@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -40,18 +41,17 @@ import androidx.navigation.toRoute
 import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
-import com.prafull.algorithms.data.local.AlgorithmEntity
-import com.prafull.algorithms.models.FileInfo
-import com.prafull.algorithms.models.ProgrammingLanguage
 import com.prafull.algorithms.screens.ai.AskAi
 import com.prafull.algorithms.screens.ai.ChatViewModel
 import com.prafull.algorithms.screens.code.CodeScreen
 import com.prafull.algorithms.screens.code.CodeViewModel
-import com.prafull.algorithms.screens.complexSearch.ComplexLanguageData
-import com.prafull.algorithms.screens.complexSearch.ComplexSearchMain
-import com.prafull.algorithms.screens.complexSearch.ComplexSearchResultScreen
-import com.prafull.algorithms.screens.complexSearch.ComplexSearchScreen
-import com.prafull.algorithms.screens.complexSearch.ComplexSearchVM
+import com.prafull.algorithms.screens.complexSearch.algo.ComplexSearchResultScreen
+import com.prafull.algorithms.screens.complexSearch.lang.ComplexLanguageAlgoVM
+import com.prafull.algorithms.screens.complexSearch.lang.ComplexLanguageData
+import com.prafull.algorithms.screens.complexSearch.lang.LanguageAlgoScreen
+import com.prafull.algorithms.screens.complexSearch.main.ComplexSearchMain
+import com.prafull.algorithms.screens.complexSearch.main.ComplexSearchVM
+import com.prafull.algorithms.screens.complexSearch.search.ComplexSearchScreen
 import com.prafull.algorithms.screens.favourites.FavouriteCodeScreen
 import com.prafull.algorithms.screens.favourites.FavouriteScreen
 import com.prafull.algorithms.screens.folder.FolderScreen
@@ -61,7 +61,6 @@ import com.prafull.algorithms.screens.home.HomeScreen
 import com.prafull.algorithms.screens.search.SearchScreen
 import com.prafull.algorithms.screens.search.SearchViewModel
 import com.prafull.algorithms.ui.theme.AlgorithmsTheme
-import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -108,7 +107,7 @@ fun App() {
         NavHost(
             modifier = Modifier.padding(paddingValues),
             navController = navController,
-            startDestination = Routes.Home
+            startDestination = Routes.ComplexScreens
         ) {
             composable<Routes.Search> {
                 SearchScreen(searchViewModel, navController)
@@ -141,26 +140,43 @@ fun App() {
                 val chatViewModel: ChatViewModel = koinViewModel { parametersOf(data) }
                 AskAi(chatViewModel, navController)
             }
-            composable<Routes.ComplexSearchMainScreen> {
-                ComplexSearchMain(viewModel = complexVM, navController = navController)
-            }
-            composable<Routes.ComplexSearchLanguage> {
-                val data = it.toRoute<Routes.ComplexSearchLanguage>()
-                ComplexLanguageData(
-                    viewModel = koinViewModel { parametersOf(data.language) },
-                    navController
-                )
-            }
-            composable<Routes.ComplexSearchScreen> {
-                ComplexSearchScreen(complexVm = complexVM, navController)
-            }
-            composable<Routes.ComplexSearchResultScreen> {
-                val data = it.toRoute<Routes.ComplexSearchResultScreen>()
-                ComplexSearchResultScreen(
-                    viewModel = koinViewModel { parametersOf(data.algoName) },
-                    navController
-                )
-            }
+            complexNav(complexVM, navController)
+        }
+    }
+}
+
+fun NavGraphBuilder.complexNav(complexVM: ComplexSearchVM, navController: NavController) {
+    navigation<Routes.ComplexScreens>(
+        startDestination = ComplexRoutes.ComplexSearchMainScreen
+    ) {
+        composable<ComplexRoutes.ComplexSearchMainScreen> {
+            ComplexSearchMain(viewModel = complexVM, navController = navController)
+        }
+        composable<ComplexRoutes.ComplexSearchLanguage> {
+            val data = it.toRoute<ComplexRoutes.ComplexSearchLanguage>()
+            ComplexLanguageData(
+                viewModel = koinViewModel { parametersOf(data.lang) },
+                navController
+            )
+        }
+        composable<ComplexRoutes.ComplexSearchScreen> {
+            ComplexSearchScreen(complexVm = complexVM, navController)
+        }
+        composable<ComplexRoutes.ComplexSearchResultScreen> {
+            val data = it.toRoute<ComplexRoutes.ComplexSearchResultScreen>()
+            ComplexSearchResultScreen(
+                viewModel = koinViewModel { parametersOf(data.algoName) },
+                navController
+            )
+        }
+        composable<ComplexRoutes.ComplexLanguageAlgoRoute> {
+            val data = it.toRoute<ComplexRoutes.ComplexLanguageAlgoRoute>()
+            Log.d("Bugger", data.toString())
+            val vm: ComplexLanguageAlgoVM = koinViewModel { parametersOf(data) }
+            LanguageAlgoScreen(
+                viewModel = vm,
+                navController = navController
+            )
         }
     }
 }
@@ -215,7 +231,7 @@ data class BottomBarItems(
         ), BottomBarItem(
             title = "Complex Search",
             selected = false,
-            route = Routes.ComplexSearchMainScreen,
+            route = ComplexRoutes.ComplexSearchMainScreen,
             drawableIcon = R.drawable.baseline_web_24
         )
     )
@@ -232,81 +248,12 @@ data class BottomBarItem(
 )
 
 
-sealed interface Routes {
-    @Serializable
-    data object HomeScreen : Routes
-
-    @Serializable
-    data class FolderScreen(
-        val path: String, val name: String
-    ) : Routes
-
-    @Serializable
-    data object Home : Routes
-
-
-    @Serializable
-    data object Search : Routes
-
-    @Serializable
-    data object History : Routes
-
-    @Serializable
-    data class CodeScreen(
-        val id: String,
-        val name: String,
-        val path: String,
-        val langName: String
-    ) : Routes {
-        fun toFileInfo() = FileInfo(
-            id = id, name = name, path = path, language = ProgrammingLanguage.valueOf(langName)
-        )
-
-    }
-
-    @Serializable
-    data class AskAi(
-        val code: String, val programName: String, val message: String, val language: String
-    ) : Routes
-
-    @Serializable
-    data object ComplexSearchMainScreen : Routes
-
-    @Serializable
-    data object ComplexSearchScreen : Routes
-
-    @Serializable
-    data class ComplexSearchResultScreen(
-        val algoName: String
-    ) : Routes
-
-    @Serializable
-    data class ComplexSearchLanguage(
-        val language: String
-    ) : Routes
-
-
-    @Serializable
-    data class FavouriteCodeScreen(
-        val id: String,
-        val code: String,
-        val language: String,
-        val extension: String,
-        val title: String = ""
-    ) : Routes {
-        fun toAlgorithmEntity(): AlgorithmEntity {
-            return AlgorithmEntity(
-                id = id, code = code, language = language, extension = extension, title = title
-            )
-        }
-    }
-}
-
 fun canShowBottomBar(current: String): Boolean {
     return current != "com.prafull.algorithms.Routes.FolderScreen/{path}/{name}" && current != "com.prafull.algorithms.Routes.CodeScreen/{id}/{name}/{path}/{langName}" && current != "com.prafull.algorithms.Routes.FavouriteCodeScreen/{id}/{code}/{language}/{extension}?title={title}" && current != "com.prafull.algorithms.Routes.AskAi/{code}/{programName}/{message}/{language}"
-            && current != "com.prafull.algorithms.Routes.ComplexSearchLanguage/{language}"
-            && current != "com.prafull.algorithms.Routes.ComplexSearchScreen"
-            && current != "com.prafull.algorithms.Routes.ComplexSearchResultScreen/{algoName}"
+            && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchLanguage/{lang}"
+            && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchScreen"
+            && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchResultScreen/{algoName}"
+            && current != "com.prafull.algorithms.ComplexRoutes.ComplexLanguageAlgoRoute/{algo}/{lang}"
 }
 
 fun NavController.goBackStack() {
