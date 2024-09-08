@@ -22,9 +22,6 @@ fun getFormattedName(input: String): String {
         .joinToString(" ") { it.lowercase().replaceFirstChar { char -> char.uppercase() } }
 }
 
-fun getAlgoNameFromCompletePath(path: String): String {
-    return getFormattedName(getFileName(path.split("/").last()))
-}
 
 fun String.getFormattedNameExtension() = getFormattedName(this)
 

@@ -88,13 +88,5 @@ sealed interface ComplexRoutes : Routes {
         val algo: String,
         val lang: String
     ) : ComplexRoutes {
-        fun toComplexLanguageRouteMapper() = ComplexLanguageRouteMapper(
-            algo = algo, lang = lang
-        )
     }
 }
-
-data class ComplexLanguageRouteMapper(
-    val algo: String,
-    val lang: String
-)
