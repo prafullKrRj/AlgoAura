@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.asTextOrNull
 import com.google.ai.client.generativeai.type.content
+import com.prafull.algorithms.ApiKey
 import com.prafull.algorithms.Routes
 import com.prafull.algorithms.utils.Const
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,9 +21,9 @@ import org.koin.core.component.KoinComponent
 import java.util.UUID
 
 class ChatViewModel(
-    private val askAi: Routes.AskAi
+    private val askAi: Routes.AskAi,
+    private val apiKey: ApiKey
 ) : ViewModel(), KoinComponent {
-
 
     val language: String by mutableStateOf(askAi.language)
     var code by mutableStateOf(askAi.code)
@@ -30,7 +31,7 @@ class ChatViewModel(
     var message by mutableStateOf(askAi.message)
 
     private var generativeModel = GenerativeModel(modelName = "gemini-1.5-flash",
-        apiKey = Const.apiKey,
+        apiKey = apiKey.apiKey,
         systemInstruction = content {
             text(Const.SYSTEM_PROMPT + askAi.code)
         })

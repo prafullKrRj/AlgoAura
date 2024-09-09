@@ -19,6 +19,8 @@ import com.prafull.algorithms.screens.favourites.FavouritesViewModel
 import com.prafull.algorithms.screens.folder.FolderViewModel
 import com.prafull.algorithms.screens.home.AlgoViewModel
 import com.prafull.algorithms.screens.search.SearchViewModel
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -39,6 +41,11 @@ val appModule = module {
             androidContext(), AlgoDatabase::class.java, "algo_db"
         ).build()
     }
+    single<ApiKey> {
+        val firestore = get<FirebaseFirestore>()
+        val apiKey = runBlocking { fetchApiKey(firestore) }
+        ApiKey(apiKey)
+    }
     single<AlgoDao> {
         get<AlgoDatabase>().algoDao()
     }
@@ -54,7 +61,7 @@ val appModule = module {
     viewModel {
         FolderViewModel(get())
     }
-    viewModel { ChatViewModel(get()) }
+    viewModel { ChatViewModel(get(), get()) }
     viewModel { SearchViewModel() }
     viewModel { FavouritesViewModel() }
     viewModel { ComplexSearchVM() }
@@ -62,3 +69,12 @@ val appModule = module {
     viewModel { ComplexLanguageViewModel(get()) }
     viewModel { ComplexLanguageAlgoVM(get()) }
 }
+
+suspend fun fetchApiKey(firestore: FirebaseFirestore): String {
+    val doc = firestore.collection("key").document("apiKey").get().await()
+    return doc.getString("key") ?: ""
+}
+
+data class ApiKey(
+    val apiKey: String
+)
