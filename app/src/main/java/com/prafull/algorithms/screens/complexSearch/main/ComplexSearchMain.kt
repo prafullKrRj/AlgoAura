@@ -37,13 +37,11 @@ import com.valentinilk.shimmer.shimmer
 fun ComplexSearchMain(viewModel: ComplexSearchVM, navController: NavController) {
     val complexLanguagesState by viewModel.langs.collectAsState()
     val focusManager = LocalFocusManager.current
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(title = {
-                Text(text = "Detailed Search")
-            })
-        }
-    ) { paddingValues ->
+    Scaffold(topBar = {
+        CenterAlignedTopAppBar(title = {
+            Text(text = "Detailed Search")
+        })
+    }) { paddingValues ->
         LazyColumn(
             Modifier
                 .fillMaxSize()
@@ -52,10 +50,12 @@ fun ComplexSearchMain(viewModel: ComplexSearchVM, navController: NavController) 
             contentPadding = PaddingValues(12.dp)
         ) {
             item {
-                CustomSearchBar(value = viewModel.searchQuery, onValueChange = {
-                    viewModel.searchQuery = it
-                }) {
-                    viewModel.search()
+                CustomSearchBar(
+                    value = viewModel.searchQuery,
+                    onValueChange = {
+                        viewModel.searchQuery = it
+                    }) {
+                    viewModel.search(viewModel.searchQuery)
                     focusManager.clearFocus()
                     navController.navigate(ComplexRoutes.ComplexSearchScreen)
                 }
@@ -75,8 +75,8 @@ fun ComplexSearchMain(viewModel: ComplexSearchVM, navController: NavController) 
                                 .padding(vertical = 6.dp),
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            ShimmerCard(Modifier.weight(.5f))
-                            ShimmerCard(Modifier.weight(.5f))
+                            ShimmerCardMainScreen(Modifier.weight(.5f))
+                            ShimmerCardMainScreen(Modifier.weight(.5f))
                         }
                     }
                 }
@@ -89,10 +89,8 @@ fun ComplexSearchMain(viewModel: ComplexSearchVM, navController: NavController) 
                             modifier = Modifier.padding(8.dp)
                         )
                     }
-                    items(
-                        (complexLanguagesState as BaseClass.Success<List<String>>).data.chunked(2),
-                        key = { it.joinToString() }
-                    ) {
+                    items((complexLanguagesState as BaseClass.Success<List<String>>).data.chunked(2),
+                        key = { it.joinToString() }) {
                         LanguageSuccess(navController = navController, languages = it)
                     }
                 }
@@ -101,14 +99,12 @@ fun ComplexSearchMain(viewModel: ComplexSearchVM, navController: NavController) 
     }
 }
 
-
 @Composable
-fun ShimmerCard(modifier: Modifier = Modifier) {
+fun ShimmerCardMainScreen(modifier: Modifier = Modifier) {
     Card(
         modifier
             .clip(RoundedCornerShape(16.dp))
-            .shimmer(),
-        shape = RoundedCornerShape(16.dp)
+            .shimmer(), shape = RoundedCornerShape(16.dp)
     ) {
         Box(
             modifier = Modifier

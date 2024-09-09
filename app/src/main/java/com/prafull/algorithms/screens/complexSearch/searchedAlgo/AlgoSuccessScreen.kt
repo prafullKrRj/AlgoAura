@@ -1,27 +1,77 @@
 package com.prafull.algorithms.screens.complexSearch.searchedAlgo
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichText
+import com.prafull.algorithms.ComplexRoutes
 import com.prafull.algorithms.commons.CustomSearchBar
 import com.prafull.algorithms.models.ComplexAlgorithm
+import com.prafull.algorithms.screens.complexSearch.main.getIcon
+import com.prafull.algorithms.ui.customColors.langColor
 
 
 @Composable
-fun AlgoSuccessScreen(algo: ComplexAlgorithm, paddingValues: PaddingValues) {
+fun AlgoSuccessScreen(
+    algo: ComplexAlgorithm, paddingValues: PaddingValues, navController: NavController
+) {
+    var searchQuery by rememberSaveable {
+        mutableStateOf("")
+    }
     val textState = rememberRichTextState()
-    textState.setMarkdown(algo.task)
+    LaunchedEffect(key1 = Unit) {
+        textState.setMarkdown(algo.task)
+    }
+
+    val focusManager = LocalFocusManager.current
+    val filteredLanguages by remember(algo.languages, searchQuery) {
+        derivedStateOf {
+            algo.languages.filter { language ->
+                language.contains(searchQuery, ignoreCase = true)
+            }
+        }
+    }
+    val navigateAlgoImpl: (String) -> Unit = remember {
+        { langName ->
+            navController.navigate(
+                ComplexRoutes.ComplexLanguageAlgoRoute(
+                    algo = algo.id, lang = langName
+                )
+            )
+        }
+    }
     LazyColumn(
         Modifier
             .fillMaxSize()
@@ -35,13 +85,54 @@ fun AlgoSuccessScreen(algo: ComplexAlgorithm, paddingValues: PaddingValues) {
             }
         }
         item {
-            CustomSearchBar(value = "", onValueChange = {}) {
-
-            }
+            CustomSearchBar(value = searchQuery, onValueChange = {
+                searchQuery = it
+            }, showSearchButton = false, label = "Search Languages", onSearch = {
+                focusManager.clearFocus()
+            })
         }
-        items(algo.languages) {
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Text(text = it, modifier = Modifier.padding(8.dp))
+
+        items(filteredLanguages, key = {
+            it
+        }) {
+            Card(
+                modifier = Modifier.fillMaxWidth(), colors = CardDefaults.langColor()
+            ) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            navigateAlgoImpl(it)
+                        }
+                        .padding(12.dp),
+                    verticalAlignment = CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween) {
+                    Row(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .weight(.8f),
+                        verticalAlignment = CenterVertically,
+                    ) {
+                        Text(
+                            text = it
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Image(
+                            painter = painterResource(id = getIcon(it)),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+
+                    IconButton(onClick = {
+                        navigateAlgoImpl(it)
+                    }, Modifier.weight(.2f)) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.Send,
+                            contentDescription = "Getting to particular algo screen"
+                        )
+                    }
+                }
             }
         }
     }

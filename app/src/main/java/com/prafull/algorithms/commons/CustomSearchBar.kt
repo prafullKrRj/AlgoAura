@@ -10,35 +10,38 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
+import com.prafull.algorithms.ui.customColors.algoColors
 
 @Composable
 fun CustomSearchBar(
     label: String = "Search",
+    modifier: Modifier = Modifier,
+    showSearchButton: Boolean = true,
+    leadingIcon: ImageVector = Icons.Default.Search,
+    onLeadingIconClick: () -> Unit = {},
+    leadingIconEnabled: Boolean = false,
     value: String,
     onValueChange: (String) -> Unit,
-    onSearch: () -> Unit
+    onSearch: () -> Unit = {}
 ) {
     OutlinedTextField(value = value, onValueChange = onValueChange, label = { Text(label) },
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(16.dp),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = MaterialTheme.colorScheme.surfaceContainerLow,
-            unfocusedBorderColor = MaterialTheme.colorScheme.surfaceContainerLow,
-            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow
-        ),
+        colors = OutlinedTextFieldDefaults.algoColors(),
         leadingIcon = {
-            Icon(imageVector = Icons.Default.Search, contentDescription = "Search Icon")
+            IconButton(onClick = onLeadingIconClick, enabled = leadingIconEnabled) {
+                Icon(imageVector = leadingIcon, contentDescription = "Search Icon")
+            }
         },
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Search,
@@ -52,8 +55,10 @@ fun CustomSearchBar(
         singleLine = true,
         shape = RoundedCornerShape(16.dp),
         trailingIcon = {
-            IconButton(onClick = onSearch) {
-                Icon(imageVector = Icons.Default.Send, contentDescription = "Search Icon")
+            if (showSearchButton) {
+                IconButton(onClick = onSearch) {
+                    Icon(imageVector = Icons.Default.Send, contentDescription = "Search Icon")
+                }
             }
         }
     )

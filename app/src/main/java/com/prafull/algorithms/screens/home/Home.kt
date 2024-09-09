@@ -21,7 +21,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -39,6 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.prafull.algorithms.Routes
 import com.prafull.algorithms.models.ProgrammingLanguage
+import com.prafull.algorithms.ui.customColors.algoCard
+import com.prafull.algorithms.ui.customColors.langFilterChip
 import com.prafull.algorithms.utils.BaseClass
 import com.prafull.algorithms.utils.getFormattedName
 
@@ -86,7 +88,8 @@ fun HomeScreen(viewModel: AlgoViewModel, navController: NavController) {
                             contentDescription = null,
                             modifier = Modifier.size(24.dp)
                         )
-                    })
+                    }, colors = FilterChipDefaults.langFilterChip()
+                    )
                 }
             }
             when (state) {
@@ -118,9 +121,7 @@ fun HomeScreen(viewModel: AlgoViewModel, navController: NavController) {
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(12.dp),
-                                colors = CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                                )
+                                colors = CardDefaults.algoCard()
                             ) {
                                 Column(
                                     Modifier

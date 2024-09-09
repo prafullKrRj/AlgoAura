@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +35,7 @@ import com.mohamedrejeb.richeditor.ui.material3.RichText
 import com.prafull.algorithms.ComplexRoutes
 import com.prafull.algorithms.commons.CustomSearchBar
 import com.prafull.algorithms.models.ComplexLanguageData
+import com.prafull.algorithms.ui.customColors.algoCard
 import com.prafull.algorithms.utils.getFormattedNameExtension
 
 
@@ -94,7 +96,7 @@ private fun ProblemCard(
     viewModel: ComplexLanguageViewModel,
     navController: NavController
 ) {
-    Card(modifier = Modifier.fillMaxWidth()) {
+    Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.algoCard()) {
         Column(
             Modifier
                 .fillMaxWidth()

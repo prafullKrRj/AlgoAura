@@ -48,6 +48,7 @@ import com.prafull.algorithms.data.local.AlgorithmEntity
 import com.prafull.algorithms.goBackStack
 import com.prafull.algorithms.models.ProgrammingLanguage
 import com.prafull.algorithms.screens.code.GoToAiDialog
+import com.prafull.algorithms.ui.customColors.algoCard
 import com.prafull.algorithms.utils.getKodeViewLanguageFromLanguage
 import dev.snipme.highlights.Highlights
 import dev.snipme.highlights.model.SyntaxThemes
@@ -89,9 +90,7 @@ private fun FavouriteAlgoCard(algo: AlgorithmEntity, navController: NavControlle
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-        )
+        colors = CardDefaults.algoCard()
     ) {
         Row(Modifier
             .fillMaxSize()

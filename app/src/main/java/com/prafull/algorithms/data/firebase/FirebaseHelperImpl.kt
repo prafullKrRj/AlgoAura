@@ -196,6 +196,7 @@ class FirebaseHelperImpl(
                 val document = db.collection("rosettaAlgos").document(algoName).get().await()
                 val algo = ComplexAlgorithm(
                     name = document.get("name") as String,
+                    id = document.id,
                     task = document.get("task") as String,
                     languages = document.get("languages") as List<String>,
                 )

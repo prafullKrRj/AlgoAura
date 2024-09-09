@@ -18,10 +18,10 @@ import org.koin.core.component.inject
 
 class ComplexSearchVM : ViewModel(), KoinComponent {
     private val firestore by inject<FirebaseHelper>()
-    var searchQuery by mutableStateOf("")
+
     private val _uiState = MutableStateFlow<ComplexSearchUiState>(ComplexSearchUiState())
     val uiState = _uiState.asStateFlow()
-
+    var searchQuery by mutableStateOf("")
     private val _langs = MutableStateFlow<BaseClass<List<String>>>(BaseClass.Loading)
     val langs = _langs.asStateFlow()
 
@@ -29,7 +29,7 @@ class ComplexSearchVM : ViewModel(), KoinComponent {
         getComplexLanguagesList()
     }
 
-    fun search() {
+    fun search(searchQuery: String) {
         viewModelScope.launch(Dispatchers.IO) {
             _uiState.update {
                 it.copy(

@@ -24,6 +24,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -54,6 +55,8 @@ import com.prafull.algorithms.commons.CustomSearchBar
 import com.prafull.algorithms.data.local.SearchedEntity
 import com.prafull.algorithms.models.FileInfo
 import com.prafull.algorithms.models.ProgrammingLanguage
+import com.prafull.algorithms.ui.customColors.algoCard
+import com.prafull.algorithms.ui.customColors.langFilterChip
 import com.prafull.algorithms.utils.getFileName
 import com.prafull.algorithms.utils.getFormattedName
 import com.prafull.algorithms.utils.getLanguageFromString
@@ -134,7 +137,8 @@ fun SearchScreen(viewModel: SearchViewModel, navController: NavController) {
                                                 modifier = Modifier.size(24.dp),
                                                 colorFilter = ColorFilter.tint(color = Color.Cyan)
                                             )
-                                        })
+                                        }, colors = FilterChipDefaults.langFilterChip()
+                                    )
                                 }
                                 itemsIndexed(viewModel.languages) { index, programmingLanguage ->
                                     FilterChip(
@@ -152,7 +156,8 @@ fun SearchScreen(viewModel: SearchViewModel, navController: NavController) {
                                                 contentDescription = null,
                                                 modifier = Modifier.size(24.dp)
                                             )
-                                        })
+                                        }, colors = FilterChipDefaults.langFilterChip()
+                                    )
                                 }
                             }
                         }
@@ -238,9 +243,7 @@ fun SearchItem(fileInfo: FileInfo, navController: NavController) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-        )
+        colors = CardDefaults.algoCard()
     ) {
         Row(Modifier
             .fillMaxSize()
