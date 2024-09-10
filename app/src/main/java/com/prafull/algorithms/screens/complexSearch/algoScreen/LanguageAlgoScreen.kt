@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,8 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,6 +30,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -44,13 +42,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichText
-import com.prafull.algorithms.R
+import com.prafull.algorithms.Routes
+import com.prafull.algorithms.commons.AskAiChip
+import com.prafull.algorithms.commons.AskAiDialog
 import com.prafull.algorithms.goBackStack
 import com.prafull.algorithms.models.ComplexLanguageAlgo
 import com.prafull.algorithms.utils.BaseClass
@@ -107,8 +106,10 @@ fun LanguageAlgoScreen(viewModel: ComplexLanguageAlgoVM, navController: NavContr
                             shorterTask = if (algo.task.length > 500) algo.task.substring(
                                 0, 500
                             ) + "..." else algo.task,
-                            language = viewModel.lang
-                        )
+                            language = viewModel.lang,
+                            programName = viewModel.selectedAlgo.getFormattedNameExtension()
+                        ),
+                        navController = navController
                     )
                 }
             }
@@ -139,12 +140,17 @@ fun InfoAlertDialog(onDismiss: () -> Unit) {
     )
 }
 
+@Immutable
 data class DummyAlgoData(
-    val task: String, val codes: List<String>, val shorterTask: String = "", val language: String
+    val task: String,
+    val codes: List<String>,
+    val shorterTask: String = "",
+    val language: String,
+    val programName: String = ""
 )
 
 @Composable
-private fun LanguageAlgoSuccess(algo: DummyAlgoData) {
+private fun LanguageAlgoSuccess(algo: DummyAlgoData, navController: NavController) {
     val taskState = rememberRichTextState()
     LaunchedEffect(key1 = Unit) {
         taskState.setMarkdown(algo.shorterTask)
@@ -218,37 +224,48 @@ private fun LanguageAlgoSuccess(algo: DummyAlgoData) {
                         ).build()
                 }
                 CodeTextView(highlights = highlights, modifier = Modifier.padding(12.dp))
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp), horizontalArrangement =
-                    Arrangement.End
-                ) {
-                    AssistChip(
-                        onClick = {
-                            // TODO
-                        },
-                        label = {
-                            Text("Ask AI")
-                        },
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ai),
-                                contentDescription = null,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        },
-                        enabled = true,
-                        colors = AssistChipDefaults.assistChipColors(
-                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                            labelColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                            leadingIconContentColor = MaterialTheme.colorScheme.onTertiaryContainer
-                        )
-                    )
-                }
+                NavigateToAiChip(
+                    algo = algo, navController = navController, idx = idx
+                )
             }
-
         }
+    }
+}
+
+@Composable
+fun NavigateToAiChip(
+    modifier: Modifier = Modifier,
+    algo: DummyAlgoData,
+    navController: NavController,
+    idx: Int
+) {
+    var showDialog by remember {
+        mutableStateOf(false)
+    }
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp), horizontalArrangement =
+        Arrangement.End
+    ) {
+        AskAiChip {
+            showDialog = !showDialog
+        }
+    }
+    if (showDialog) {
+        AskAiDialog(onDismiss = {
+            showDialog = !showDialog
+        }, onSend = {
+            showDialog = !showDialog
+            navController.navigate(
+                Routes.AskAi(
+                    code = algo.codes[idx],
+                    language = algo.language,
+                    message = it,
+                    programName = algo.programName
+                )
+            )
+        })
     }
 }
 

@@ -33,6 +33,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.prafull.algorithms.Routes
 import com.prafull.algorithms.commons.AskAiChip
+import com.prafull.algorithms.commons.AskAiDialog
 import com.prafull.algorithms.commons.CodeScreenBottomBar
 import com.prafull.algorithms.commons.CodeScreenTopAppBar
 import com.prafull.algorithms.goBackStack
@@ -110,16 +111,18 @@ fun CodeScreen(viewModel: CodeViewModel, navController: NavController) {
         }
     }
     if (goToAiDialogBox) {
-        GoToAiDialog(
-            onDismiss = {
-                goToAiDialogBox = false
-            }, navController = navController, Routes.AskAi(
-                code = viewModel.algorithm!!.code,
-                programName = viewModel.programName,
-                message = "",
-                language = viewModel.algorithm!!.language.name
+        AskAiDialog(onDismiss = {
+            goToAiDialogBox = false
+        }) {
+            navController.navigate(
+                Routes.AskAi(
+                    code = viewModel.algorithm!!.code,
+                    programName = viewModel.programName,
+                    message = it,
+                    language = viewModel.algorithm!!.language.name
+                )
             )
-        )
+        }
     }
 }
 

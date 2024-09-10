@@ -42,12 +42,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.prafull.algorithms.Routes
 import com.prafull.algorithms.commons.AskAiChip
+import com.prafull.algorithms.commons.AskAiDialog
 import com.prafull.algorithms.commons.CodeScreenBottomBar
 import com.prafull.algorithms.commons.CodeScreenTopAppBar
 import com.prafull.algorithms.data.local.AlgorithmEntity
 import com.prafull.algorithms.goBackStack
 import com.prafull.algorithms.models.ProgrammingLanguage
-import com.prafull.algorithms.screens.code.GoToAiDialog
 import com.prafull.algorithms.ui.customColors.algoCard
 import com.prafull.algorithms.utils.getKodeViewLanguageFromLanguage
 import dev.snipme.highlights.Highlights
@@ -166,16 +166,18 @@ fun FavouriteCodeScreen(
         }
     }
     if (goToAiDialogBox) {
-        GoToAiDialog(
-            onDismiss = {
-                goToAiDialogBox = false
-            }, navController = navController, Routes.AskAi(
-                code = algo.code,
-                programName = algo.title,
-                message = "I need help with this code",
-                language = algo.language
+        AskAiDialog(onDismiss = {
+            goToAiDialogBox = !goToAiDialogBox
+        }) {
+            navController.navigate(
+                Routes.AskAi(
+                    code = algo.code,
+                    programName = algo.title,
+                    message = it,
+                    language = algo.language
+                )
             )
-        )
+        }
     }
 }
 

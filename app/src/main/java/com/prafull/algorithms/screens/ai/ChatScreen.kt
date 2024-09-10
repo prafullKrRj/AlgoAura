@@ -1,5 +1,6 @@
 package com.prafull.algorithms.screens.ai
 
+import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.tween
@@ -44,10 +45,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -56,11 +61,18 @@ import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichText
 import com.prafull.algorithms.goBackStack
 import com.prafull.algorithms.models.ProgrammingLanguage
+import com.prafull.algorithms.screens.AiMessageBubble
+import com.prafull.algorithms.screens.complexSearch.algoScreen.getSyntaxLanguageFromString
+import com.prafull.algorithms.utils.getFileName
+import com.prafull.algorithms.utils.getFormattedName
 import com.prafull.algorithms.utils.getKodeViewLanguageFromLanguage
+import com.prafull.algorithms.utils.getLanguageFromString
 import com.valentinilk.shimmer.shimmer
 import dev.snipme.highlights.Highlights
+import dev.snipme.highlights.model.SyntaxLanguage
 import dev.snipme.highlights.model.SyntaxThemes
 import dev.snipme.kodeview.view.CodeTextView
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,23 +80,39 @@ fun AskAi(viewModel: ChatViewModel, navController: NavController) {
     val codeExpanded = rememberSaveable {
         mutableStateOf(false)
     }
+    var language = SyntaxLanguage.DEFAULT
+    LaunchedEffect(key1 = Unit) {
+        language = if (getLanguageFromString(viewModel.language) == ProgrammingLanguage.UNKNOWN) {
+            getSyntaxLanguageFromString(viewModel.language)
+        } else {
+            getKodeViewLanguageFromLanguage(ProgrammingLanguage.valueOf(viewModel.language))
+        }
+    }
     val state by viewModel.uiState.collectAsState()
     val promptValue = rememberSaveable {
         mutableStateOf("")
     }
+
     val listState = rememberLazyListState()
-    LaunchedEffect(key1 = state.messages) {
-        if (state.messages.isNotEmpty()) {
-            listState.animateScrollToItem(state.messages.lastIndex)
-        }
-    }
     val focusManager = LocalFocusManager.current
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val clipboardManager = LocalClipboardManager.current
     Scaffold(topBar = {
         TopAppBar(title = {
-            Text(text = viewModel.programName)
+            Text(text = getFileName(getFormattedName(viewModel.programName)))
         }, actions = {
             IconButton(onClick = {
                 codeExpanded.value = !codeExpanded.value
+                if (codeExpanded.value) {
+                    scope.launch {
+                        listState.animateScrollToItem(state.messages.size) // as the code is at the end
+                    }
+                } else {
+                    scope.launch {
+                        listState.animateScrollToItem(0) // as the code is at the end
+                    }
+                }
             }) {
                 Icon(
                     imageVector = if (codeExpanded.value) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
@@ -109,23 +137,27 @@ fun AskAi(viewModel: ChatViewModel, navController: NavController) {
     }) { paddingValues ->
         LazyColumn(
             state = listState,
-            contentPadding = PaddingValues(horizontal = 12.dp),
+            contentPadding = PaddingValues(
+                top = paddingValues.calculateTopPadding(),
+                bottom = paddingValues.calculateBottomPadding(),
+                start = 8.dp,
+                end = 8.dp
+            ),
             modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            reverseLayout = true
+                .fillMaxSize(),
+            reverseLayout = true,
         ) {
-            item(key = "code") {
-                AnimatedCode(
-                    visible = codeExpanded.value,
-                    code = viewModel.code,
-                    language = viewModel.language
-                )
-            }
             items(state.messages.reversed(), key = {
                 it.id
             }) {
-                ChatMessageBubble(it)
+                ChatMessageBubble(it, clipboardManager, context)
+            }
+            item {
+                AnimatedCode(
+                    visible = codeExpanded.value,
+                    code = viewModel.code,
+                    language = language
+                )
             }
         }
     }
@@ -160,7 +192,11 @@ fun PromptField(value: String, onValueChange: (String) -> Unit, onSent: () -> Un
 }
 
 @Composable
-fun ChatMessageBubble(message: ChatMessage) {
+fun ChatMessageBubble(
+    message: ChatMessage,
+    clipboardManager: ClipboardManager,
+    context: Context
+) {
     if (message.participant == Participant.USER) {
         if (message.isPending) {
             Row(
@@ -217,10 +253,11 @@ fun ChatMessageBubble(message: ChatMessage) {
             }
         }
         UserChatBubble(message)
+
     } else {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(text = "✨", Modifier.padding(vertical = 12.dp))
-            ModelChatBubble(message)
+            ModelChatBubble(message, clipboardManager, context)
         }
     }
 }
@@ -248,21 +285,24 @@ fun UserChatBubble(message: ChatMessage) {
 }
 
 @Composable
-fun ModelChatBubble(message: ChatMessage) {
+fun ModelChatBubble(
+    message: ChatMessage,
+    clipboardManager: ClipboardManager,
+    context: Context
+) {
     Row(Modifier.fillMaxWidth()) {
-        val textState = rememberRichTextState()
-        textState.setMarkdown(message.text)
-        RichText(
-            state = textState,
-            Modifier
-                .fillMaxSize()
-                .padding(12.dp)
-        )
+        AiMessageBubble(message = message, clipboardManager, context)
     }
 }
 
 @Composable
-private fun AnimatedCode(visible: Boolean, code: String, language: String) {
+private fun AnimatedCode(visible: Boolean, code: String, language: SyntaxLanguage) {
+    val context = LocalContext.current
+    val highlights = remember {
+        Highlights.Builder(code = code).theme(SyntaxThemes.monokai()).language(
+            language = language
+        ).build()
+    }
     AnimatedVisibility(
         visible = visible, enter = fadeIn(
             animationSpec = tween(
@@ -275,13 +315,6 @@ private fun AnimatedCode(visible: Boolean, code: String, language: String) {
                 containerColor = MaterialTheme.colorScheme.surfaceContainerLow
             )
         ) {
-            val highlights = remember {
-                Highlights.Builder(code = code).theme(SyntaxThemes.darcula()).language(
-                    language = getKodeViewLanguageFromLanguage(
-                        ProgrammingLanguage.valueOf(language)
-                    )
-                ).build()
-            }
             CodeTextView(highlights = highlights)
         }
     }
