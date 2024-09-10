@@ -1,5 +1,6 @@
-package com.prafull.algorithms.screens.complexSearch.lang.algoScreen
+package com.prafull.algorithms.screens.complexSearch.algoScreen
 
+import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,11 +13,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,15 +43,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichText
+import com.prafull.algorithms.R
 import com.prafull.algorithms.goBackStack
 import com.prafull.algorithms.models.ComplexLanguageAlgo
 import com.prafull.algorithms.utils.BaseClass
+import com.prafull.algorithms.utils.getFormattedNameExtension
 import com.valentinilk.shimmer.shimmer
 import dev.snipme.highlights.Highlights
+import dev.snipme.highlights.model.SyntaxLanguage
 import dev.snipme.highlights.model.SyntaxThemes
 import dev.snipme.kodeview.view.CodeTextView
 
@@ -53,12 +66,21 @@ import dev.snipme.kodeview.view.CodeTextView
 @Composable
 fun LanguageAlgoScreen(viewModel: ComplexLanguageAlgoVM, navController: NavController) {
     val state by viewModel.problemDetails.collectAsState()
+    var showWarning by remember {
+        mutableStateOf(false)
+    }
     Scaffold(topBar = {
         TopAppBar(title = {
-            Text(text = viewModel.selectedAlgo)
+            Text(text = viewModel.selectedAlgo.getFormattedNameExtension())
         }, navigationIcon = {
             IconButton(onClick = navController::goBackStack) {
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
+            }
+        }, actions = {
+            IconButton(onClick = {
+                showWarning = showWarning.not()
+            }) {
+                Icon(imageVector = Icons.Outlined.Info, contentDescription = null)
             }
         })
     }) { paddingValues ->
@@ -84,17 +106,41 @@ fun LanguageAlgoScreen(viewModel: ComplexLanguageAlgoVM, navController: NavContr
                             codes = algo.langCode,
                             shorterTask = if (algo.task.length > 500) algo.task.substring(
                                 0, 500
-                            ) + "..." else algo.task
+                            ) + "..." else algo.task,
+                            language = viewModel.lang
                         )
                     )
                 }
             }
         }
+        if (showWarning) {
+            InfoAlertDialog {
+                showWarning = !showWarning
+            }
+        }
     }
 }
 
+@Composable
+fun InfoAlertDialog(onDismiss: () -> Unit) {
+    AlertDialog(onDismissRequest = {
+        onDismiss()
+    }, confirmButton = {
+        Button(onClick = {
+            onDismiss()
+        }) {
+            Text("OK")
+        }
+    }, title = {
+        Text(text = "Information")
+    }, text = {
+        Text("The code provided may not be accurate. You can ask AI for better results.")
+    }, properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
+    )
+}
+
 data class DummyAlgoData(
-    val task: String, val codes: List<String>, val shorterTask: String = ""
+    val task: String, val codes: List<String>, val shorterTask: String = "", val language: String
 )
 
 @Composable
@@ -105,6 +151,13 @@ private fun LanguageAlgoSuccess(algo: DummyAlgoData) {
     }
     var isOpen by rememberSaveable {
         mutableStateOf(false)
+    }
+    val uiMode = LocalConfiguration.current.uiMode
+    var isDark by remember {
+        mutableStateOf((uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES)
+    }
+    LaunchedEffect(key1 = uiMode) {
+        isDark = (uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
     }
     LazyColumn(
         Modifier.fillMaxSize(),
@@ -146,11 +199,10 @@ private fun LanguageAlgoSuccess(algo: DummyAlgoData) {
                     .fillMaxWidth()
                     .border(
                         border = BorderStroke(
-                            width = 2.dp, color = Color.LightGray
-                        ),
-                        shape = RoundedCornerShape(16.dp)
+                            width = 1.dp, color = Color.LightGray
+                        ), shape = RoundedCornerShape(12.dp)
                     )
-                    .clip(RoundedCornerShape(16.dp))
+                    .clip(RoundedCornerShape(12.dp))
             ) {
                 Text(
                     text = "Code ${idx + 1}",
@@ -158,10 +210,42 @@ private fun LanguageAlgoSuccess(algo: DummyAlgoData) {
                     modifier = Modifier.padding(8.dp)
                 )
                 val highlights = remember {
-                    Highlights.Builder(code = code).theme(SyntaxThemes.darcula())
-                        .build()
+                    Highlights.Builder(code = code)
+                        .language(getSyntaxLanguageFromString(algo.language)).theme(
+                            SyntaxThemes.monokai(
+                                darkMode = isDark
+                            )
+                        ).build()
                 }
-                CodeTextView(highlights = highlights, modifier = Modifier.padding(8.dp))
+                CodeTextView(highlights = highlights, modifier = Modifier.padding(12.dp))
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp), horizontalArrangement =
+                    Arrangement.End
+                ) {
+                    AssistChip(
+                        onClick = {
+                            // TODO
+                        },
+                        label = {
+                            Text("Ask AI")
+                        },
+                        leadingIcon = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ai),
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        },
+                        enabled = true,
+                        colors = AssistChipDefaults.assistChipColors(
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            labelColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                            leadingIconContentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                        )
+                    )
+                }
             }
 
         }
@@ -195,5 +279,28 @@ private fun LanguageAlgoLoading() {
                     .shimmer()
             )
         }
+    }
+}
+
+fun getSyntaxLanguageFromString(langName: String): SyntaxLanguage {
+    return when (langName) {
+        "C" -> SyntaxLanguage.C
+        "C++" -> SyntaxLanguage.CPP
+        "C-sharp" -> SyntaxLanguage.CSHARP
+        "Java" -> SyntaxLanguage.JAVA
+        "JavaScript" -> SyntaxLanguage.JAVASCRIPT
+        "Kotlin" -> SyntaxLanguage.KOTLIN
+        "Rust" -> SyntaxLanguage.RUST
+        "CoffeeScript" -> SyntaxLanguage.COFFEESCRIPT
+        "Perl" -> SyntaxLanguage.PERL
+        "Perl5i" -> SyntaxLanguage.PERL
+        "Python" -> SyntaxLanguage.PYTHON
+        "Ruby" -> SyntaxLanguage.RUBY
+        "Friendly-interactive-shell" -> SyntaxLanguage.SHELL
+        "PowerShell" -> SyntaxLanguage.SHELL
+        "SheerPower-4GL" -> SyntaxLanguage.SHELL
+        "UNIX-Shell" -> SyntaxLanguage.SHELL
+        "Swift" -> SyntaxLanguage.SWIFT
+        else -> SyntaxLanguage.MIXED
     }
 }

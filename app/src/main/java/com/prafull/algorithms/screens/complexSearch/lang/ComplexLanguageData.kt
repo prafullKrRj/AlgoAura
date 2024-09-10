@@ -1,4 +1,4 @@
-package com.prafull.algorithms.screens.complexSearch.lang.langDetailsScreen
+package com.prafull.algorithms.screens.complexSearch.lang
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack

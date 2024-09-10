@@ -11,8 +11,8 @@ import com.prafull.algorithms.data.room.RoomHelper
 import com.prafull.algorithms.data.room.RoomHelperImpl
 import com.prafull.algorithms.screens.ai.ChatViewModel
 import com.prafull.algorithms.screens.code.CodeViewModel
-import com.prafull.algorithms.screens.complexSearch.lang.algoScreen.ComplexLanguageAlgoVM
-import com.prafull.algorithms.screens.complexSearch.lang.langDetailsScreen.ComplexLanguageViewModel
+import com.prafull.algorithms.screens.complexSearch.algoScreen.ComplexLanguageAlgoVM
+import com.prafull.algorithms.screens.complexSearch.lang.ComplexLanguageViewModel
 import com.prafull.algorithms.screens.complexSearch.main.ComplexSearchVM
 import com.prafull.algorithms.screens.complexSearch.searchedAlgo.ComplexSearchAlgoVM
 import com.prafull.algorithms.screens.favourites.FavouritesViewModel

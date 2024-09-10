@@ -1,4 +1,4 @@
-package com.prafull.algorithms.screens.complexSearch.lang.algoScreen
+package com.prafull.algorithms.screens.complexSearch.algoScreen
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -24,12 +24,12 @@ class ComplexLanguageAlgoVM(
 ) : ViewModel(), KoinComponent {
 
     private val firebase by inject<FirebaseHelper>()
-
+    var lang by mutableStateOf("")
     var selectedAlgo by mutableStateOf("")
 
     init {
         selectedAlgo = data.algo
-        Log.d("Bugger", "init: ${data.algo} ${data.lang}")
+        lang = data.lang
         getProblemDetails()
     }
 

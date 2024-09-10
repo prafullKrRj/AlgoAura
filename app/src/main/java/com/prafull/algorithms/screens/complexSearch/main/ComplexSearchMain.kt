@@ -44,10 +44,14 @@ fun ComplexSearchMain(viewModel: ComplexSearchVM, navController: NavController) 
     }) { paddingValues ->
         LazyColumn(
             Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
+                .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(6.dp),
-            contentPadding = PaddingValues(12.dp)
+            contentPadding = PaddingValues(
+                top = paddingValues.calculateTopPadding(),
+                bottom = paddingValues.calculateBottomPadding(),
+                start = 8.dp,
+                end = 8.dp
+            )
         ) {
             item {
                 CustomSearchBar(
