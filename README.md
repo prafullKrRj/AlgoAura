@@ -6,9 +6,6 @@
 
 The application is built with **Jetpack Compose**, and the backend is powered by **Firebase** and **Firestore** for secure and scalable data storage.
 
-## 📃 Documentation
-
-You can find the documentation [here](https://algoaura-v4w2.onrender.com).
 
 ## ✨ Features
 
