@@ -154,11 +154,12 @@ class FirebaseHelperImpl(
     override suspend fun getComplexLanguages(): Flow<BaseClass<List<String>>> {
         return callbackFlow {
             try {
-                val response = db.collection("rosettalang").orderBy("priority").get().await()
-                trySend(BaseClass.Success(response.documents.map {
-                    it.id
-                }))
-
+                val response = db.collection("rosettaLists").document("languages").get().await()
+                trySend(
+                    BaseClass.Success(
+                        response.get("names") as List<String>
+                    )
+                )
             } catch (e: Exception) {
                 trySend(BaseClass.Error(e.message ?: "Error"))
             }
@@ -172,16 +173,15 @@ class FirebaseHelperImpl(
                 val normalizedQuery = query.replace("_", " ").lowercase()
                 val regexQuery = Regex(".*${normalizedQuery.replace(" ", ".*")}.*")
 
-                val response = db.collection("rosettaAlgos").get().await()
-                val matchingDocuments = response.documents.filter { doc ->
+                val document = db.collection("rosettaLists").document("algos").get().await()
+                val names = document.get("names") as List<String>
+                val matchingNames = names.filter { name ->
                     regexQuery.matches(
-                        doc.id.replace("+", " ").replace("-", " ").lowercase()
-                    ) || regexQuery.matches(
-                        doc.getString("content")?.lowercase().orEmpty()
+                        name.lowercase().replace("+", " ").replace("-", " ")
                     )
-                }.map { it.id }
+                }
 
-                trySend(BaseClass.Success(matchingDocuments))
+                trySend(BaseClass.Success(matchingNames))
             } catch (e: Exception) {
                 trySend(BaseClass.Error(e.message ?: "Error", exception = e))
             }
