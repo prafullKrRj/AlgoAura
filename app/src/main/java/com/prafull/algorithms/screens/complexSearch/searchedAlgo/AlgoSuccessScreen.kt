@@ -37,7 +37,7 @@ import androidx.navigation.NavController
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichText
 import com.prafull.algorithms.ComplexRoutes
-import com.prafull.algorithms.commons.CustomSearchBar
+import com.prafull.algorithms.commons.components.CustomSearchBar
 import com.prafull.algorithms.models.ComplexAlgorithm
 import com.prafull.algorithms.screens.complexSearch.main.getIcon
 import com.prafull.algorithms.ui.customColors.langColor

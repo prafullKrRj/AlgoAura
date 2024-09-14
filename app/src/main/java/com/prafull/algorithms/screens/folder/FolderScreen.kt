@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.prafull.algorithms.Routes
+import com.prafull.algorithms.commons.ads.BannerAdView
 import com.prafull.algorithms.goBackStack
 import com.prafull.algorithms.utils.BaseClass
 import com.prafull.algorithms.utils.getFileName
@@ -82,32 +83,39 @@ fun FolderScreen(
 
             is BaseClass.Success -> {
                 val data = (files as BaseClass.Success).data
-                LazyColumn(
-                    modifier = Modifier.padding(paddingValues),
-                    contentPadding = PaddingValues(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(paddingValues = paddingValues)
                 ) {
-                    items(data, key = {
-                        "${it.path}-${it.name}"
-                    }) { file ->
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceContainer
-                            )
-                        ) {
-                            Column(
-                                Modifier
-                                    .fillMaxSize()
-                                    .clickable {
-                                        navController.navigate(
-                                            file.toCodeScreen()
-                                        )
-                                    }
-                                    .padding(8.dp)
+                    BannerAdView()
+                    LazyColumn(
+                        modifier = Modifier.padding(),
+                        contentPadding = PaddingValues(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(data, key = {
+                            "${it.path}-${it.name}"
+                        }) { file ->
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                                )
                             ) {
-                                Text(text = getFormattedName(getFileName(file.name)))
+                                Column(
+                                    Modifier
+                                        .fillMaxSize()
+                                        .clickable {
+                                            navController.navigate(
+                                                file.toCodeScreen()
+                                            )
+                                        }
+                                        .padding(8.dp)
+                                ) {
+                                    Text(text = getFormattedName(getFileName(file.name)))
+                                }
                             }
                         }
                     }

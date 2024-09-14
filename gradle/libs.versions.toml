@@ -25,6 +25,7 @@ activityCompose = "1.9.1"
 composeBom = "2024.08.00"
 googleGmsGoogleServices = "4.4.2"
 firebaseStorage = "21.0.0"
+playServicesAds = "23.3.0"
 richeditorCompose = "1.0.0-rc05"
 kotlinxSerializationJson = "1.5.1"
 navigationCompose = "2.8.0-beta05"
@@ -79,6 +80,7 @@ koin-androidx-navigation = { module = "io.insert-koin:koin-androidx-navigation",
 koin-androidx-viewmodel = { module = "io.insert-koin:koin-androidx-viewmodel", version.ref = "koinAndroidxViewmodelVersion" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koinCore" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlinStdlib" }
+play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playServicesAds" }
 richeditor-compose = { module = "com.mohamedrejeb.richeditor:richeditor-compose", version.ref = "richeditorCompose" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 

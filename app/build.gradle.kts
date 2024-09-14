@@ -114,6 +114,8 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.androidx.navigation)
     implementation(libs.compose.shimmer)
+    implementation(libs.play.services.ads)
+
 }
 kapt {
     correctErrorTypes = true

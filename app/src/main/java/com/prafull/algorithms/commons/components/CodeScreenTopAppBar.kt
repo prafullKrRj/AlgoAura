@@ -1,4 +1,4 @@
-package com.prafull.algorithms.commons
+package com.prafull.algorithms.commons.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack

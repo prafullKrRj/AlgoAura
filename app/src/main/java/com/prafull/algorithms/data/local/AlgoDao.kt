@@ -26,4 +26,7 @@ interface AlgoDao {
 
     @Upsert
     suspend fun insertSearchedText(searchedEntity: SearchedEntity)
+
+    @Delete
+    suspend fun deleteAlgos(selectedAlgos: List<AlgorithmEntity>)
 }

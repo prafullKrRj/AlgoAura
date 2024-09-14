@@ -1,4 +1,4 @@
-package com.prafull.algorithms.commons
+package com.prafull.algorithms.commons.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi

@@ -1,4 +1,4 @@
-package com.prafull.algorithms.commons
+package com.prafull.algorithms.commons.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding

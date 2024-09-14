@@ -25,6 +25,12 @@ class FavouritesViewModel : ViewModel(), KoinComponent {
         }
     }
 
+    fun deleteSelectedAlgos(selectedAlgos: List<AlgorithmEntity>) {
+        viewModelScope.launch {
+            room.deleteAlgos(selectedAlgos)
+        }
+    }
+
     val favouriteAlgorithms = room.getAllAlgorithms()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(7000), emptyList())
 

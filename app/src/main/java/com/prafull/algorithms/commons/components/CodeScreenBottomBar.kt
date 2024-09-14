@@ -1,4 +1,4 @@
-package com.prafull.algorithms.commons
+package com.prafull.algorithms.commons.components
 
 import android.content.Context
 import android.content.Intent

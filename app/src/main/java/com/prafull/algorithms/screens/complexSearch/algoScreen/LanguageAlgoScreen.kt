@@ -48,8 +48,8 @@ import androidx.navigation.NavController
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichText
 import com.prafull.algorithms.Routes
-import com.prafull.algorithms.commons.AskAiChip
-import com.prafull.algorithms.commons.AskAiDialog
+import com.prafull.algorithms.commons.ads.InterstitialAdManager
+import com.prafull.algorithms.commons.components.AskAiDialog
 import com.prafull.algorithms.goBackStack
 import com.prafull.algorithms.models.ComplexLanguageAlgo
 import com.prafull.algorithms.utils.BaseClass
@@ -242,30 +242,43 @@ fun NavigateToAiChip(
     var showDialog by remember {
         mutableStateOf(false)
     }
+    var showInterstitialAd by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var currMessage by rememberSaveable {
+        mutableStateOf("")
+    }
     Row(
         Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp), horizontalArrangement =
         Arrangement.End
     ) {
-        AskAiChip {
-            showDialog = !showDialog
-        }
+        /*  AskAiChip {
+              showDialog = !showDialog
+          }*/
     }
     if (showDialog) {
         AskAiDialog(onDismiss = {
             showDialog = !showDialog
         }, onSend = {
             showDialog = !showDialog
+            currMessage = it
+            showInterstitialAd = true
+        })
+    }
+    if (showInterstitialAd) {
+        InterstitialAdManager(adUnitId = "ca-app-pub-3940256099942544/1033173712") {
+            showInterstitialAd = false
             navController.navigate(
                 Routes.AskAi(
                     code = algo.codes[idx],
                     language = algo.language,
-                    message = it,
+                    message = currMessage,
                     programName = algo.programName
                 )
             )
-        })
+        }
     }
 }
 

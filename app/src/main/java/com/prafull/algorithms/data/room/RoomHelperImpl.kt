@@ -1,6 +1,7 @@
 package com.prafull.algorithms.data.room
 
 import com.prafull.algorithms.data.local.AlgoDao
+import com.prafull.algorithms.data.local.AlgorithmEntity
 import com.prafull.algorithms.data.local.SearchedEntity
 import com.prafull.algorithms.models.Algorithm
 import kotlinx.coroutines.flow.Flow
@@ -27,4 +28,8 @@ class RoomHelperImpl(
     override fun getSearchedAlgorithms(): Flow<List<SearchedEntity>> = dao.getAllSearched()
     override suspend fun insertSearchedText(searchedEntity: SearchedEntity) =
         dao.insertSearchedText(searchedEntity)
+
+    override suspend fun deleteAlgos(selectedAlgos: List<AlgorithmEntity>) {
+        dao.deleteAlgos(selectedAlgos)
+    }
 }

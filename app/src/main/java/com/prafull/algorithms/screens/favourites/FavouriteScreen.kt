@@ -1,7 +1,8 @@
 package com.prafull.algorithms.screens.favourites
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,10 +20,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -32,6 +38,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,10 +48,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.prafull.algorithms.Routes
-import com.prafull.algorithms.commons.AskAiChip
-import com.prafull.algorithms.commons.AskAiDialog
-import com.prafull.algorithms.commons.CodeScreenBottomBar
-import com.prafull.algorithms.commons.CodeScreenTopAppBar
+import com.prafull.algorithms.commons.ads.InterstitialAdManager
+import com.prafull.algorithms.commons.components.AskAiDialog
+import com.prafull.algorithms.commons.components.CodeScreenBottomBar
+import com.prafull.algorithms.commons.components.CodeScreenTopAppBar
 import com.prafull.algorithms.data.local.AlgorithmEntity
 import com.prafull.algorithms.goBackStack
 import com.prafull.algorithms.models.ProgrammingLanguage
@@ -57,23 +64,67 @@ import dev.snipme.kodeview.view.CodeTextView
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavouriteScreen(
-    favouritesViewModel: FavouritesViewModel, navController: NavController
+    favouritesViewModel: FavouritesViewModel,
+    navController: NavController
 ) {
     val algos by favouritesViewModel.favouriteAlgorithms.collectAsState()
-    Scaffold(topBar = {
-        TopAppBar(title = {
-            Text(text = "⭐ Favourites")
-        })
-    }) { paddingValues ->
+    var selectedAlgos by rememberSaveable { mutableStateOf(emptyList<AlgorithmEntity>()) }
+    var showDeleteAllDialog by remember {
+        mutableStateOf(false)
+    }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "⭐ Favourites") },
+                actions = {
+                    if (selectedAlgos.isNotEmpty()) {
+                        IconButton(onClick = {
+                            favouritesViewModel.deleteSelectedAlgos(selectedAlgos)
+                            selectedAlgos = emptyList()
+                        }) {
+                            Icon(Icons.Default.Delete, contentDescription = "Delete")
+                        }
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
         LazyColumn(
             contentPadding = PaddingValues(12.dp),
             modifier = Modifier.padding(paddingValues),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(algos, key = {
-                it.id
-            }) { algo ->
-                FavouriteAlgoCard(algo = algo, navController)
+            if (selectedAlgos.isNotEmpty()) {
+                item() {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        IconButton(onClick = {
+                            showDeleteAllDialog = true
+                        }) {
+                            Icon(imageVector = Icons.Default.Delete, contentDescription = null)
+                        }
+                        Text(text = "Delete All")
+                    }
+                }
+            }
+
+            items(algos, key = { it.id }) { algo ->
+                FavouriteAlgoCard(
+                    algo = algo,
+                    navController = navController,
+                    selectionMode = selectedAlgos.isNotEmpty(),
+                    isSelected = selectedAlgos.contains(algo),
+                    onSelect = { selectedAlgo ->
+                        selectedAlgos = if (selectedAlgos.contains(selectedAlgo)) {
+                            selectedAlgos - selectedAlgo
+                        } else {
+                            selectedAlgos + selectedAlgo
+                        }
+                    }
+                )
             }
             item {
                 if (algos.isEmpty()) {
@@ -82,29 +133,67 @@ fun FavouriteScreen(
             }
         }
     }
+    if (showDeleteAllDialog) {
+        AlertDialog(onDismissRequest = {
+            showDeleteAllDialog = false
+        }, confirmButton = {
+            favouritesViewModel.deleteSelectedAlgos(algos)
+            selectedAlgos = emptyList()
+            showDeleteAllDialog = false
+        }, text = {
+            Text(text = "Are you sure you want to delete all algorithms?")
+        }, title = {
+            Text(text = "Delete All")
+        })
+    }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun FavouriteAlgoCard(algo: AlgorithmEntity, navController: NavController) {
+private fun FavouriteAlgoCard(
+    algo: AlgorithmEntity,
+    navController: NavController,
+    selectionMode: Boolean,
+    isSelected: Boolean,
+    onSelect: (AlgorithmEntity) -> Unit,
+) {
     val algorithm = algo.toAlgorithms()
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.algoCard()
     ) {
-        Row(Modifier
-            .fillMaxSize()
-            .clickable {
-                navController.navigate(algo.toFavouriteCodeScreen())
-            }
-            .padding(12.dp),
+        Row(
+            Modifier
+                .fillMaxSize()
+                .combinedClickable(
+                    onClick = {
+                        if (selectionMode) {
+                            onSelect(algo)
+                            return@combinedClickable
+                        }
+                        navController.navigate(algo.toFavouriteCodeScreen())
+                    },
+                    onLongClick = {
+                        onSelect(algo)
+                    }
+                )
+                .padding(12.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            if (selectionMode) {
+                Checkbox(
+                    checked = isSelected,
+                    onCheckedChange = { onSelect(algo) },
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+            }
             Column(
                 Modifier
                     .fillMaxHeight()
-                    .weight(.85f)
+                    .weight(0.85f)
             ) {
                 Text(text = algorithm.title, style = MaterialTheme.typography.titleMedium)
             }
@@ -112,12 +201,13 @@ private fun FavouriteAlgoCard(algo: AlgorithmEntity, navController: NavControlle
                 painter = painterResource(id = algorithm.language.logo),
                 contentDescription = null,
                 modifier = Modifier
-                    .weight(.15f)
+                    .weight(0.15f)
                     .alpha(1f)
             )
         }
     }
 }
+
 
 @Composable
 fun FavouriteCodeScreen(
@@ -131,6 +221,12 @@ fun FavouriteCodeScreen(
     var goToAiDialogBox by remember {
         mutableStateOf(false)
     }
+    var showInterstitialAd by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var currMessage by rememberSaveable {
+        mutableStateOf("")
+    }
     Scaffold(topBar = {
         CodeScreenTopAppBar(
             isFavorite = viewModel.isFav,
@@ -142,9 +238,9 @@ fun FavouriteCodeScreen(
     }, bottomBar = {
         CodeScreenBottomBar(algo.code)
     }, floatingActionButton = {
-        AskAiChip {
-            goToAiDialogBox = true
-        }
+        /* AskAiChip {
+             goToAiDialogBox = true
+         }*/
     }) { paddingValues ->
         Column(
             modifier = Modifier
@@ -169,11 +265,19 @@ fun FavouriteCodeScreen(
         AskAiDialog(onDismiss = {
             goToAiDialogBox = !goToAiDialogBox
         }) {
+            showInterstitialAd = true
+            goToAiDialogBox = !goToAiDialogBox
+            currMessage = it
+        }
+    }
+    if (showInterstitialAd) {
+        InterstitialAdManager(adUnitId = "ca-app-pub-3940256099942544/1033173712") {
+            showInterstitialAd = false
             navController.navigate(
                 Routes.AskAi(
                     code = algo.code,
                     programName = algo.title,
-                    message = it,
+                    message = currMessage,
                     language = algo.language
                 )
             )

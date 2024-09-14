@@ -35,8 +35,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -51,7 +53,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.prafull.algorithms.R
-import com.prafull.algorithms.commons.CustomSearchBar
+import com.prafull.algorithms.commons.components.CustomSearchBar
 import com.prafull.algorithms.data.local.SearchedEntity
 import com.prafull.algorithms.models.FileInfo
 import com.prafull.algorithms.models.ProgrammingLanguage
@@ -75,16 +77,17 @@ fun SearchScreen(viewModel: SearchViewModel, navController: NavController) {
             focusRequester.requestFocus()
         }
     }
+    var isSearching by rememberSaveable {
+        mutableStateOf(false)
+    }
     val selectedLang = rememberSaveable {
         mutableIntStateOf(-1)
     }
-    Scaffold(
-        topBar = {
-            TopAppBar(title = {
-                Text(text = "🔍 Search")
-            })
-        }
-    ) { paddingValues ->
+    Scaffold(topBar = {
+        TopAppBar(title = {
+            Text(text = "🔍 Search")
+        })
+    }) { paddingValues ->
         Column(
             Modifier
                 .fillMaxSize()
@@ -94,6 +97,9 @@ fun SearchScreen(viewModel: SearchViewModel, navController: NavController) {
             CustomSearchBar(value = viewModel.query, onValueChange = {
                 viewModel.query = it
             }) {
+                if (viewModel.query.isNotEmpty()) {
+                    isSearching = true
+                }
                 viewModel.search(
                     SearchedEntity(searchedText = viewModel.query)
                 )
@@ -113,34 +119,32 @@ fun SearchScreen(viewModel: SearchViewModel, navController: NavController) {
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     contentPadding = PaddingValues(12.dp)
                 ) {
-                    if (viewModel.searchResults.isNotEmpty()) {
-                        item {
+                    if (isSearching) {
+                        item("Languages") {
                             LazyRow(
                                 Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 state = languagesListState
                             ) {
                                 item {
-                                    FilterChip(
-                                        selected = selectedLang.intValue == -1,
-                                        onClick = {
-                                            selectedLang.intValue = -1
-                                            viewModel.filterResults(ProgrammingLanguage.UNKNOWN)
-                                        },
-                                        label = {
-                                            Text(text = "All")
-                                        },
-                                        trailingIcon = {
-                                            Image(
-                                                painter = painterResource(id = R.drawable.baseline_code_24),
-                                                contentDescription = null,
-                                                modifier = Modifier.size(24.dp),
-                                                colorFilter = ColorFilter.tint(color = Color.Cyan)
-                                            )
-                                        }, colors = FilterChipDefaults.langFilterChip()
+                                    FilterChip(selected = selectedLang.intValue == -1, onClick = {
+                                        selectedLang.intValue = -1
+                                        viewModel.filterResults(ProgrammingLanguage.UNKNOWN)
+                                    }, label = {
+                                        Text(text = "All")
+                                    }, trailingIcon = {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.baseline_code_24),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(24.dp),
+                                            colorFilter = ColorFilter.tint(color = Color.Cyan)
+                                        )
+                                    }, colors = FilterChipDefaults.langFilterChip()
                                     )
                                 }
-                                itemsIndexed(viewModel.languages) { index, programmingLanguage ->
+                                itemsIndexed(viewModel.languages, key = { index, item ->
+                                    index
+                                }) { index, programmingLanguage ->
                                     FilterChip(
                                         selected = index == selectedLang.intValue,
                                         onClick = {
@@ -156,16 +160,24 @@ fun SearchScreen(viewModel: SearchViewModel, navController: NavController) {
                                                 contentDescription = null,
                                                 modifier = Modifier.size(24.dp)
                                             )
-                                        }, colors = FilterChipDefaults.langFilterChip()
+                                        },
+                                        colors = FilterChipDefaults.langFilterChip()
                                     )
                                 }
                             }
                         }
-                        items(viewModel.results, key = {
-                            it.id
-                        }) { fileInfo ->
-                            SearchItem(fileInfo = fileInfo, navController = navController)
+                        if (viewModel.results.isNotEmpty()) {
+                            items(viewModel.results, key = {
+                                it.id
+                            }) { fileInfo ->
+                                SearchItem(fileInfo = fileInfo, navController = navController)
+                            }
+                        } else {
+                            item {
+                                NoResultsFound()
+                            }
                         }
+
                     } else {
                         items(searchedElements) {
                             Row(
@@ -194,6 +206,30 @@ fun SearchScreen(viewModel: SearchViewModel, navController: NavController) {
 }
 
 @Composable
+fun NoResultsFound() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.baseline_search_off_24),
+            contentDescription = "No Results",
+            modifier = Modifier.size(64.dp),
+            tint = Color.Gray
+        )
+        Text(
+            text = "No results found",
+            style = MaterialTheme.typography.headlineMedium,
+            color = Color.Gray,
+            modifier = Modifier.padding(top = 8.dp)
+        )
+    }
+}
+
+@Composable
 fun LoadingShimmerSearchScreen(modifier: Modifier = Modifier) {
     LazyColumn(
         modifier = Modifier,
@@ -205,8 +241,7 @@ fun LoadingShimmerSearchScreen(modifier: Modifier = Modifier) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .shimmer(),
-                shape = RoundedCornerShape(16.dp)
+                    .shimmer(), shape = RoundedCornerShape(16.dp)
             ) {
                 Row(
                     Modifier
@@ -221,8 +256,7 @@ fun LoadingShimmerSearchScreen(modifier: Modifier = Modifier) {
                             .weight(.85f)
                     ) {
                         Text(
-                            text = "",
-                            style = MaterialTheme.typography.titleMedium
+                            text = "", style = MaterialTheme.typography.titleMedium
                         )
                     }
                     Box(
@@ -245,17 +279,17 @@ fun SearchItem(fileInfo: FileInfo, navController: NavController) {
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.algoCard()
     ) {
-        Row(Modifier
-            .fillMaxSize()
-            .clickable {
-                navController.navigate(
-                    fileInfo.toCodeScreen()
-                )
-            }
-            .padding(12.dp),
+        Row(
+            Modifier
+                .fillMaxSize()
+                .clickable {
+                    navController.navigate(
+                        fileInfo.toCodeScreen()
+                    )
+                }
+                .padding(12.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+            verticalAlignment = Alignment.CenterVertically) {
             Column(
                 Modifier
                     .fillMaxHeight()

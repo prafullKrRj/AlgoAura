@@ -13,4 +13,5 @@ interface RoomHelper {
     suspend fun toggle(algorithm: Algorithm)
     fun getSearchedAlgorithms(): Flow<List<SearchedEntity>>
     suspend fun insertSearchedText(searchedEntity: SearchedEntity)
+    suspend fun deleteAlgos(selectedAlgos: List<AlgorithmEntity>)
 }

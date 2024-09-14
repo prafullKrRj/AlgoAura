@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,10 +33,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.prafull.algorithms.Routes
-import com.prafull.algorithms.commons.AskAiChip
-import com.prafull.algorithms.commons.AskAiDialog
-import com.prafull.algorithms.commons.CodeScreenBottomBar
-import com.prafull.algorithms.commons.CodeScreenTopAppBar
+import com.prafull.algorithms.commons.ads.BannerAdView
+import com.prafull.algorithms.commons.ads.InterstitialAdManager
+import com.prafull.algorithms.commons.components.AskAiDialog
+import com.prafull.algorithms.commons.components.CodeScreenBottomBar
+import com.prafull.algorithms.commons.components.CodeScreenTopAppBar
 import com.prafull.algorithms.goBackStack
 import com.prafull.algorithms.screens.ai.PromptField
 import com.prafull.algorithms.utils.BaseClass
@@ -71,11 +73,11 @@ fun CodeScreen(viewModel: CodeViewModel, navController: NavController) {
             CodeScreenBottomBar(viewModel.algorithm!!.code)
         }
     }, floatingActionButton = {
-        if (viewModel.algorithm != null) {
-            AskAiChip {
-                goToAiDialogBox = true
-            }
-        }
+        /*   if (viewModel.algorithm != null) {
+               AskAiChip {
+                   goToAiDialogBox = true
+               }
+           }*/
     }) { paddingValues ->
         Column(
             modifier = Modifier
@@ -84,6 +86,7 @@ fun CodeScreen(viewModel: CodeViewModel, navController: NavController) {
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
+            BannerAdView()
             when (state) {
 
                 is BaseClass.Loading -> {
@@ -104,21 +107,36 @@ fun CodeScreen(viewModel: CodeViewModel, navController: NavController) {
                     CodeTextView(highlights = highlights)
                 }
 
+
                 is BaseClass.Error -> {
-                    //Text(text = (state as BaseClass.Error).message)
+                    Text(text = (state as BaseClass.Error).message)
                 }
             }
         }
+    }
+    var showInterstitialAd by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var currMessage by rememberSaveable {
+        mutableStateOf("")
     }
     if (goToAiDialogBox) {
         AskAiDialog(onDismiss = {
             goToAiDialogBox = false
         }) {
+            goToAiDialogBox = false
+            showInterstitialAd = true
+            currMessage = it
+        }
+    }
+    if (showInterstitialAd) {
+        InterstitialAdManager(adUnitId = "ca-app-pub-3940256099942544/1033173712") {
+            showInterstitialAd = false
             navController.navigate(
                 Routes.AskAi(
                     code = viewModel.algorithm!!.code,
                     programName = viewModel.programName,
-                    message = it,
+                    message = currMessage,
                     language = viewModel.algorithm!!.language.name
                 )
             )
@@ -129,9 +147,7 @@ fun CodeScreen(viewModel: CodeViewModel, navController: NavController) {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GoToAiDialog(
-    onDismiss: () -> Unit = {},
-    navController: NavController,
-    askAi: Routes.AskAi
+    onDismiss: () -> Unit = {}, navController: NavController, askAi: Routes.AskAi
 ) {
     val promptValue = remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
@@ -159,16 +175,12 @@ fun GoToAiDialog(
 
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     predefinedPrompts.forEachIndexed { index, prompt ->
-                        FilterChip(
-                            label = {
-                                Text(text = prompt)
-                            },
-                            selected = index == selectedPrompt.intValue,
-                            onClick = {
-                                selectedPrompt.intValue = index
-                                promptValue.value = prompt
-                            }
-                        )
+                        FilterChip(label = {
+                            Text(text = prompt)
+                        }, selected = index == selectedPrompt.intValue, onClick = {
+                            selectedPrompt.intValue = index
+                            promptValue.value = prompt
+                        })
                     }
                 }
 

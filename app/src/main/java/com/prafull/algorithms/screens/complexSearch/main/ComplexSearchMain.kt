@@ -28,7 +28,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.prafull.algorithms.ComplexRoutes
-import com.prafull.algorithms.commons.CustomSearchBar
+import com.prafull.algorithms.commons.components.CustomSearchBar
 import com.prafull.algorithms.utils.BaseClass
 import com.valentinilk.shimmer.shimmer
 

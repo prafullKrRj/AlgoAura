@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.prafull.algorithms.ComplexRoutes
 import com.prafull.algorithms.R
-import com.prafull.algorithms.commons.CustomSearchBar
+import com.prafull.algorithms.commons.components.CustomSearchBar
 import com.prafull.algorithms.goBackStack
 import com.prafull.algorithms.screens.complexSearch.main.ComplexSearchVM
 import com.valentinilk.shimmer.shimmer

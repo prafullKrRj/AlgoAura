@@ -60,6 +60,15 @@ fun HomeScreen(viewModel: AlgoViewModel, navController: NavController) {
     Scaffold(topBar = {
         TopAppBar(title = {
             Text(text = "AlgoAura")
+        }, actions = {
+            /*  AssistChip(
+                  onClick = {
+
+                  },
+                  label = {
+                      Text(text = "500 ✨")
+                  }
+              )*/
         })
     }) { paddingValues ->
         Column(
