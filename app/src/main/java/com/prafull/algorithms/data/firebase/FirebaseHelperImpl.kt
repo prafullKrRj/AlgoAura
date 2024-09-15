@@ -13,6 +13,8 @@ import com.prafull.algorithms.models.FolderInfo
 import com.prafull.algorithms.models.ProgrammingLanguage
 import com.prafull.algorithms.utils.BaseClass
 import com.prafull.algorithms.utils.Const
+import com.prafull.algorithms.utils.getFileName
+import com.prafull.algorithms.utils.getFormattedNameExtension
 import com.prafull.algorithms.utils.getLanguageFromString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
@@ -64,7 +66,7 @@ class FirebaseHelperImpl(
                     id = document.get("id") as String,
                     code = document.get("content") as String,
                     language = language,
-                    title = document.id,
+                    title = getFileName(document.id).getFormattedNameExtension(),
                     langName = language.languageGenerics,
                     extension = language.extension
                 )
@@ -99,6 +101,7 @@ class FirebaseHelperImpl(
             awaitClose { }
         }
     }
+
     // get list of documents from algos collection for search screen
     override suspend fun getListOfDocuments(query: String): Flow<BaseClass<List<FileInfo>>> {
         return callbackFlow {

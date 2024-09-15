@@ -114,7 +114,7 @@ fun FolderScreen(
                                         }
                                         .padding(8.dp)
                                 ) {
-                                    Text(text = getFormattedName(getFileName(algorithm.name))) // TODO
+                                    Text(text = getFormattedName(getFileName(algorithm.name)))
                                 }
                             }
                         }

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AlgoDao {
-    @Query("SELECT * FROM AlgorithmEntity")
+    @Query("SELECT * FROM AlgorithmEntity order by time desc")
     fun getAllAlgorithms(): Flow<List<AlgorithmEntity>>
 
     @Insert
