@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -94,9 +94,9 @@ fun FolderScreen(
                         contentPadding = PaddingValues(12.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(data, key = {
-                            "${it.path}-${it.name}"
-                        }) { file ->
+                        itemsIndexed(data, key = { idx, _ ->
+                            idx
+                        }) { _, algorithm ->
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(12.dp),
@@ -109,12 +109,12 @@ fun FolderScreen(
                                         .fillMaxSize()
                                         .clickable {
                                             navController.navigate(
-                                                file.toCodeScreen()
+                                                algorithm.toCodeScreen()
                                             )
                                         }
                                         .padding(8.dp)
                                 ) {
-                                    Text(text = getFormattedName(getFileName(file.name)))
+                                    Text(text = getFormattedName(getFileName(algorithm.name))) // TODO
                                 }
                             }
                         }

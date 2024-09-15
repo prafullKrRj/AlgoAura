@@ -2,7 +2,7 @@ package com.prafull.algorithms
 
 import com.prafull.algorithms.data.local.AlgorithmEntity
 import com.prafull.algorithms.models.FileInfo
-import com.prafull.algorithms.models.ProgrammingLanguage
+import com.prafull.algorithms.utils.getLanguageFromString
 import kotlinx.serialization.Serializable
 
 sealed interface Routes {
@@ -31,10 +31,14 @@ sealed interface Routes {
         val path: String,
         val langName: String
     ) : Routes {
-        fun toFileInfo() = FileInfo(
-            id = id, name = name, path = path, language = ProgrammingLanguage.valueOf(langName)
-        )
-
+        fun toFileInfo(): FileInfo {
+            return FileInfo(
+                id = id,
+                name = name,
+                path = path,
+                language = getLanguageFromString(langName)
+            )
+        }
     }
 
     @Serializable

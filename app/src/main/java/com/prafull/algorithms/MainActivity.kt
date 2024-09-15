@@ -130,7 +130,7 @@ fun App() {
             }
             composable<Routes.CodeScreen> {
                 val path = it.toRoute<Routes.CodeScreen>()
-                val codeViewModel: CodeViewModel = koinViewModel { parametersOf(path.toFileInfo()) }
+                val codeViewModel: CodeViewModel = koinViewModel { parametersOf(path) }
                 CodeScreen(viewModel = codeViewModel, navController)
             }
             composable<Routes.FavouriteCodeScreen> {

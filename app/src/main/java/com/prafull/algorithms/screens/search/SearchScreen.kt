@@ -186,6 +186,7 @@ fun SearchScreen(viewModel: SearchViewModel, navController: NavController) {
                                     .clickable {
                                         viewModel.query = it.searchedText
                                         viewModel.search(it)
+                                        isSearching = true
                                         focusManager.clearFocus()
                                     }
                                     .padding(8.dp),

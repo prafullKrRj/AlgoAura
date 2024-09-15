@@ -12,6 +12,10 @@ data class FileInfo(
         id = id,
         name = name,
         path = path,
-        langName = language.name
+        langName = name.getLanguageNameFromFileName()
     )
+}
+
+fun String.getLanguageNameFromFileName(): String {
+    return this.removeSuffix(".md").split(".").last()
 }

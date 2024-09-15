@@ -13,8 +13,6 @@ import com.prafull.algorithms.models.FolderInfo
 import com.prafull.algorithms.models.ProgrammingLanguage
 import com.prafull.algorithms.utils.BaseClass
 import com.prafull.algorithms.utils.Const
-import com.prafull.algorithms.utils.getFileName
-import com.prafull.algorithms.utils.getFormattedName
 import com.prafull.algorithms.utils.getLanguageFromString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
@@ -28,19 +26,21 @@ class FirebaseHelperImpl(
     private val storage: FirebaseStorage, private val db: FirebaseFirestore
 ) : FirebaseHelper {
 
+    // get algorithms into a particular folder in home screen like C++ -> Bit Manipulation -> algos
     override fun getAlgorithms(path: String): Flow<BaseClass<List<FileInfo>>> {
         return callbackFlow {
             try {
+                Log.d("FirebaseHelper", "Path: $path")
                 val pathDetails = path.split("/")
-                Log.d("FirebaseHelper", "Path: $pathDetails")
-                val docRef = db.collection(Const.LANGUAGES).document(pathDetails[0])
-                    .collection(pathDetails[1]).get().await()
-                val fileInfoList = docRef.documents.map { doc ->
+                val doc = db.collection(Const.LANGUAGES).document(pathDetails[0])
+                    .collection(pathDetails[1]).document("algos").get().await()
+                val list = doc.get("algos") as List<Map<String, String>>
+                val fileInfoList = list.map {
                     FileInfo(
-                        id = doc.get("id") as String,
-                        name = doc.id,
-                        path = doc.get("path") as String,
-                        language = getLanguageFromString(doc.id)
+                        id = it["id"] ?: "",
+                        name = it["name"] ?: "",
+                        path = path + "/" + it["name"],
+                        language = getLanguageFromString(it["name"] ?: "")
                     )
                 }
                 trySend(BaseClass.Success(fileInfoList))
@@ -51,31 +51,26 @@ class FirebaseHelperImpl(
         }
     }
 
+    // get algorithms into a particular folder in home screen like C++ -> Bit Manipulation -> algos -> particular algorithm
     override fun getAlgorithm(fileInfo: FileInfo): Flow<BaseClass<Algorithm>> {
         return callbackFlow {
             trySend(BaseClass.Loading)
             try {
-                val file = storage.reference.child(fileInfo.path)
-                val localFile = File.createTempFile("tempMarkdown", ".md")
-                val x = file.getFile(localFile).await()
-                if (x != null) {
-                    val code = localFile.readText()
-                    val language = getLanguageFromString(file.name)
-                    val algorithm = Algorithm(
-                        id = fileInfo.id,
-                        code = code,
-                        language = language,
-                        title = getFormattedName(
-                            getFileName(file.name)
-                        ),
-                        langName = language.languageGenerics,
-                        extension = language.extension
-                    )
-                    Log.d("FirebaseHelper", "Algorithm: $algorithm")
-                    trySend(BaseClass.Success(algorithm))
-                } else {
-                    trySend(BaseClass.Error("File not found"))
-                }
+                val language = getLanguageFromString(fileInfo.name)
+                val pathDetails = fileInfo.path.split("/")
+                val document = db.collection(Const.LANGUAGES).document(pathDetails[0])
+                    .collection(pathDetails[1]).document(fileInfo.name).get().await()
+                val algo = Algorithm(
+                    id = document.get("id") as String,
+                    code = document.get("content") as String,
+                    language = language,
+                    title = document.id,
+                    langName = language.languageGenerics,
+                    extension = language.extension
+                )
+                trySend(
+                    BaseClass.Success(algo)
+                )
             } catch (e: Exception) {
                 trySend(BaseClass.Error(e.message ?: "An error occurred"))
             }
@@ -104,7 +99,7 @@ class FirebaseHelperImpl(
             awaitClose { }
         }
     }
-
+    // get list of documents from algos collection for search screen
     override suspend fun getListOfDocuments(query: String): Flow<BaseClass<List<FileInfo>>> {
         return callbackFlow {
             try {
@@ -113,34 +108,19 @@ class FirebaseHelperImpl(
                 val normalizedQuery = query.replace("_", " ").lowercase()
                 val regexQuery = Regex(".*${normalizedQuery.replace(" ", ".*")}.*")
 
-                val response = db.collection("Languages")
-                val documents = response.get().await()
-                val fileInfoList = mutableListOf<FileInfo>()
-
-                for (document in documents) {
-                    val folders = document.get("folders") as List<String>
-                    for (collection in folders) {
-                        val docRef = db.collection(Const.LANGUAGES).document(document.id)
-                            .collection(collection).get().await()
-                        for (doc in docRef) {
-                            val docName = doc.id.lowercase().replace("_", " ")
-                            if (regexQuery.matches(docName) || regexQuery.matches(
-                                    doc.getString("content")?.lowercase().orEmpty()
-                                )
-                            ) {
-                                fileInfoList.add(
-                                    FileInfo(
-                                        id = doc.get("id") as String,
-                                        name = doc.id,
-                                        path = doc.get("path") as String,
-                                        language = getLanguageFromString(doc.id)
-                                    )
-                                )
-                            }
-                        }
-                    }
+                val response = db.collection("Algorithms").document("algos").get().await()
+                val list = response.get("algos") as List<Map<String, Any>>
+                Log.d("FirebaseHelper", "List: $list")
+                val fileInfoList = list.map {
+                    FileInfo(
+                        id = it["id"] as String,
+                        name = it["name"] as String,
+                        path = it["path"] as String,
+                        language = getLanguageFromString(it["name"] as String)
+                    )
+                }.filter {
+                    regexQuery.matches(it.name.lowercase().replace("+", " ").replace("-", " "))
                 }
-
                 trySend(BaseClass.Success(fileInfoList))
             } catch (e: Exception) {
                 Log.d("FirebaseHelper", "Error: ${e.message}")
@@ -213,16 +193,14 @@ class FirebaseHelperImpl(
         return callbackFlow {
             try {
                 val doc = db.collection("rosettalang").document(lang).get().await()
-                val data = ComplexLanguageData(
-                    name = doc.id,
+                val data = ComplexLanguageData(name = doc.id,
                     extension = doc.get("extension") as String,
                     langDescription = doc.get("language") as String,
                     files = (doc.get("algos") as List<String>).map {
                         ComplexLanguageFiles(
                             name = it
                         )
-                    }
-                )
+                    })
                 trySend(BaseClass.Success(data))
             } catch (e: Exception) {
                 trySend(BaseClass.Error(e.message ?: "Error", exception = e))
@@ -233,8 +211,7 @@ class FirebaseHelperImpl(
     }
 
     override suspend fun getComplexLanguageAlgo(
-        lang: String,
-        algo: String
+        lang: String, algo: String
     ): Flow<BaseClass<ComplexLanguageAlgo>> {
         return callbackFlow {
             try {
@@ -252,9 +229,7 @@ class FirebaseHelperImpl(
                 trySend(
                     BaseClass.Success(
                         ComplexLanguageAlgo(
-                            algoName = algo,
-                            task = task ?: "",
-                            langCode = res
+                            algoName = algo, task = task ?: "", langCode = res
                         )
                     )
                 )

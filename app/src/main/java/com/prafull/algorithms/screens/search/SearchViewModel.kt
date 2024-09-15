@@ -1,5 +1,6 @@
 package com.prafull.algorithms.screens.search
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -63,6 +64,7 @@ class SearchViewModel : ViewModel(), KoinComponent {
             firebase.getListOfDocuments(query.lowercase()).collectLatest { resp ->
                 when (resp) {
                     is BaseClass.Success -> {
+                        Log.d("SearchViewModel", "search: ${resp.data}")
                         searchResults = resp.data
                         loading = false
                         languages = searchResults.map { it.language }.distinct()

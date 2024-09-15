@@ -11,13 +11,15 @@ import com.prafull.algorithms.utils.BaseClass
 import kotlinx.coroutines.flow.Flow
 
 interface FirebaseHelper {
+
+    // get algorithms into a particular folder in home screen like C++ -> Bit Manipulation -> algos -> particular algorithm
     fun getAlgorithm(fileInfo: FileInfo): Flow<BaseClass<Algorithm>>      // Get the algorithm
 
+    // get algorithms into a particular folder in home screen like C++ -> Bit Manipulation -> algos
     fun getAlgorithms(path: String): Flow<BaseClass<List<FileInfo>>>        // Get all the algorithms in a group
-    fun getAlgoGroups(language: ProgrammingLanguage): Flow<BaseClass<List<FolderInfo>>> // Get all the groups of algorithms
+    fun getAlgoGroups(language: ProgrammingLanguage): Flow<BaseClass<List<FolderInfo>>> // Get all the groups of algorithm
 
-    suspend fun getListOfDocuments(query: String): Flow<BaseClass<List<FileInfo>>>
-
+    suspend fun getListOfDocuments(query: String): Flow<BaseClass<List<FileInfo>>> //*/
 
     suspend fun getComplexLanguages(): Flow<BaseClass<List<String>>> // Get all the languages
     suspend fun getComplexSearchResults(query: String): Flow<BaseClass<List<String>>>
