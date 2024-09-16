@@ -3,6 +3,8 @@ package com.prafull.algorithms.utils
 
 object Const {
 
+    const val API_KEY_PREF = "api_key"
+    const val PREF_KEY = "apiKey"
     const val ALGORITHMS = "algorithms"
     const val LANGUAGES = "Languages"
 

@@ -1,5 +1,6 @@
 package com.prafull.algorithms.screens.code
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,6 +11,7 @@ import com.prafull.algorithms.data.firebase.FirebaseHelper
 import com.prafull.algorithms.data.room.RoomHelper
 import com.prafull.algorithms.models.Algorithm
 import com.prafull.algorithms.utils.BaseClass
+import com.prafull.algorithms.utils.Const
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,6 +35,9 @@ class CodeViewModel(
     val state get() = _state.asStateFlow()
 
     var algorithm by mutableStateOf<Algorithm?>(null)
+
+    fun isKeySaved(context: Context) =
+        context.getSharedPreferences(Const.API_KEY_PREF, Context.MODE_PRIVATE).getBoolean("isKeySaved", false)
 
     fun toggleFav() {
         isFav = !isFav

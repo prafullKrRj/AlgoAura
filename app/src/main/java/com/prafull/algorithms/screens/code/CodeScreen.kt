@@ -1,5 +1,6 @@
 package com.prafull.algorithms.screens.code
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +29,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -35,6 +37,7 @@ import androidx.navigation.NavController
 import com.prafull.algorithms.Routes
 import com.prafull.algorithms.commons.ads.BannerAdView
 import com.prafull.algorithms.commons.ads.InterstitialAdManager
+import com.prafull.algorithms.commons.components.AskAiChip
 import com.prafull.algorithms.commons.components.AskAiDialog
 import com.prafull.algorithms.commons.components.CodeScreenBottomBar
 import com.prafull.algorithms.commons.components.CodeScreenTopAppBar
@@ -60,6 +63,7 @@ fun CodeScreen(viewModel: CodeViewModel, navController: NavController) {
     var goToAiDialogBox by remember {
         mutableStateOf(false)
     }
+    val context = LocalContext.current
     Scaffold(topBar = {
         CodeScreenTopAppBar(
             isFavorite = viewModel.isFav,
@@ -73,11 +77,17 @@ fun CodeScreen(viewModel: CodeViewModel, navController: NavController) {
             CodeScreenBottomBar(viewModel.algorithm!!.code)
         }
     }, floatingActionButton = {
-        /*   if (viewModel.algorithm != null) {
-               AskAiChip {
-                   goToAiDialogBox = true
-               }
-           }*/
+        if (viewModel.algorithm != null) {
+            AskAiChip {
+                if (viewModel.isKeySaved(context)) {
+                    goToAiDialogBox = true
+                } else {
+                    Toast.makeText(context, "Please save your API Key first", Toast.LENGTH_SHORT)
+                        .show()
+                    navController.navigate(Routes.EnrollToAi)
+                }
+            }
+        }
     }) { paddingValues ->
         Column(
             modifier = Modifier

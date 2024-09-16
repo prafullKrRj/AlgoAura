@@ -46,6 +46,11 @@ sealed interface Routes {
         val code: String, val programName: String, val message: String, val language: String
     ) : Routes
 
+    @Serializable
+    data object EnrollToAi : Routes
+
+    @Serializable
+    data object HowToCreateApiKey : Routes
 
     @Serializable
     data class FavouriteCodeScreen(

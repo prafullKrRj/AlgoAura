@@ -1,5 +1,6 @@
 package com.prafull.algorithms.screens.complexSearch.algoScreen
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -10,6 +11,7 @@ import com.prafull.algorithms.ComplexRoutes
 import com.prafull.algorithms.data.firebase.FirebaseHelper
 import com.prafull.algorithms.models.ComplexLanguageAlgo
 import com.prafull.algorithms.utils.BaseClass
+import com.prafull.algorithms.utils.Const
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -53,5 +55,8 @@ class ComplexLanguageAlgoVM(
             }
         }
     }
+
+    fun isKeySaved(context: Context) =
+        context.getSharedPreferences(Const.API_KEY_PREF, Context.MODE_PRIVATE).getBoolean("isKeySaved", false)
 
 }

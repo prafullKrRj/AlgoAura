@@ -1,6 +1,7 @@
 package com.prafull.algorithms.screens.complexSearch.algoScreen
 
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -42,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
@@ -49,6 +51,7 @@ import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichText
 import com.prafull.algorithms.Routes
 import com.prafull.algorithms.commons.ads.InterstitialAdManager
+import com.prafull.algorithms.commons.components.AskAiChip
 import com.prafull.algorithms.commons.components.AskAiDialog
 import com.prafull.algorithms.goBackStack
 import com.prafull.algorithms.models.ComplexLanguageAlgo
@@ -108,8 +111,7 @@ fun LanguageAlgoScreen(viewModel: ComplexLanguageAlgoVM, navController: NavContr
                             ) + "..." else algo.task,
                             language = viewModel.lang,
                             programName = viewModel.selectedAlgo.getFormattedNameExtension()
-                        ),
-                        navController = navController
+                        ), navController = navController, viewModel
                     )
                 }
             }
@@ -150,7 +152,9 @@ data class DummyAlgoData(
 )
 
 @Composable
-private fun LanguageAlgoSuccess(algo: DummyAlgoData, navController: NavController) {
+private fun LanguageAlgoSuccess(
+    algo: DummyAlgoData, navController: NavController, viewModel: ComplexLanguageAlgoVM
+) {
     val taskState = rememberRichTextState()
     LaunchedEffect(key1 = Unit) {
         taskState.setMarkdown(algo.shorterTask)
@@ -225,7 +229,7 @@ private fun LanguageAlgoSuccess(algo: DummyAlgoData, navController: NavControlle
                 }
                 CodeTextView(highlights = highlights, modifier = Modifier.padding(12.dp))
                 NavigateToAiChip(
-                    algo = algo, navController = navController, idx = idx
+                    algo = algo, navController = navController, idx = idx, viewModel = viewModel
                 )
             }
         }
@@ -237,7 +241,8 @@ fun NavigateToAiChip(
     modifier: Modifier = Modifier,
     algo: DummyAlgoData,
     navController: NavController,
-    idx: Int
+    idx: Int,
+    viewModel: ComplexLanguageAlgoVM
 ) {
     var showDialog by remember {
         mutableStateOf(false)
@@ -248,15 +253,20 @@ fun NavigateToAiChip(
     var currMessage by rememberSaveable {
         mutableStateOf("")
     }
+    val context = LocalContext.current
     Row(
         Modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp), horizontalArrangement =
-        Arrangement.End
+            .padding(horizontal = 12.dp), horizontalArrangement = Arrangement.End
     ) {
-        /*  AskAiChip {
-              showDialog = !showDialog
-          }*/
+        AskAiChip {
+            if (viewModel.isKeySaved(context)) {
+                showDialog = true
+            } else {
+                Toast.makeText(context, "Please save your API Key first", Toast.LENGTH_SHORT).show()
+                navController.navigate(Routes.EnrollToAi)
+            }
+        }
     }
     if (showDialog) {
         AskAiDialog(onDismiss = {

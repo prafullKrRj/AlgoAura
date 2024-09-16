@@ -53,6 +53,8 @@ import com.prafull.algorithms.screens.complexSearch.main.ComplexSearchMain
 import com.prafull.algorithms.screens.complexSearch.main.ComplexSearchVM
 import com.prafull.algorithms.screens.complexSearch.search.ComplexSearchScreen
 import com.prafull.algorithms.screens.complexSearch.searchedAlgo.ComplexSearchResultScreen
+import com.prafull.algorithms.screens.enrollToAi.EnrollingScreen
+import com.prafull.algorithms.screens.enrollToAi.howToCreateApiKey.HowToCreateApiKeyScreen
 import com.prafull.algorithms.screens.favourites.FavouriteCodeScreen
 import com.prafull.algorithms.screens.favourites.FavouriteScreen
 import com.prafull.algorithms.screens.folder.FolderScreen
@@ -143,6 +145,12 @@ fun App() {
                 AskAi(chatViewModel, navController)
             }
             complexNav(complexVM, navController)
+            composable<Routes.EnrollToAi> {
+                EnrollingScreen(viewModel = koinViewModel(), navController)
+            }
+            composable<Routes.HowToCreateApiKey> {
+                HowToCreateApiKeyScreen(navController = navController, viewModel = koinViewModel())
+            }
         }
     }
 }
@@ -256,6 +264,8 @@ fun canShowBottomBar(current: String): Boolean {
             && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchScreen"
             && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchResultScreen/{algoName}"
             && current != "com.prafull.algorithms.ComplexRoutes.ComplexLanguageAlgoRoute/{algo}/{lang}"
+            && current != "com.prafull.algorithms.Routes.EnrollToAi"
+            && current != "com.prafull.algorithms.Routes.HowToCreateApiKey"
 }
 
 fun NavController.goBackStack() {

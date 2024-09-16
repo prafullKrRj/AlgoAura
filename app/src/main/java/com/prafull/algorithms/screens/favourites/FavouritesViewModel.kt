@@ -1,5 +1,6 @@
 package com.prafull.algorithms.screens.favourites
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -7,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prafull.algorithms.data.local.AlgorithmEntity
 import com.prafull.algorithms.data.room.RoomHelper
+import com.prafull.algorithms.utils.Const
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -30,6 +32,10 @@ class FavouritesViewModel : ViewModel(), KoinComponent {
             room.deleteAlgos(selectedAlgos)
         }
     }
+
+    fun isKeySaved(context: Context) =
+        context.getSharedPreferences(Const.API_KEY_PREF, Context.MODE_PRIVATE)
+            .getBoolean("isKeySaved", false)
 
     val favouriteAlgorithms = room.getAllAlgorithms()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(7000), emptyList())

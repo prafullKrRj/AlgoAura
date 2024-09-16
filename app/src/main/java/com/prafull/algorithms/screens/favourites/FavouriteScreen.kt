@@ -1,5 +1,6 @@
 package com.prafull.algorithms.screens.favourites
 
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
@@ -43,12 +44,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.prafull.algorithms.Routes
 import com.prafull.algorithms.commons.ads.InterstitialAdManager
+import com.prafull.algorithms.commons.components.AskAiChip
 import com.prafull.algorithms.commons.components.AskAiDialog
 import com.prafull.algorithms.commons.components.CodeScreenBottomBar
 import com.prafull.algorithms.commons.components.CodeScreenTopAppBar
@@ -227,6 +230,7 @@ fun FavouriteCodeScreen(
     var currMessage by rememberSaveable {
         mutableStateOf("")
     }
+    val context = LocalContext.current
     Scaffold(topBar = {
         CodeScreenTopAppBar(
             isFavorite = viewModel.isFav,
@@ -238,9 +242,15 @@ fun FavouriteCodeScreen(
     }, bottomBar = {
         CodeScreenBottomBar(algo.code)
     }, floatingActionButton = {
-        /* AskAiChip {
-             goToAiDialogBox = true
-         }*/
+        AskAiChip {
+            if (viewModel.isKeySaved(context)) {
+                goToAiDialogBox = true
+            } else {
+                Toast.makeText(context, "Please save your API Key first", Toast.LENGTH_SHORT)
+                    .show()
+                navController.navigate(Routes.EnrollToAi)
+            }
+        }
     }) { paddingValues ->
         Column(
             modifier = Modifier

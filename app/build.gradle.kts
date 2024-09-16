@@ -116,6 +116,8 @@ dependencies {
     implementation(libs.compose.shimmer)
     implementation(libs.play.services.ads)
 
+    // coil
+    implementation(libs.coil.compose)
 }
 kapt {
     correctErrorTypes = true

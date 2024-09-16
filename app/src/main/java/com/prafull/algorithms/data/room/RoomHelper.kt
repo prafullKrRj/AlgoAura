@@ -1,5 +1,7 @@
 package com.prafull.algorithms.data.room
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.prafull.algorithms.data.local.AlgorithmEntity
 import com.prafull.algorithms.data.local.SearchedEntity
 import com.prafull.algorithms.models.Algorithm
@@ -14,4 +16,6 @@ interface RoomHelper {
     fun getSearchedAlgorithms(): Flow<List<SearchedEntity>>
     suspend fun insertSearchedText(searchedEntity: SearchedEntity)
     suspend fun deleteAlgos(selectedAlgos: List<AlgorithmEntity>)
+
+
 }
