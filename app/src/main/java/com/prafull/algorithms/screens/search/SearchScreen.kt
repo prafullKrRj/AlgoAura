@@ -54,7 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.prafull.algorithms.R
 import com.prafull.algorithms.commons.components.CustomSearchBar
-import com.prafull.algorithms.data.local.SearchedEntity
+import com.prafull.algorithms.data.local.algo.SearchedEntity
 import com.prafull.algorithms.models.FileInfo
 import com.prafull.algorithms.models.ProgrammingLanguage
 import com.prafull.algorithms.ui.customColors.algoCard

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -68,6 +69,11 @@ fun ComplexSearchMain(viewModel: ComplexSearchVM, navController: NavController) 
                 is BaseClass.Error -> {
                     item {
                         Text(text = (complexLanguagesState as BaseClass.Error).message)
+                        Button(onClick = {
+                            viewModel.getComplexLanguagesList()
+                        }) {
+                            Text(text = "Retry")
+                        }
                     }
                 }
 

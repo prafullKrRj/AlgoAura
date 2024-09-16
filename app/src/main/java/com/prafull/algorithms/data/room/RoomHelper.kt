@@ -1,9 +1,7 @@
 package com.prafull.algorithms.data.room
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import com.prafull.algorithms.data.local.AlgorithmEntity
-import com.prafull.algorithms.data.local.SearchedEntity
+import com.prafull.algorithms.data.local.algo.AlgorithmEntity
+import com.prafull.algorithms.data.local.algo.SearchedEntity
 import com.prafull.algorithms.models.Algorithm
 import kotlinx.coroutines.flow.Flow
 

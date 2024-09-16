@@ -37,7 +37,8 @@ class CodeViewModel(
     var algorithm by mutableStateOf<Algorithm?>(null)
 
     fun isKeySaved(context: Context) =
-        context.getSharedPreferences(Const.API_KEY_PREF, Context.MODE_PRIVATE).getBoolean("isKeySaved", false)
+        context.getSharedPreferences(Const.API_KEY_PREF, Context.MODE_PRIVATE)
+            .getBoolean("isKeySaved", false)
 
     fun toggleFav() {
         isFav = !isFav

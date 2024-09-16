@@ -1,4 +1,4 @@
-package com.prafull.algorithms.data.local
+package com.prafull.algorithms.data.local.algo
 
 import androidx.room.Dao
 import androidx.room.Delete

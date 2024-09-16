@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.prafull.algorithms.data.local.AlgorithmEntity
+import com.prafull.algorithms.data.local.algo.AlgorithmEntity
 import com.prafull.algorithms.data.room.RoomHelper
 import com.prafull.algorithms.utils.Const
 import kotlinx.coroutines.flow.SharingStarted

@@ -1,8 +1,8 @@
 package com.prafull.algorithms.data.room
 
-import com.prafull.algorithms.data.local.AlgoDao
-import com.prafull.algorithms.data.local.AlgorithmEntity
-import com.prafull.algorithms.data.local.SearchedEntity
+import com.prafull.algorithms.data.local.algo.AlgoDao
+import com.prafull.algorithms.data.local.algo.AlgorithmEntity
+import com.prafull.algorithms.data.local.algo.SearchedEntity
 import com.prafull.algorithms.models.Algorithm
 import kotlinx.coroutines.flow.Flow
 

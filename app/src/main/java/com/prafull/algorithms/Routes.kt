@@ -1,6 +1,6 @@
 package com.prafull.algorithms
 
-import com.prafull.algorithms.data.local.AlgorithmEntity
+import com.prafull.algorithms.data.local.algo.AlgorithmEntity
 import com.prafull.algorithms.models.FileInfo
 import com.prafull.algorithms.utils.getLanguageFromString
 import kotlinx.serialization.Serializable
@@ -66,6 +66,9 @@ sealed interface Routes {
             )
         }
     }
+
+    @Serializable
+    data object DsaSheetScreen : Routes
 
     @Serializable
     data object ComplexScreens : Routes

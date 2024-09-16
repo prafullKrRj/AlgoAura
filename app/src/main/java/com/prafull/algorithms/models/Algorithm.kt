@@ -1,6 +1,6 @@
 package com.prafull.algorithms.models
 
-import com.prafull.algorithms.data.local.AlgorithmEntity
+import com.prafull.algorithms.data.local.algo.AlgorithmEntity
 
 
 data class Algorithm(

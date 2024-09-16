@@ -55,7 +55,7 @@ import com.prafull.algorithms.commons.components.AskAiChip
 import com.prafull.algorithms.commons.components.AskAiDialog
 import com.prafull.algorithms.commons.components.CodeScreenBottomBar
 import com.prafull.algorithms.commons.components.CodeScreenTopAppBar
-import com.prafull.algorithms.data.local.AlgorithmEntity
+import com.prafull.algorithms.data.local.algo.AlgorithmEntity
 import com.prafull.algorithms.goBackStack
 import com.prafull.algorithms.models.ProgrammingLanguage
 import com.prafull.algorithms.ui.customColors.algoCard

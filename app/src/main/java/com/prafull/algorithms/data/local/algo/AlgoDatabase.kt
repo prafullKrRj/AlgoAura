@@ -1,4 +1,4 @@
-package com.prafull.algorithms.data.local
+package com.prafull.algorithms.data.local.algo
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

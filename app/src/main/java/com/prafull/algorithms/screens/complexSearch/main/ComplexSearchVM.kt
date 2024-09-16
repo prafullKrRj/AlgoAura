@@ -74,7 +74,7 @@ class ComplexSearchVM : ViewModel(), KoinComponent {
         }
     }
 
-    private fun getComplexLanguagesList() {
+    fun getComplexLanguagesList() {
         viewModelScope.launch(Dispatchers.IO) {
             firestore.getComplexLanguages().collectLatest { response ->
                 _langs.update {

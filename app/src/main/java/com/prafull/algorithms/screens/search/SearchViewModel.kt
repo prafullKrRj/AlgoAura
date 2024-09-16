@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prafull.algorithms.data.firebase.FirebaseHelper
-import com.prafull.algorithms.data.local.SearchedEntity
+import com.prafull.algorithms.data.local.algo.SearchedEntity
 import com.prafull.algorithms.data.room.RoomHelper
 import com.prafull.algorithms.models.FileInfo
 import com.prafull.algorithms.models.ProgrammingLanguage

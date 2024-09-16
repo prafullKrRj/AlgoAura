@@ -53,6 +53,7 @@ import com.prafull.algorithms.screens.complexSearch.main.ComplexSearchMain
 import com.prafull.algorithms.screens.complexSearch.main.ComplexSearchVM
 import com.prafull.algorithms.screens.complexSearch.search.ComplexSearchScreen
 import com.prafull.algorithms.screens.complexSearch.searchedAlgo.ComplexSearchResultScreen
+import com.prafull.algorithms.screens.dsaSheet.DsaSheetScreen
 import com.prafull.algorithms.screens.enrollToAi.EnrollingScreen
 import com.prafull.algorithms.screens.enrollToAi.howToCreateApiKey.HowToCreateApiKeyScreen
 import com.prafull.algorithms.screens.favourites.FavouriteCodeScreen
@@ -151,6 +152,9 @@ fun App() {
             composable<Routes.HowToCreateApiKey> {
                 HowToCreateApiKeyScreen(navController = navController, viewModel = koinViewModel())
             }
+            composable<Routes.DsaSheetScreen> {
+                DsaSheetScreen(viewModel = koinViewModel())
+            }
         }
     }
 }
@@ -165,8 +169,7 @@ fun NavGraphBuilder.complexNav(complexVM: ComplexSearchVM, navController: NavCon
         composable<ComplexRoutes.ComplexSearchLanguage> {
             val data = it.toRoute<ComplexRoutes.ComplexSearchLanguage>()
             ComplexLanguageData(
-                viewModel = koinViewModel { parametersOf(data.lang) },
-                navController
+                viewModel = koinViewModel { parametersOf(data.lang) }, navController
             )
         }
         composable<ComplexRoutes.ComplexSearchScreen> {
@@ -175,8 +178,7 @@ fun NavGraphBuilder.complexNav(complexVM: ComplexSearchVM, navController: NavCon
         composable<ComplexRoutes.ComplexSearchResultScreen> {
             val data = it.toRoute<ComplexRoutes.ComplexSearchResultScreen>()
             ComplexSearchResultScreen(
-                viewModel = koinViewModel { parametersOf(data.algoName) },
-                navController
+                viewModel = koinViewModel { parametersOf(data.algoName) }, navController
             )
         }
         composable<ComplexRoutes.ComplexLanguageAlgoRoute> {
@@ -184,8 +186,7 @@ fun NavGraphBuilder.complexNav(complexVM: ComplexSearchVM, navController: NavCon
             Log.d("Bugger", data.toString())
             val vm: ComplexLanguageAlgoVM = koinViewModel { parametersOf(data) }
             LanguageAlgoScreen(
-                viewModel = vm,
-                navController = navController
+                viewModel = vm, navController = navController
             )
         }
     }
@@ -193,7 +194,6 @@ fun NavGraphBuilder.complexNav(complexVM: ComplexSearchVM, navController: NavCon
 
 @Composable
 fun BottomNavigationBar(selected: Int, onClick: (Routes, Int) -> Unit) {
-
     NavigationBar(Modifier.fillMaxWidth()) {
         BottomBarItems().items.forEachIndexed { index, item ->
             NavigationBarItem(icon = {
@@ -243,6 +243,11 @@ data class BottomBarItems(
             selected = false,
             route = ComplexRoutes.ComplexSearchMainScreen,
             drawableIcon = R.drawable.baseline_web_24
+        ), BottomBarItem(
+            title = "DSA Sheet",
+            selected = false,
+            route = Routes.DsaSheetScreen,
+            drawableIcon = R.drawable.baseline_checklist_24
         )
     )
 )
@@ -259,13 +264,7 @@ data class BottomBarItem(
 
 
 fun canShowBottomBar(current: String): Boolean {
-    return current != "com.prafull.algorithms.Routes.FolderScreen/{path}/{name}" && current != "com.prafull.algorithms.Routes.CodeScreen/{id}/{name}/{path}/{langName}" && current != "com.prafull.algorithms.Routes.FavouriteCodeScreen/{id}/{code}/{language}/{extension}?title={title}" && current != "com.prafull.algorithms.Routes.AskAi/{code}/{programName}/{message}/{language}"
-            && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchLanguage/{lang}"
-            && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchScreen"
-            && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchResultScreen/{algoName}"
-            && current != "com.prafull.algorithms.ComplexRoutes.ComplexLanguageAlgoRoute/{algo}/{lang}"
-            && current != "com.prafull.algorithms.Routes.EnrollToAi"
-            && current != "com.prafull.algorithms.Routes.HowToCreateApiKey"
+    return current != "com.prafull.algorithms.Routes.FolderScreen/{path}/{name}" && current != "com.prafull.algorithms.Routes.CodeScreen/{id}/{name}/{path}/{langName}" && current != "com.prafull.algorithms.Routes.FavouriteCodeScreen/{id}/{code}/{language}/{extension}?title={title}" && current != "com.prafull.algorithms.Routes.AskAi/{code}/{programName}/{message}/{language}" && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchLanguage/{lang}" && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchScreen" && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchResultScreen/{algoName}" && current != "com.prafull.algorithms.ComplexRoutes.ComplexLanguageAlgoRoute/{algo}/{lang}" && current != "com.prafull.algorithms.Routes.EnrollToAi" && current != "com.prafull.algorithms.Routes.HowToCreateApiKey"
 }
 
 fun NavController.goBackStack() {
