@@ -83,7 +83,7 @@ fun AiMessageBubble(
                         }
                         CodeTextView(
                             highlights = Highlights.Builder().code(item.code).theme(
-                                theme = SyntaxThemes.monokai()
+                                theme = SyntaxThemes.darcula()
                             ).build(), modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(8.dp)

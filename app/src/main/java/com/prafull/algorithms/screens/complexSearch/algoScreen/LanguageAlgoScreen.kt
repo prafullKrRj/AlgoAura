@@ -222,9 +222,7 @@ private fun LanguageAlgoSuccess(
                 val highlights = remember {
                     Highlights.Builder(code = code)
                         .language(getSyntaxLanguageFromString(algo.language)).theme(
-                            SyntaxThemes.monokai(
-                                darkMode = isDark
-                            )
+                            SyntaxThemes.darcula()
                         ).build()
                 }
                 CodeTextView(highlights = highlights, modifier = Modifier.padding(12.dp))

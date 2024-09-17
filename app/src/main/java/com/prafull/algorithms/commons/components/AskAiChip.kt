@@ -14,24 +14,19 @@ import com.prafull.algorithms.R
 
 @Composable
 fun AskAiChip(onClick: () -> Unit) {
-    AssistChip(
-        onClick = onClick,
-        label = {
-            Text("Ask AI")
-        },
-        leadingIcon = {
-            Icon(
-                painter = painterResource(id = R.drawable.ai),
-                contentDescription = null,
-                modifier = Modifier.size(24.dp)
-            )
-        },
-        enabled = true,
-        colors = AssistChipDefaults.assistChipColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-            labelColor = MaterialTheme.colorScheme.onTertiaryContainer,
-            leadingIconContentColor = MaterialTheme.colorScheme.onTertiaryContainer
+    AssistChip(onClick = onClick, label = {
+        Text("Ask AI")
+    }, leadingIcon = {
+        Icon(
+            painter = painterResource(id = R.drawable.ai),
+            contentDescription = null,
+            modifier = Modifier.size(24.dp)
         )
+    }, enabled = true, colors = AssistChipDefaults.assistChipColors(
+        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        labelColor = MaterialTheme.colorScheme.onTertiaryContainer,
+        leadingIconContentColor = MaterialTheme.colorScheme.onTertiaryContainer
+    )
     )
 
 }

@@ -98,6 +98,12 @@ fun AskAi(viewModel: ChatViewModel, navController: NavController) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
+
+    // Scroll to the bottom when a new message is added
+    LaunchedEffect(state.messages.size) {
+        listState.animateScrollToItem(0)
+    }
+
     Scaffold(topBar = {
         TopAppBar(title = {
             Text(text = getFileName(getFormattedName(viewModel.programName)))
@@ -299,7 +305,7 @@ fun ModelChatBubble(
 private fun AnimatedCode(visible: Boolean, code: String, language: SyntaxLanguage) {
     val context = LocalContext.current
     val highlights = remember {
-        Highlights.Builder(code = code).theme(SyntaxThemes.monokai()).language(
+        Highlights.Builder(code = code).theme(SyntaxThemes.darcula()).language(
             language = language
         ).build()
     }

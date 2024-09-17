@@ -233,28 +233,24 @@ data class BottomBarItems(
             selectedIcon = Icons.Filled.Home,
             unselectedIcon = Icons.Outlined.Home,
             route = Routes.HomeScreen
-        ),
-        BottomBarItem(
+        ), BottomBarItem(
             title = "Search",
             selected = false,
             selectedIcon = Icons.Filled.Search,
             unselectedIcon = Icons.Outlined.Search,
             route = Routes.Search
-        ),
-        BottomBarItem(
+        ), BottomBarItem(
             title = "DSA Sheet",
             selected = false,
             route = Routes.DsaSheetScreen,
             drawableIcon = R.drawable.baseline_checklist_24
-        ),
-        BottomBarItem(
+        ), BottomBarItem(
             title = "Favourites",
             selected = false,
             selectedIcon = Icons.Filled.Favorite,
             unselectedIcon = Icons.Outlined.FavoriteBorder,
             route = Routes.History
-        ),
-        BottomBarItem(
+        ), BottomBarItem(
             title = "Complex Search",
             selected = false,
             route = ComplexRoutes.ComplexSearchMainScreen,
@@ -275,8 +271,7 @@ data class BottomBarItem(
 
 
 fun canShowBottomBar(current: String): Boolean {
-    return current != "com.prafull.algorithms.Routes.FolderScreen/{path}/{name}" && current != "com.prafull.algorithms.Routes.CodeScreen/{id}/{name}/{path}/{langName}" && current != "com.prafull.algorithms.Routes.FavouriteCodeScreen/{id}/{code}/{language}/{extension}?title={title}" && current != "com.prafull.algorithms.Routes.AskAi/{code}/{programName}/{message}/{language}" && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchLanguage/{lang}" && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchScreen" && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchResultScreen/{algoName}" && current != "com.prafull.algorithms.ComplexRoutes.ComplexLanguageAlgoRoute/{algo}/{lang}" && current != "com.prafull.algorithms.Routes.EnrollToAi" && current != "com.prafull.algorithms.Routes.HowToCreateApiKey"
-            && current != "com.prafull.algorithms.Routes.DsaRevisionScreen"
+    return current != "com.prafull.algorithms.Routes.FolderScreen/{path}/{name}" && current != "com.prafull.algorithms.Routes.CodeScreen/{id}/{name}/{path}/{langName}" && current != "com.prafull.algorithms.Routes.FavouriteCodeScreen/{id}/{code}/{language}/{extension}?title={title}" && current != "com.prafull.algorithms.Routes.AskAi/{code}/{programName}/{message}/{language}" && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchLanguage/{lang}" && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchScreen" && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchResultScreen/{algoName}" && current != "com.prafull.algorithms.ComplexRoutes.ComplexLanguageAlgoRoute/{algo}/{lang}" && current != "com.prafull.algorithms.Routes.EnrollToAi" && current != "com.prafull.algorithms.Routes.HowToCreateApiKey" && current != "com.prafull.algorithms.Routes.DsaRevisionScreen"
 }
 
 fun NavController.goBackStack() {
