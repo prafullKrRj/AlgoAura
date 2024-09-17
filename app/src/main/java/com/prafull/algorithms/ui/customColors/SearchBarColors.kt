@@ -14,3 +14,13 @@ fun OutlinedTextFieldDefaults.algoColors(): TextFieldColors {
         unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
     )
 }
+
+@Composable
+fun OutlinedTextFieldDefaults.normalSearchBarColors(): TextFieldColors {
+    return this.colors(
+        focusedBorderColor = MaterialTheme.colorScheme.secondaryContainer,
+        unfocusedBorderColor = MaterialTheme.colorScheme.secondaryContainer,
+        focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+        unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer
+    )
+}

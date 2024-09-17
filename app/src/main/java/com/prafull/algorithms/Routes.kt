@@ -71,6 +71,9 @@ sealed interface Routes {
     data object DsaSheetScreen : Routes
 
     @Serializable
+    data object DsaRevisionScreen : Routes
+
+    @Serializable
     data object ComplexScreens : Routes
 }
 

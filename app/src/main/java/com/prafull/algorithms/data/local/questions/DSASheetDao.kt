@@ -45,4 +45,21 @@ interface DSASheetDao {
             insertQuestions(questions)
         }
     }
+
+    suspend fun updateQuestion(copy: QuestionEntity) {
+        insertQuestions(listOf(copy))
+    }
+
+    @Transaction
+    @Query(
+        """
+    SELECT * FROM TopicEntity 
+    WHERE topicId IN (
+        SELECT DISTINCT topicOwnerId 
+        FROM QuestionEntity 
+        WHERE revision = 1
+    )
+"""
+    )
+    fun getRevisionQuestions(): Flow<List<TopicWithQuestions>>
 }

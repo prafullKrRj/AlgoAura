@@ -53,7 +53,9 @@ import com.prafull.algorithms.screens.complexSearch.main.ComplexSearchMain
 import com.prafull.algorithms.screens.complexSearch.main.ComplexSearchVM
 import com.prafull.algorithms.screens.complexSearch.search.ComplexSearchScreen
 import com.prafull.algorithms.screens.complexSearch.searchedAlgo.ComplexSearchResultScreen
+import com.prafull.algorithms.screens.dsaSheet.DsaRevisionScreen
 import com.prafull.algorithms.screens.dsaSheet.DsaSheetScreen
+import com.prafull.algorithms.screens.dsaSheet.DsaSheetViewModel
 import com.prafull.algorithms.screens.enrollToAi.EnrollingScreen
 import com.prafull.algorithms.screens.enrollToAi.howToCreateApiKey.HowToCreateApiKeyScreen
 import com.prafull.algorithms.screens.favourites.FavouriteCodeScreen
@@ -153,7 +155,12 @@ fun App() {
                 HowToCreateApiKeyScreen(navController = navController, viewModel = koinViewModel())
             }
             composable<Routes.DsaSheetScreen> {
-                DsaSheetScreen(viewModel = koinViewModel())
+                DsaSheetScreen(viewModel = koinViewModel(), navController)
+            }
+            composable<Routes.DsaRevisionScreen> {
+                val dsaVm = getViewModel<DsaSheetViewModel>()
+                dsaVm.getRevisionQuestions()
+                DsaRevisionScreen(viewModel = dsaVm, navController = navController)
             }
         }
     }
@@ -226,28 +233,32 @@ data class BottomBarItems(
             selectedIcon = Icons.Filled.Home,
             unselectedIcon = Icons.Outlined.Home,
             route = Routes.HomeScreen
-        ), BottomBarItem(
+        ),
+        BottomBarItem(
             title = "Search",
             selected = false,
             selectedIcon = Icons.Filled.Search,
             unselectedIcon = Icons.Outlined.Search,
             route = Routes.Search
-        ), BottomBarItem(
+        ),
+        BottomBarItem(
+            title = "DSA Sheet",
+            selected = false,
+            route = Routes.DsaSheetScreen,
+            drawableIcon = R.drawable.baseline_checklist_24
+        ),
+        BottomBarItem(
             title = "Favourites",
             selected = false,
             selectedIcon = Icons.Filled.Favorite,
             unselectedIcon = Icons.Outlined.FavoriteBorder,
             route = Routes.History
-        ), BottomBarItem(
+        ),
+        BottomBarItem(
             title = "Complex Search",
             selected = false,
             route = ComplexRoutes.ComplexSearchMainScreen,
             drawableIcon = R.drawable.baseline_web_24
-        ), BottomBarItem(
-            title = "DSA Sheet",
-            selected = false,
-            route = Routes.DsaSheetScreen,
-            drawableIcon = R.drawable.baseline_checklist_24
         )
     )
 )
@@ -265,6 +276,7 @@ data class BottomBarItem(
 
 fun canShowBottomBar(current: String): Boolean {
     return current != "com.prafull.algorithms.Routes.FolderScreen/{path}/{name}" && current != "com.prafull.algorithms.Routes.CodeScreen/{id}/{name}/{path}/{langName}" && current != "com.prafull.algorithms.Routes.FavouriteCodeScreen/{id}/{code}/{language}/{extension}?title={title}" && current != "com.prafull.algorithms.Routes.AskAi/{code}/{programName}/{message}/{language}" && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchLanguage/{lang}" && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchScreen" && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchResultScreen/{algoName}" && current != "com.prafull.algorithms.ComplexRoutes.ComplexLanguageAlgoRoute/{algo}/{lang}" && current != "com.prafull.algorithms.Routes.EnrollToAi" && current != "com.prafull.algorithms.Routes.HowToCreateApiKey"
+            && current != "com.prafull.algorithms.Routes.DsaRevisionScreen"
 }
 
 fun NavController.goBackStack() {

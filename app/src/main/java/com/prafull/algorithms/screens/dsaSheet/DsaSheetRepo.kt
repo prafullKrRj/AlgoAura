@@ -1,6 +1,7 @@
 package com.prafull.algorithms.screens.dsaSheet
 
 import com.prafull.algorithms.data.local.questions.DSASheetDao
+import com.prafull.algorithms.data.local.questions.QuestionEntity
 import com.prafull.algorithms.data.local.questions.TopicWithQuestions
 import kotlinx.coroutines.flow.Flow
 import org.koin.core.component.KoinComponent
@@ -14,4 +15,11 @@ class DsaSheetRepo : KoinComponent {
         return dao.getAllTopicsWithQuestions()
     }
 
+    suspend fun updateQuestion(question: QuestionEntity) {
+        dao.updateQuestion(question)
+    }
+
+    fun getRevisionQuestions(): Flow<List<TopicWithQuestions>> {
+        return dao.getRevisionQuestions()
+    }
 }
