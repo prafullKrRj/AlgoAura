@@ -2,7 +2,7 @@ package com.prafull.algorithms.data.local.algo
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.prafull.algorithms.Routes
+import com.prafull.algorithms.FavouritesRoutes
 import com.prafull.algorithms.models.Algorithm
 import com.prafull.algorithms.models.ProgrammingLanguage
 
@@ -28,8 +28,8 @@ data class AlgorithmEntity(
         )
     }
 
-    fun toFavouriteCodeScreen(): Routes.FavouriteCodeScreen {
-        return Routes.FavouriteCodeScreen(
+    fun toFavouriteCodeScreen(): FavouritesRoutes.FavouriteCodeScreen {
+        return FavouritesRoutes.FavouriteCodeScreen(
             id = id,
             code = code,
             language = language,

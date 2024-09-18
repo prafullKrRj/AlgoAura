@@ -6,37 +6,25 @@ import com.prafull.algorithms.utils.getLanguageFromString
 import kotlinx.serialization.Serializable
 
 sealed interface Routes {
-    @Serializable
-    data object HomeScreen : Routes
+
 
     @Serializable
-    data class FolderScreen(
-        val path: String, val name: String
-    ) : Routes
-
-    @Serializable
-    data object Home : Routes
-
+    data object HomeRoutes : Routes
 
     @Serializable
     data object Search : Routes
 
     @Serializable
-    data object History : Routes
+    data object FavouriteRoutes : Routes
+
 
     @Serializable
     data class CodeScreen(
-        val id: String,
-        val name: String,
-        val path: String,
-        val langName: String
+        val id: String, val name: String, val path: String, val langName: String
     ) : Routes {
         fun toFileInfo(): FileInfo {
             return FileInfo(
-                id = id,
-                name = name,
-                path = path,
-                language = getLanguageFromString(langName)
+                id = id, name = name, path = path, language = getLanguageFromString(langName)
             )
         }
     }
@@ -47,10 +35,19 @@ sealed interface Routes {
     ) : Routes
 
     @Serializable
-    data object EnrollToAi : Routes
+    data object EnrollToAiRoute : Routes
 
     @Serializable
-    data object HowToCreateApiKey : Routes
+    data object DsaSheetRoutes : Routes
+
+    @Serializable
+    data object ComplexScreens : Routes
+}
+
+sealed interface FavouritesRoutes : Routes {
+
+    @Serializable
+    data object FavouriteScreen : Routes
 
     @Serializable
     data class FavouriteCodeScreen(
@@ -59,22 +56,41 @@ sealed interface Routes {
         val language: String,
         val extension: String,
         val title: String = ""
-    ) : Routes {
+    ) : FavouritesRoutes {
         fun toAlgorithmEntity(): AlgorithmEntity {
             return AlgorithmEntity(
                 id = id, code = code, language = language, extension = extension, title = title
             )
         }
     }
+}
+
+sealed interface DsaSheetRoutes : Routes {
+    @Serializable
+    data object DsaSheetScreen : DsaSheetRoutes
 
     @Serializable
-    data object DsaSheetScreen : Routes
+    data object DsaRevisionScreen : DsaSheetRoutes
+}
+
+sealed interface EnrollToAIRoutes : Routes {
+
 
     @Serializable
-    data object DsaRevisionScreen : Routes
+    data object EnrollToAi : EnrollToAIRoutes
 
     @Serializable
-    data object ComplexScreens : Routes
+    data object HowToCreateApiKey : EnrollToAIRoutes
+}
+
+sealed interface HomeRoutes : Routes {
+    @Serializable
+    data class FolderScreen(
+        val path: String, val name: String
+    ) : HomeRoutes
+
+    @Serializable
+    data object HomeScreen : HomeRoutes
 }
 
 sealed interface ComplexRoutes : Routes {
@@ -100,8 +116,6 @@ sealed interface ComplexRoutes : Routes {
     * */
     @Serializable
     data class ComplexLanguageAlgoRoute(
-        val algo: String,
-        val lang: String
-    ) : ComplexRoutes {
-    }
+        val algo: String, val lang: String
+    ) : ComplexRoutes {}
 }

@@ -9,65 +9,37 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.google.android.gms.ads.MobileAds
 import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
-import com.prafull.algorithms.screens.ai.AskAi
-import com.prafull.algorithms.screens.ai.ChatViewModel
-import com.prafull.algorithms.screens.code.CodeScreen
-import com.prafull.algorithms.screens.code.CodeViewModel
-import com.prafull.algorithms.screens.complexSearch.algoScreen.ComplexLanguageAlgoVM
-import com.prafull.algorithms.screens.complexSearch.algoScreen.LanguageAlgoScreen
-import com.prafull.algorithms.screens.complexSearch.lang.ComplexLanguageData
-import com.prafull.algorithms.screens.complexSearch.main.ComplexSearchMain
-import com.prafull.algorithms.screens.complexSearch.main.ComplexSearchVM
-import com.prafull.algorithms.screens.complexSearch.search.ComplexSearchScreen
-import com.prafull.algorithms.screens.complexSearch.searchedAlgo.ComplexSearchResultScreen
-import com.prafull.algorithms.screens.dsaSheet.DsaRevisionScreen
-import com.prafull.algorithms.screens.dsaSheet.DsaSheetScreen
-import com.prafull.algorithms.screens.dsaSheet.DsaSheetViewModel
-import com.prafull.algorithms.screens.enrollToAi.EnrollingScreen
-import com.prafull.algorithms.screens.enrollToAi.howToCreateApiKey.HowToCreateApiKeyScreen
-import com.prafull.algorithms.screens.favourites.FavouriteCodeScreen
-import com.prafull.algorithms.screens.favourites.FavouriteScreen
-import com.prafull.algorithms.screens.folder.FolderScreen
-import com.prafull.algorithms.screens.folder.FolderViewModel
-import com.prafull.algorithms.screens.home.AlgoViewModel
-import com.prafull.algorithms.screens.home.HomeScreen
-import com.prafull.algorithms.screens.search.SearchScreen
-import com.prafull.algorithms.screens.search.SearchViewModel
+import com.prafull.algorithms.features.ai.AskAi
+import com.prafull.algorithms.features.ai.ChatViewModel
+import com.prafull.algorithms.features.code.CodeScreen
+import com.prafull.algorithms.features.code.CodeViewModel
+import com.prafull.algorithms.features.complexSearch.ui.main.ComplexSearchVM
+import com.prafull.algorithms.features.homeScreen.home.AlgoViewModel
+import com.prafull.algorithms.features.search.SearchScreen
+import com.prafull.algorithms.features.search.SearchViewModel
 import com.prafull.algorithms.ui.theme.AlgorithmsTheme
-import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -114,107 +86,70 @@ fun App() {
         NavHost(
             modifier = Modifier.padding(paddingValues),
             navController = navController,
-            startDestination = Routes.Home
+            startDestination = Routes.HomeRoutes
         ) {
+
+            homeNav(viewModel, navController)
+            complexNav(complexVM, navController)
+            enrollToAi(navController)
+            dsaScreen(navController)
+            favScreen(navController)
+
             composable<Routes.Search> {
                 SearchScreen(searchViewModel, navController)
-            }
-            navigation<Routes.Home>(startDestination = Routes.HomeScreen) {
-                composable<Routes.HomeScreen> {
-                    HomeScreen(viewModel, navController)
-                }
-                composable<Routes.FolderScreen> {
-                    val path = it.toRoute<Routes.FolderScreen>()
-                    val folderViewModel: FolderViewModel = koinViewModel()
-                    folderViewModel.getFiles(path.path)
-                    FolderScreen(folderViewModel, path, navController)
-                }
-            }
-            composable<Routes.History> {
-                FavouriteScreen(favouritesViewModel = getViewModel(), navController = navController)
             }
             composable<Routes.CodeScreen> {
                 val path = it.toRoute<Routes.CodeScreen>()
                 val codeViewModel: CodeViewModel = koinViewModel { parametersOf(path) }
                 CodeScreen(viewModel = codeViewModel, navController)
             }
-            composable<Routes.FavouriteCodeScreen> {
-                val data = it.toRoute<Routes.FavouriteCodeScreen>()
-                FavouriteCodeScreen(algo = data.toAlgorithmEntity(), koinViewModel(), navController)
-            }
             composable<Routes.AskAi> {
                 val data = it.toRoute<Routes.AskAi>()
                 val chatViewModel: ChatViewModel = koinViewModel { parametersOf(data) }
                 AskAi(chatViewModel, navController)
             }
-            complexNav(complexVM, navController)
-            composable<Routes.EnrollToAi> {
-                EnrollingScreen(viewModel = koinViewModel(), navController)
-            }
-            composable<Routes.HowToCreateApiKey> {
-                HowToCreateApiKeyScreen(navController = navController, viewModel = koinViewModel())
-            }
-            composable<Routes.DsaSheetScreen> {
-                DsaSheetScreen(viewModel = koinViewModel(), navController)
-            }
-            composable<Routes.DsaRevisionScreen> {
-                val dsaVm = getViewModel<DsaSheetViewModel>()
-                dsaVm.getRevisionQuestions()
-                DsaRevisionScreen(viewModel = dsaVm, navController = navController)
-            }
         }
     }
 }
 
-fun NavGraphBuilder.complexNav(complexVM: ComplexSearchVM, navController: NavController) {
-    navigation<Routes.ComplexScreens>(
-        startDestination = ComplexRoutes.ComplexSearchMainScreen
-    ) {
-        composable<ComplexRoutes.ComplexSearchMainScreen> {
-            ComplexSearchMain(viewModel = complexVM, navController = navController)
-        }
-        composable<ComplexRoutes.ComplexSearchLanguage> {
-            val data = it.toRoute<ComplexRoutes.ComplexSearchLanguage>()
-            ComplexLanguageData(
-                viewModel = koinViewModel { parametersOf(data.lang) }, navController
-            )
-        }
-        composable<ComplexRoutes.ComplexSearchScreen> {
-            ComplexSearchScreen(complexVm = complexVM, navController)
-        }
-        composable<ComplexRoutes.ComplexSearchResultScreen> {
-            val data = it.toRoute<ComplexRoutes.ComplexSearchResultScreen>()
-            ComplexSearchResultScreen(
-                viewModel = koinViewModel { parametersOf(data.algoName) }, navController
-            )
-        }
-        composable<ComplexRoutes.ComplexLanguageAlgoRoute> {
-            val data = it.toRoute<ComplexRoutes.ComplexLanguageAlgoRoute>()
-            Log.d("Bugger", data.toString())
-            val vm: ComplexLanguageAlgoVM = koinViewModel { parametersOf(data) }
-            LanguageAlgoScreen(
-                viewModel = vm, navController = navController
-            )
-        }
-    }
+
+enum class Screens(
+    val title: String,
+    val route: Routes,
+    @DrawableRes val selectedIcon: Int,
+    @DrawableRes val unselectedIcon: Int
+) {
+    HOME("Home", Routes.HomeRoutes, R.drawable.baseline_home_24, R.drawable.outline_home_24),
+    SEARCH("Search", Routes.Search, R.drawable.baseline_search_24, R.drawable.baseline_search_24),
+    DSA_SHEET(
+        "DSA Sheet",
+        Routes.DsaSheetRoutes,
+        R.drawable.baseline_checklist_24,
+        R.drawable.baseline_checklist_24
+    ),
+    FAVOURITES(
+        "Favourites",
+        Routes.FavouriteRoutes,
+        R.drawable.baseline_favorite_24,
+        R.drawable.baseline_favorite_border_24
+    ),
+    COMPLEX_SEARCH(
+        "Complex Search",
+        Routes.ComplexScreens,
+        R.drawable.baseline_web_24,
+        R.drawable.baseline_web_24
+    )
 }
 
 @Composable
 fun BottomNavigationBar(selected: Int, onClick: (Routes, Int) -> Unit) {
     NavigationBar(Modifier.fillMaxWidth()) {
-        BottomBarItems().items.forEachIndexed { index, item ->
+        Screens.entries.forEachIndexed { index, item ->
             NavigationBarItem(icon = {
-                if (item.drawableIcon != null) {
-                    Icon(
-                        painter = painterResource(id = item.drawableIcon),
-                        contentDescription = item.title
-                    )
-                } else {
-                    Icon(
-                        imageVector = if (item.selected) item.selectedIcon!! else item.unselectedIcon!!,
-                        contentDescription = item.title
-                    )
-                }
+                Icon(
+                    painter = painterResource(id = if (selected == index) item.selectedIcon else item.unselectedIcon),
+                    contentDescription = item.title
+                )
             }, label = {
                 Text(text = item.title)
             }, selected = index == selected, onClick = {
@@ -224,54 +159,18 @@ fun BottomNavigationBar(selected: Int, onClick: (Routes, Int) -> Unit) {
     }
 }
 
-@Immutable
-data class BottomBarItems(
-    val items: List<BottomBarItem> = listOf(
-        BottomBarItem(
-            title = "Home",
-            selected = true,
-            selectedIcon = Icons.Filled.Home,
-            unselectedIcon = Icons.Outlined.Home,
-            route = Routes.HomeScreen
-        ), BottomBarItem(
-            title = "Search",
-            selected = false,
-            selectedIcon = Icons.Filled.Search,
-            unselectedIcon = Icons.Outlined.Search,
-            route = Routes.Search
-        ), BottomBarItem(
-            title = "DSA Sheet",
-            selected = false,
-            route = Routes.DsaSheetScreen,
-            drawableIcon = R.drawable.baseline_checklist_24
-        ), BottomBarItem(
-            title = "Favourites",
-            selected = false,
-            selectedIcon = Icons.Filled.Favorite,
-            unselectedIcon = Icons.Outlined.FavoriteBorder,
-            route = Routes.History
-        ), BottomBarItem(
-            title = "Complex Search",
-            selected = false,
-            route = ComplexRoutes.ComplexSearchMainScreen,
-            drawableIcon = R.drawable.baseline_web_24
-        )
-    )
-)
-
-@Immutable
-data class BottomBarItem(
-    val title: String,
-    val selected: Boolean,
-    val selectedIcon: ImageVector? = null,
-    val unselectedIcon: ImageVector? = null,
-    val route: Routes,
-    @DrawableRes val drawableIcon: Int? = null
-)
-
-
 fun canShowBottomBar(current: String): Boolean {
-    return current != "com.prafull.algorithms.Routes.FolderScreen/{path}/{name}" && current != "com.prafull.algorithms.Routes.CodeScreen/{id}/{name}/{path}/{langName}" && current != "com.prafull.algorithms.Routes.FavouriteCodeScreen/{id}/{code}/{language}/{extension}?title={title}" && current != "com.prafull.algorithms.Routes.AskAi/{code}/{programName}/{message}/{language}" && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchLanguage/{lang}" && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchScreen" && current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchResultScreen/{algoName}" && current != "com.prafull.algorithms.ComplexRoutes.ComplexLanguageAlgoRoute/{algo}/{lang}" && current != "com.prafull.algorithms.Routes.EnrollToAi" && current != "com.prafull.algorithms.Routes.HowToCreateApiKey" && current != "com.prafull.algorithms.Routes.DsaRevisionScreen"
+    return current != "com.prafull.algorithms.Routes.FolderScreen/{path}/{name}" &&
+            current != "com.prafull.algorithms.Routes.CodeScreen/{id}/{name}/{path}/{langName}" &&
+            current != "com.prafull.algorithms.FavouritesRoutes.FavouriteCodeScreen/{id}/{code}/{language}/{extension}?title={title}" &&
+            current != "com.prafull.algorithms.Routes.AskAi/{code}/{programName}/{message}/{language}" &&
+            current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchLanguage/{lang}" &&
+            current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchScreen" &&
+            current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchResultScreen/{algoName}" &&
+            current != "com.prafull.algorithms.ComplexRoutes.ComplexLanguageAlgoRoute/{algo}/{lang}" &&
+            current != "com.prafull.algorithms.EnrollToAIRoutes.EnrollToAi" &&
+            current != "com.prafull.algorithms.EnrollToAIRoutes.HowToCreateApiKey" &&
+            current != "com.prafull.algorithms.DsaSheetRoutes.DsaRevisionScreen"
 }
 
 fun NavController.goBackStack() {

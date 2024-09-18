@@ -1,9 +1,9 @@
 package com.prafull.algorithms.data.firebase
 
+import com.prafull.algorithms.features.complexSearch.domain.ComplexAlgorithm
+import com.prafull.algorithms.features.complexSearch.domain.ComplexLanguageAlgo
+import com.prafull.algorithms.features.complexSearch.domain.ComplexLanguageData
 import com.prafull.algorithms.models.Algorithm
-import com.prafull.algorithms.models.ComplexAlgorithm
-import com.prafull.algorithms.models.ComplexLanguageAlgo
-import com.prafull.algorithms.models.ComplexLanguageData
 import com.prafull.algorithms.models.FileInfo
 import com.prafull.algorithms.models.FolderInfo
 import com.prafull.algorithms.models.ProgrammingLanguage
