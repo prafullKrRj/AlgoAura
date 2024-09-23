@@ -7,9 +7,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.prafull.algorithms.Routes
-import com.prafull.algorithms.complexSearch.ui.algoScreen.ComplexLanguageAlgoVM
-import com.prafull.algorithms.complexSearch.ui.algoScreen.LanguageAlgoScreen
 import com.prafull.algorithms.complexSearch.ui.lang.ComplexLanguageData
+import com.prafull.algorithms.complexSearch.ui.langAlgoScreen.ComplexLanguageAlgoVM
+import com.prafull.algorithms.complexSearch.ui.langAlgoScreen.LanguageAlgoScreen
 import com.prafull.algorithms.complexSearch.ui.main.ComplexSearchMain
 import com.prafull.algorithms.complexSearch.ui.main.ComplexSearchVM
 import com.prafull.algorithms.complexSearch.ui.search.ComplexSearchScreen

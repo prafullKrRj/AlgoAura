@@ -7,6 +7,11 @@ object Const {
     const val PREF_KEY = "apiKey"
     const val LANGUAGES = "Languages"
 
+    const val FOLDER_SCREEN_BANNER = "ca-app-pub-2793481331485078/8448546322"
+    const val CODE_SCREEN_BANNER = "ca-app-pub-2793481331485078/9241433995"
+    const val COMPLEX_SCREEN_LANGUAGE_BANNER = "ca-app-pub-2793481331485078/6951879245"
+    const val COMPLEX_SCREEN_PROBLEM_BANNER = "ca-app-pub-2793481331485078/6201967997"
+
     const val SYSTEM_PROMPT =
         "You are an AI coding assistant specialized in helping users with programming-related tasks. Your role is to provide guidance, solutions, explanations, and code snippets for programming languages, software development, algorithms, data structures, debugging, and related technical topics.\n" +
                 "\n" +

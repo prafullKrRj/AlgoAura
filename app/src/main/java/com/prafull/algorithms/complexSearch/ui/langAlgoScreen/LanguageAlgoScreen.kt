@@ -1,4 +1,4 @@
-package com.prafull.algorithms.complexSearch.ui.algoScreen
+package com.prafull.algorithms.complexSearch.ui.langAlgoScreen
 
 import android.content.res.Configuration
 import android.widget.Toast
@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -50,10 +52,12 @@ import androidx.navigation.NavController
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichText
 import com.prafull.algorithms.Routes
+import com.prafull.algorithms.commons.ads.BannerAdView
 import com.prafull.algorithms.commons.ads.InterstitialAdManager
 import com.prafull.algorithms.commons.components.AskAiChip
 import com.prafull.algorithms.commons.components.AskAiDialog
 import com.prafull.algorithms.commons.utils.BaseClass
+import com.prafull.algorithms.commons.utils.Const
 import com.prafull.algorithms.commons.utils.getFormattedNameExtension
 import com.prafull.algorithms.complexSearch.domain.models.ComplexLanguageAlgo
 import com.prafull.algorithms.goBackStack
@@ -68,29 +72,38 @@ import dev.snipme.kodeview.view.CodeTextView
 @Composable
 fun LanguageAlgoScreen(viewModel: ComplexLanguageAlgoVM, navController: NavController) {
     val state by viewModel.problemDetails.collectAsState()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var showWarning by remember {
         mutableStateOf(false)
     }
-    Scaffold(topBar = {
-        TopAppBar(title = {
-            Text(text = viewModel.selectedAlgo.getFormattedNameExtension())
-        }, navigationIcon = {
-            IconButton(onClick = navController::goBackStack) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
-            }
-        }, actions = {
-            IconButton(onClick = {
-                showWarning = showWarning.not()
-            }) {
-                Icon(imageVector = Icons.Outlined.Info, contentDescription = null)
-            }
-        })
-    }) { paddingValues ->
+    Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = viewModel.selectedAlgo.getFormattedNameExtension())
+                },
+                navigationIcon = {
+                    IconButton(onClick = navController::goBackStack) {
+                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        showWarning = showWarning.not()
+                    }) {
+                        Icon(imageVector = Icons.Outlined.Info, contentDescription = null)
+                    }
+                },
+                scrollBehavior = scrollBehavior
+            )
+        }) { paddingValues ->
         Column(
             Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            BannerAdView(adUnitId = Const.COMPLEX_SCREEN_LANGUAGE_BANNER)
             when (state) {
                 is BaseClass.Error -> {
                     Text(text = (state as BaseClass.Error).message)

@@ -19,12 +19,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -38,10 +40,13 @@ import com.valentinilk.shimmer.shimmer
 fun ComplexSearchMain(viewModel: ComplexSearchVM, navController: NavController) {
     val complexLanguagesState by viewModel.langs.collectAsState()
     val focusManager = LocalFocusManager.current
-    Scaffold(topBar = {
-        CenterAlignedTopAppBar(title = {
-            Text(text = "Detailed Search")
-        })
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    Scaffold(modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection), topBar = {
+        CenterAlignedTopAppBar(
+            title = {
+                Text(text = "Detailed Search")
+            }, scrollBehavior = scrollBehavior
+        )
     }) { paddingValues ->
         LazyColumn(
             Modifier

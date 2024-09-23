@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 
 @Dao
 interface FavAlgoDao {
@@ -23,4 +24,11 @@ interface FavAlgoDao {
 
     @Delete
     suspend fun deleteAlgos(selectedAlgos: List<AlgorithmEntity>)
+
+
+    suspend fun deleteAllFav() {
+        getAllAlgorithms().collectLatest {
+            deleteAlgos(it)
+        }
+    }
 }

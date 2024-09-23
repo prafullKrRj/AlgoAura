@@ -64,7 +64,7 @@ import com.prafull.algorithms.commons.utils.getFileName
 import com.prafull.algorithms.commons.utils.getFormattedName
 import com.prafull.algorithms.commons.utils.getKodeViewLanguageFromLanguage
 import com.prafull.algorithms.commons.utils.getLanguageFromString
-import com.prafull.algorithms.complexSearch.ui.algoScreen.getSyntaxLanguageFromString
+import com.prafull.algorithms.complexSearch.ui.langAlgoScreen.getSyntaxLanguageFromString
 import com.prafull.algorithms.goBackStack
 import com.valentinilk.shimmer.shimmer
 import dev.snipme.highlights.Highlights

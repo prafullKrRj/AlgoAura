@@ -16,6 +16,8 @@ sealed interface Routes {
     @Serializable
     data object FavouriteRoutes : Routes
 
+    @Serializable
+    data object SettingsRoute : Routes
 
     @Serializable
     data class CodeScreen(

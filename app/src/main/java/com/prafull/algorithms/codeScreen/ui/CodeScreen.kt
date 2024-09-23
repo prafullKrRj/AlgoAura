@@ -35,6 +35,7 @@ import com.prafull.algorithms.commons.components.AskAiDialog
 import com.prafull.algorithms.commons.components.CodeScreenBottomBar
 import com.prafull.algorithms.commons.components.CodeScreenTopAppBar
 import com.prafull.algorithms.commons.utils.BaseClass
+import com.prafull.algorithms.commons.utils.Const
 import com.prafull.algorithms.commons.utils.getFileName
 import com.prafull.algorithms.commons.utils.getFormattedName
 import com.prafull.algorithms.commons.utils.getKodeViewLanguageFromLanguage
@@ -87,7 +88,7 @@ fun CodeScreen(viewModel: CodeViewModel, navController: NavController) {
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
-            BannerAdView()
+            BannerAdView(Const.CODE_SCREEN_BANNER)
             when (state) {
                 is BaseClass.Loading -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

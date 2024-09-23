@@ -45,7 +45,7 @@ import com.prafull.algorithms.complexSearch.ui.main.getIcon
 
 @Composable
 fun AlgoSuccessScreen(
-    algo: ComplexAlgorithm, paddingValues: PaddingValues, navController: NavController
+    algo: ComplexAlgorithm, navController: NavController
 ) {
     var searchQuery by rememberSaveable {
         mutableStateOf("")
@@ -75,7 +75,7 @@ fun AlgoSuccessScreen(
     LazyColumn(
         Modifier
             .fillMaxSize()
-            .padding(paddingValues),
+            .padding(),
         contentPadding = PaddingValues(8.dp),
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {

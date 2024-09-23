@@ -3,6 +3,7 @@ package com.prafull.algorithms.complexSearch.ui.searchedAlgo
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,14 +20,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.prafull.algorithms.commons.ads.BannerAdView
 import com.prafull.algorithms.commons.utils.BaseClass
+import com.prafull.algorithms.commons.utils.Const
 import com.prafull.algorithms.complexSearch.domain.models.ComplexAlgorithm
 import com.prafull.algorithms.goBackStack
 import com.valentinilk.shimmer.shimmer
@@ -35,43 +40,49 @@ import com.valentinilk.shimmer.shimmer
 @Composable
 fun ComplexSearchResultScreen(viewModel: ComplexSearchAlgoVM, navController: NavController) {
     val state by viewModel.algoDetails.collectAsState()
-    Scaffold(topBar = {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    Scaffold(modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection), topBar = {
         TopAppBar(title = {
             Text(text = viewModel.algo)
         }, navigationIcon = {
             IconButton(onClick = navController::goBackStack) {
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
             }
-        })
+        }, scrollBehavior = scrollBehavior)
     }) { paddingValues ->
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            BannerAdView(adUnitId = Const.COMPLEX_SCREEN_PROBLEM_BANNER)
+            when (state) {
+                is BaseClass.Loading -> {
+                    AlgoLoadingShimmer()
+                }
 
-        when (state) {
-            is BaseClass.Loading -> {
-                AlgoLoadingShimmer(paddingValues)
-            }
+                is BaseClass.Success -> {
+                    AlgoSuccessScreen(
+                        algo = (state as BaseClass.Success<ComplexAlgorithm>).data,
+                        navController
+                    )
+                }
 
-            is BaseClass.Success -> {
-                AlgoSuccessScreen(
-                    algo = (state as BaseClass.Success<ComplexAlgorithm>).data,
-                    paddingValues = paddingValues,
-                    navController
-                )
-            }
-
-            is BaseClass.Error -> {
-                Text(text = "Error")
+                is BaseClass.Error -> {
+                    Text(text = "Error")
+                }
             }
         }
+
     }
 }
 
 
 @Composable
-fun AlgoLoadingShimmer(paddingValues: PaddingValues) {
+fun AlgoLoadingShimmer() {
     LazyColumn(
         Modifier
-            .fillMaxSize()
-            .padding(paddingValues),
+            .fillMaxSize(),
         contentPadding = PaddingValues(8.dp),
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {

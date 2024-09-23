@@ -1,4 +1,4 @@
-package com.prafull.algorithms.complexSearch.ui.algoScreen
+package com.prafull.algorithms.complexSearch.ui.langAlgoScreen
 
 import android.content.Context
 import android.util.Log

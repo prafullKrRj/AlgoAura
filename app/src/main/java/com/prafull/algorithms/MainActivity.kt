@@ -1,12 +1,10 @@
 package com.prafull.algorithms
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.DrawableRes
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -16,7 +14,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -46,6 +43,8 @@ import com.prafull.algorithms.homeScreen.home.AlgoViewModel
 import com.prafull.algorithms.homeScreen.homeNav
 import com.prafull.algorithms.search.ui.SearchScreen
 import com.prafull.algorithms.search.ui.SearchViewModel
+import com.prafull.algorithms.settings.SettingsScreen
+import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -67,7 +66,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun App() {
     val navController = rememberNavController()
@@ -75,11 +73,9 @@ fun App() {
     val searchViewModel: SearchViewModel = koinViewModel()
     val complexVM: ComplexSearchVM = koinViewModel()
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-    LaunchedEffect(key1 = currentRoute) {
-        Log.d("CurrentRoute", currentRoute.toString())
-    }
+
     val selected = rememberSaveable {
-        mutableIntStateOf(0)
+        mutableIntStateOf(2)
     }
     Scaffold(modifier = Modifier.systemBarsPadding(), bottomBar = {
         if (canShowBottomBar(currentRoute.toString())) {
@@ -93,7 +89,7 @@ fun App() {
         NavHost(
             modifier = Modifier.padding(paddingValues),
             navController = navController,
-            startDestination = Routes.HomeRoutes
+            startDestination = Routes.DsaSheetRoutes
         ) {
 
             homeNav(viewModel, navController)
@@ -114,6 +110,9 @@ fun App() {
                 val data = it.toRoute<Routes.AskAi>()
                 val chatViewModel: ChatViewModel = koinViewModel { parametersOf(data) }
                 AskAi(chatViewModel, navController)
+            }
+            composable<Routes.SettingsRoute> {
+                SettingsScreen(getViewModel(), navController)
             }
         }
     }
@@ -177,7 +176,8 @@ fun canShowBottomBar(current: String): Boolean {
             current != "com.prafull.algorithms.complexSearch.ComplexRoutes.ComplexLanguageAlgoRoute/{algo}/{lang}" &&
             current != "com.prafull.algorithms.enrollToAi.EnrollToAIRoutes.EnrollToAi" &&
             current != "com.prafull.algorithms.enrollToAi.EnrollToAIRoutes.HowToCreateApiKey" &&
-            current != "com.prafull.algorithms.dsaSheet.DsaSheetRoutes.DsaRevisionScreen"
+            current != "com.prafull.algorithms.dsaSheet.DsaSheetRoutes.DsaRevisionScreen" &&
+            current != "com.prafull.algorithms.Routes.SettingsRoute"
 }
 
 fun NavController.goBackStack() {

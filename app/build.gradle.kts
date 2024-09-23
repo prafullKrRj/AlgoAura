@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.kotlinx.serialization)
     kotlin("kapt")
+    alias(libs.plugins.google.firebase.crashlytics)
 }
 
 android {
@@ -67,6 +68,7 @@ dependencies {
     implementation(libs.firebase.appcheck.playintegrity)
 
     implementation(libs.androidx.room.runtime.v260)
+    implementation(libs.firebase.crashlytics)
     kapt(libs.androidx.room.compiler.v260)
 
     // Room Kotlin Extensions and Coroutines support
@@ -102,10 +104,7 @@ dependencies {
 
     implementation(libs.richeditor.compose)
     implementation(libs.kodeview)
-    implementation(libs.commonmark)
 
-    // Jsoup
-    implementation(libs.jsoup)
     implementation(libs.generativeai)
 
     // koin

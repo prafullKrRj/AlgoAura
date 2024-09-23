@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.prafull.algorithms.commons.ads.BannerAdView
 import com.prafull.algorithms.commons.utils.BaseClass
+import com.prafull.algorithms.commons.utils.Const
 import com.prafull.algorithms.commons.utils.getFileName
 import com.prafull.algorithms.commons.utils.getFormattedName
 import com.prafull.algorithms.goBackStack
@@ -109,7 +110,7 @@ fun FolderScreen(
                         .fillMaxWidth()
                         .padding(paddingValues = paddingValues)
                 ) {
-                    BannerAdView()
+                    BannerAdView(Const.FOLDER_SCREEN_BANNER)
                     LazyColumn(
                         modifier = Modifier.padding(),
                         contentPadding = PaddingValues(12.dp),

@@ -9,6 +9,7 @@ import com.prafull.algorithms.enrollToAi.di.enrollAiModule
 import com.prafull.algorithms.favourites.di.favModule
 import com.prafull.algorithms.homeScreen.di.homeModule
 import com.prafull.algorithms.search.di.searchModule
+import com.prafull.algorithms.settings.settingsModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -27,7 +28,8 @@ class AlgorithmApp : Application() {
                 codeModule,
                 aiModule,
                 enrollAiModule,
-                complexSearchModule
+                complexSearchModule,
+                settingsModule
             )
         }
     }
