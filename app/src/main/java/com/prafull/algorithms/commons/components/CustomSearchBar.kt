@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
-import com.prafull.algorithms.ui.customColors.algoColors
+import com.prafull.algorithms.commons.ui.customColors.algoColors
 
 @Composable
 fun CustomSearchBar(

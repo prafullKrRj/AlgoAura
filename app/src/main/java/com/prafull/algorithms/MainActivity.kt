@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -31,15 +32,20 @@ import com.google.android.gms.ads.MobileAds
 import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
-import com.prafull.algorithms.features.ai.AskAi
-import com.prafull.algorithms.features.ai.ChatViewModel
-import com.prafull.algorithms.features.code.CodeScreen
-import com.prafull.algorithms.features.code.CodeViewModel
-import com.prafull.algorithms.features.complexSearch.ui.main.ComplexSearchVM
-import com.prafull.algorithms.features.homeScreen.home.AlgoViewModel
-import com.prafull.algorithms.features.search.SearchScreen
-import com.prafull.algorithms.features.search.SearchViewModel
-import com.prafull.algorithms.ui.theme.AlgorithmsTheme
+import com.prafull.algorithms.ai.AskAi
+import com.prafull.algorithms.ai.ChatViewModel
+import com.prafull.algorithms.codeScreen.ui.CodeScreen
+import com.prafull.algorithms.codeScreen.ui.CodeViewModel
+import com.prafull.algorithms.commons.ui.theme.AlgorithmsTheme
+import com.prafull.algorithms.complexSearch.complexNav
+import com.prafull.algorithms.complexSearch.ui.main.ComplexSearchVM
+import com.prafull.algorithms.dsaSheet.dsaScreen
+import com.prafull.algorithms.enrollToAi.enrollToAi
+import com.prafull.algorithms.favourites.favScreen
+import com.prafull.algorithms.homeScreen.home.AlgoViewModel
+import com.prafull.algorithms.homeScreen.homeNav
+import com.prafull.algorithms.search.ui.SearchScreen
+import com.prafull.algorithms.search.ui.SearchViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -61,6 +67,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun App() {
     val navController = rememberNavController()
@@ -160,17 +167,17 @@ fun BottomNavigationBar(selected: Int, onClick: (Routes, Int) -> Unit) {
 }
 
 fun canShowBottomBar(current: String): Boolean {
-    return current != "com.prafull.algorithms.Routes.FolderScreen/{path}/{name}" &&
+    return current != "com.prafull.algorithms.homeScreen.HomeRoutes.FolderScreen/{path}/{name}/{langLogo}" &&
             current != "com.prafull.algorithms.Routes.CodeScreen/{id}/{name}/{path}/{langName}" &&
-            current != "com.prafull.algorithms.FavouritesRoutes.FavouriteCodeScreen/{id}/{code}/{language}/{extension}?title={title}" &&
+            current != "com.prafull.algorithms.favourites.FavouritesRoutes.FavouriteCodeScreen/{id}/{code}/{language}/{extension}?title={title}" &&
             current != "com.prafull.algorithms.Routes.AskAi/{code}/{programName}/{message}/{language}" &&
-            current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchLanguage/{lang}" &&
-            current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchScreen" &&
-            current != "com.prafull.algorithms.ComplexRoutes.ComplexSearchResultScreen/{algoName}" &&
-            current != "com.prafull.algorithms.ComplexRoutes.ComplexLanguageAlgoRoute/{algo}/{lang}" &&
-            current != "com.prafull.algorithms.EnrollToAIRoutes.EnrollToAi" &&
-            current != "com.prafull.algorithms.EnrollToAIRoutes.HowToCreateApiKey" &&
-            current != "com.prafull.algorithms.DsaSheetRoutes.DsaRevisionScreen"
+            current != "com.prafull.algorithms.complexSearch.ComplexRoutes.ComplexSearchLanguage/{lang}" &&
+            current != "com.prafull.algorithms.complexSearch.ComplexRoutes.ComplexSearchScreen" &&
+            current != "com.prafull.algorithms.complexSearch.ComplexRoutes.ComplexSearchResultScreen/{algoName}" &&
+            current != "com.prafull.algorithms.complexSearch.ComplexRoutes.ComplexLanguageAlgoRoute/{algo}/{lang}" &&
+            current != "com.prafull.algorithms.enrollToAi.EnrollToAIRoutes.EnrollToAi" &&
+            current != "com.prafull.algorithms.enrollToAi.EnrollToAIRoutes.HowToCreateApiKey" &&
+            current != "com.prafull.algorithms.dsaSheet.DsaSheetRoutes.DsaRevisionScreen"
 }
 
 fun NavController.goBackStack() {
