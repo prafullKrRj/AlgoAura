@@ -48,7 +48,7 @@ class ComplexLanguageAlgoVM(
     /**
      *      Get the details of the problem which user has clicked
      * */
-    private fun getProblemDetails() {
+    fun getProblemDetails() {
         viewModelScope.launch(Dispatchers.IO) {
             complexRepo.getComplexLanguageAlgo(data.lang, data.algo).collectLatest { response ->
                 Log.d("ComplexLanguageAlgoVM", "getProblemDetails: $response")

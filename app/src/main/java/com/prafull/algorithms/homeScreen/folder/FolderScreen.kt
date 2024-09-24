@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -36,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.prafull.algorithms.commons.ads.BannerAdView
+import com.prafull.algorithms.commons.components.ErrorComposable
 import com.prafull.algorithms.commons.utils.BaseClass
 import com.prafull.algorithms.commons.utils.Const
 import com.prafull.algorithms.commons.utils.getFileName
@@ -82,18 +82,8 @@ fun FolderScreen(
     }) { paddingValues ->
         when (files) {
             is BaseClass.Error -> {
-                val message = (files as BaseClass.Error).message
-                Column(
-                    Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                ) {
-                    Text(text = message)
-                    Button(onClick = {
-                        viewModel.getFiles(folderScreen.path)
-                    }) {
-                        Text(text = "Retry")
-                    }
+                ErrorComposable(exception = (files as BaseClass.Error).exception) {
+                    viewModel.getFiles(folderScreen.path)
                 }
             }
 

@@ -15,25 +15,20 @@ android {
         applicationId = "com.prafull.algorithms"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
-        buildConfigField(
-            type = "String",
-            name = "API_KEY",
-            value = project.findProperty("API_KEY").toString()
-        )
     }
     sourceSets {
         getByName("main").java.srcDirs("build/generated/ksp/main/kotlin")
     }
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

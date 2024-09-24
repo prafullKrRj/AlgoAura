@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation.NavController
+import com.prafull.algorithms.commons.components.ErrorComposable
 import com.prafull.algorithms.commons.utils.BaseClass
 import com.prafull.algorithms.complexSearch.domain.models.ComplexLanguageData
 import com.prafull.algorithms.goBackStack
@@ -43,7 +44,10 @@ fun ComplexLanguageData(viewModel: ComplexLanguageViewModel, navController: NavC
     ) { paddingValues ->
         when (state) {
             is BaseClass.Error -> {
-                Text(text = (state as BaseClass.Error).message)
+                ErrorComposable(
+                    exception = (state as BaseClass.Error).exception,
+                    onRetry = viewModel::getLangData
+                )
             }
 
             BaseClass.Loading -> {

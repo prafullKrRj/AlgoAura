@@ -55,7 +55,7 @@ class CodeViewModel(
         getCode()
     }
 
-    private fun getCode() {
+    fun getCode() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 codeRepo.getAlgorithm(fileInfo.toFileInfo()).collectLatest { resp ->

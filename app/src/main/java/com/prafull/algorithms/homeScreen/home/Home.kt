@@ -42,8 +42,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.network.HttpException
 import com.prafull.algorithms.R
 import com.prafull.algorithms.Routes
+import com.prafull.algorithms.commons.components.ErrorComposable
 import com.prafull.algorithms.commons.models.ProgrammingLanguage
 import com.prafull.algorithms.commons.ui.customColors.algoCard
 import com.prafull.algorithms.commons.ui.customColors.langFilterChip
@@ -97,7 +99,6 @@ fun HomeScreen(viewModel: AlgoViewModel, navController: NavController) {
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-
             LazyRow(
                 Modifier
                     .fillMaxWidth()
@@ -149,12 +150,8 @@ fun HomeScreen(viewModel: AlgoViewModel, navController: NavController) {
             }
             when (state) {
                 is BaseClass.Error -> {
-                    val message = (state as BaseClass.Error).message
-                    Text(text = message)
-                    Button(onClick = {
+                    ErrorComposable(exception = (state as BaseClass.Error).exception) {
                         viewModel.getFromLanguage(ProgrammingLanguage.entries[selected.intValue])
-                    }) {
-                        Text(text = "Retry")
                     }
                 }
 

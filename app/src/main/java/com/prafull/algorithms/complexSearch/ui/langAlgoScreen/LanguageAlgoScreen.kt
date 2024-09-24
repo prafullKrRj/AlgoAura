@@ -56,6 +56,7 @@ import com.prafull.algorithms.commons.ads.BannerAdView
 import com.prafull.algorithms.commons.ads.InterstitialAdManager
 import com.prafull.algorithms.commons.components.AskAiChip
 import com.prafull.algorithms.commons.components.AskAiDialog
+import com.prafull.algorithms.commons.components.ErrorComposable
 import com.prafull.algorithms.commons.utils.BaseClass
 import com.prafull.algorithms.commons.utils.Const
 import com.prafull.algorithms.commons.utils.getFormattedNameExtension
@@ -106,7 +107,9 @@ fun LanguageAlgoScreen(viewModel: ComplexLanguageAlgoVM, navController: NavContr
             BannerAdView(adUnitId = Const.COMPLEX_SCREEN_LANGUAGE_BANNER)
             when (state) {
                 is BaseClass.Error -> {
-                    Text(text = (state as BaseClass.Error).message)
+                    ErrorComposable(exception = (state as BaseClass.Error).exception) {
+                        viewModel.getProblemDetails()
+                    }
                 }
 
                 BaseClass.Loading -> {

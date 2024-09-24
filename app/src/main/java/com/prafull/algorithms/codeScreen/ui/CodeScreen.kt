@@ -12,7 +12,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -34,6 +33,7 @@ import com.prafull.algorithms.commons.components.AskAiChip
 import com.prafull.algorithms.commons.components.AskAiDialog
 import com.prafull.algorithms.commons.components.CodeScreenBottomBar
 import com.prafull.algorithms.commons.components.CodeScreenTopAppBar
+import com.prafull.algorithms.commons.components.ErrorComposable
 import com.prafull.algorithms.commons.utils.BaseClass
 import com.prafull.algorithms.commons.utils.Const
 import com.prafull.algorithms.commons.utils.getFileName
@@ -51,7 +51,6 @@ fun CodeScreen(viewModel: CodeViewModel, navController: NavController) {
             viewModel.toggleFav()
         }
     }
-    // TODO: Implement this
     var goToAiDialogBox by remember {
         mutableStateOf(false)
     }
@@ -120,7 +119,10 @@ fun CodeScreen(viewModel: CodeViewModel, navController: NavController) {
                 }
 
                 is BaseClass.Error -> {
-                    Text(text = (state as BaseClass.Error).message)
+                    ErrorComposable(
+                        exception = (state as BaseClass.Error).exception,
+                        onRetry = viewModel::getCode
+                    )
                 }
             }
         }

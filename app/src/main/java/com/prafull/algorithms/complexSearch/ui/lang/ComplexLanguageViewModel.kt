@@ -36,7 +36,7 @@ class ComplexLanguageViewModel(
         getLangData()
     }
 
-    private fun getLangData() {
+    fun getLangData() {
         viewModelScope.launch(Dispatchers.IO) {
             complexRepo.getComplexLanguageData(lang).collectLatest { response ->
                 _state.update { response }
