@@ -1,7 +1,6 @@
 package com.prafull.algorithms.enrollToAi.enrollScreen
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -60,7 +59,6 @@ fun verifyApiKey(key: String): Flow<Boolean> = flow {
         val content = GenerativeModel(
             apiKey = key, modelName = "gemini-1.5-flash"
         ).generateContent("Say Hi")
-        Log.d("ApiKeyViewModel", "verifyApiKey: $content")
         emit(true)
     } catch (e: Exception) {
         emit(false)
