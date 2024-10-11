@@ -57,7 +57,8 @@ fun DsaRevisionScreen(viewModel: DsaSheetViewModel, navController: NavController
                     topicWithQuestions.topic,
                     questions = topicWithQuestions.questions.filter { it.revision },
                     context,
-                    viewModel
+                    viewModel,
+                    navController
                 )
             }
             if (revisionQuestions.isEmpty()) {

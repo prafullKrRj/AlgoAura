@@ -53,6 +53,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.prafull.algorithms.Routes
+import com.prafull.algorithms.commons.ads.BannerAdView
 import com.prafull.algorithms.commons.ads.InterstitialAdManager
 import com.prafull.algorithms.commons.components.AskAiChip
 import com.prafull.algorithms.commons.components.AskAiDialog
@@ -60,6 +61,7 @@ import com.prafull.algorithms.commons.components.CodeScreenBottomBar
 import com.prafull.algorithms.commons.components.CodeScreenTopAppBar
 import com.prafull.algorithms.commons.models.ProgrammingLanguage
 import com.prafull.algorithms.commons.ui.customColors.algoCard
+import com.prafull.algorithms.commons.utils.Const
 import com.prafull.algorithms.commons.utils.getKodeViewLanguageFromLanguage
 import com.prafull.algorithms.favourites.data.local.AlgorithmEntity
 import com.prafull.algorithms.goBackStack
@@ -262,6 +264,7 @@ fun FavouriteCodeScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(12.dp)
         ) {
+            BannerAdView(adUnitId = Const.FAVOURITES_CODE_SCREEN_BANNER)
             val highlights = remember {
                 Highlights.Builder(code = algo.code).theme(SyntaxThemes.darcula()).language(
                     language = getKodeViewLanguageFromLanguage(

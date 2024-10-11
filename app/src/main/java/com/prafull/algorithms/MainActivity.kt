@@ -44,6 +44,7 @@ import com.prafull.algorithms.homeScreen.homeNav
 import com.prafull.algorithms.search.ui.SearchScreen
 import com.prafull.algorithms.search.ui.SearchViewModel
 import com.prafull.algorithms.settings.SettingsScreen
+import com.prafull.algorithms.settings.libraries.LibraryScreen
 import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -75,7 +76,7 @@ fun App() {
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
     val selected = rememberSaveable {
-        mutableIntStateOf(2)
+        mutableIntStateOf(0)
     }
     Scaffold(modifier = Modifier.systemBarsPadding(), bottomBar = {
         if (canShowBottomBar(currentRoute.toString())) {
@@ -89,7 +90,7 @@ fun App() {
         NavHost(
             modifier = Modifier.padding(paddingValues),
             navController = navController,
-            startDestination = Routes.DsaSheetRoutes
+            startDestination = Routes.HomeRoutes
         ) {
 
             homeNav(viewModel, navController)
@@ -113,6 +114,9 @@ fun App() {
             }
             composable<Routes.SettingsRoute> {
                 SettingsScreen(getViewModel(), navController)
+            }
+            composable<Routes.Libraries> {
+                LibraryScreen(navController = navController)
             }
         }
     }
@@ -178,6 +182,8 @@ fun canShowBottomBar(current: String): Boolean {
             current != "com.prafull.algorithms.enrollToAi.EnrollToAIRoutes.HowToCreateApiKey" &&
             current != "com.prafull.algorithms.dsaSheet.DsaSheetRoutes.DsaRevisionScreen" &&
             current != "com.prafull.algorithms.Routes.SettingsRoute"
+            && current != "com.prafull.algorithms.Routes.Libraries"
+            && current != "com.prafull.algorithms.dsaSheet.DsaSheetRoutes.DsaQuestionScreen/{url}/{heading}"
 }
 
 fun NavController.goBackStack() {

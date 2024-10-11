@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
@@ -43,20 +44,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichText
+import com.prafull.algorithms.R
 import com.prafull.algorithms.Routes
 import com.prafull.algorithms.commons.ads.BannerAdView
 import com.prafull.algorithms.commons.ads.InterstitialAdManager
 import com.prafull.algorithms.commons.components.AskAiChip
 import com.prafull.algorithms.commons.components.AskAiDialog
 import com.prafull.algorithms.commons.components.ErrorComposable
+import com.prafull.algorithms.commons.components.shareCode
 import com.prafull.algorithms.commons.utils.BaseClass
 import com.prafull.algorithms.commons.utils.Const
 import com.prafull.algorithms.commons.utils.getFormattedNameExtension
@@ -178,6 +185,7 @@ private fun LanguageAlgoSuccess(
     var isOpen by rememberSaveable {
         mutableStateOf(false)
     }
+    val context = LocalContext.current
     val uiMode = LocalConfiguration.current.uiMode
     var isDark by remember {
         mutableStateOf((uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES)
@@ -185,6 +193,7 @@ private fun LanguageAlgoSuccess(
     LaunchedEffect(key1 = uiMode) {
         isDark = (uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
     }
+    val clipBoard = LocalClipboardManager.current
     LazyColumn(
         Modifier.fillMaxSize(),
         contentPadding = PaddingValues(12.dp),
@@ -230,11 +239,32 @@ private fun LanguageAlgoSuccess(
                     )
                     .clip(RoundedCornerShape(12.dp))
             ) {
-                Text(
-                    text = "Code ${idx + 1}",
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(8.dp)
-                )
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(
+                        text = "Code ${idx + 1}",
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        IconButton(onClick = {
+                            clipBoard.setText(AnnotatedString(code))
+                            Toast.makeText(context, "Code copied", Toast.LENGTH_SHORT).show()
+                        }) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(id = R.drawable.baseline_content_copy_24),
+                                contentDescription = "Copy code $idx"
+                            )
+                        }
+                        IconButton(onClick = {
+                            shareCode(code, context)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.Share,
+                                contentDescription = "Share code $idx"
+                            )
+                        }
+                    }
+                }
                 val highlights = remember {
                     Highlights.Builder(code = code)
                         .language(getSyntaxLanguageFromString(algo.language)).theme(
@@ -252,7 +282,6 @@ private fun LanguageAlgoSuccess(
 
 @Composable
 fun NavigateToAiChip(
-    modifier: Modifier = Modifier,
     algo: DummyAlgoData,
     navController: NavController,
     idx: Int,

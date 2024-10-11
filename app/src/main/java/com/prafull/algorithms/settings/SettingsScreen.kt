@@ -1,5 +1,7 @@
 package com.prafull.algorithms.settings
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +17,7 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,9 +36,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.prafull.algorithms.R
+import com.prafull.algorithms.Routes
 import com.prafull.algorithms.goBackStack
 import kotlinx.coroutines.launch
 
@@ -47,6 +54,7 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel, navController: NavContr
     var showApiDialog by remember {
         mutableStateOf(false)
     }
+    val context = LocalContext.current
     Scaffold(topBar = {
         TopAppBar(title = {
             Text("Settings")
@@ -118,6 +126,24 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel, navController: NavContr
                     }
                 }
             }
+            item {
+                HorizontalDivider()
+            }
+            item {
+                PrivacyPolicyItem {
+                    val intent =
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("https://sites.google.com/view/algo-aura/home")
+                        )
+                    context.startActivity(intent)
+                }
+            }
+            item {
+                LibrariesItem {
+                    navController.navigate(Routes.Libraries)
+                }
+            }
         }
     }
     if (showApiDialog) {
@@ -130,6 +156,46 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel, navController: NavContr
             },
             viewmodel = settingsViewModel,
         )
+    }
+}
+
+@Composable
+fun LibrariesItem(onClick: () -> Unit) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        verticalAlignment = CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        IconButton(onClick = onClick) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.baseline_library_books_24),
+                contentDescription = "Libraries",
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
+        Text(text = "Libraries", Modifier.weight(1f))
+    }
+}
+
+@Composable
+fun PrivacyPolicyItem(onClick: () -> Unit) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        verticalAlignment = CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        IconButton(onClick = onClick) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.outline_web_24),
+                contentDescription = "Privacy Policy",
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
+        Text(text = "Privacy Policy", Modifier.weight(1f))
     }
 }
 

@@ -43,4 +43,7 @@ sealed interface Routes {
 
     @Serializable
     data object ComplexScreens : Routes
+
+    @Serializable
+    data object Libraries : Routes
 }

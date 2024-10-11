@@ -80,7 +80,6 @@ import com.prafull.algorithms.commons.ui.customColors.normalSearchBarColors
 import com.prafull.algorithms.dsaSheet.DsaSheetRoutes
 import com.prafull.algorithms.dsaSheet.data.local.QuestionEntity
 import com.prafull.algorithms.dsaSheet.data.local.TopicEntity
-import com.prafull.algorithms.enrollToAi.howToCreateApiKey.goToWebsite
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -207,7 +206,8 @@ fun DsaSheetScreen(viewModel: DsaSheetViewModel, navController: NavController) {
                         it.name.contains(searchQuery, ignoreCase = true)
                     },
                     context,
-                    viewModel
+                    viewModel,
+                    navController
                 )
             }
         }
@@ -220,7 +220,8 @@ fun TopicCard(
     topic: TopicEntity,
     questions: List<QuestionEntity>,
     context: Context,
-    viewModel: DsaSheetViewModel
+    viewModel: DsaSheetViewModel,
+    navController: NavController
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     val rotationState by animateFloatAsState(
@@ -270,7 +271,7 @@ fun TopicCard(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     questions.forEach { question ->
-                        QuestionRow(question, context, viewModel)
+                        QuestionRow(question, context, viewModel, navController)
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
@@ -295,7 +296,12 @@ fun HeaderRow() {
 }
 
 @Composable
-fun QuestionRow(question: QuestionEntity, context: Context, viewModel: DsaSheetViewModel) {
+fun QuestionRow(
+    question: QuestionEntity,
+    context: Context,
+    viewModel: DsaSheetViewModel,
+    navController: NavController
+) {
     var note by remember { mutableStateOf("") }
     var showNoteDialog by remember { mutableStateOf(false) }
     Row(
@@ -340,7 +346,13 @@ fun QuestionRow(question: QuestionEntity, context: Context, viewModel: DsaSheetV
                 .weight(.10f)
                 .size(24.dp)
                 .clickable {
-                    goToWebsite(context, question.link)
+                    // goToWebsite(context, question.link) replaced to inApp opening
+                    navController.navigate(
+                        DsaSheetRoutes.DsaQuestionScreen(
+                            question.link,
+                            question.name
+                        )
+                    )
                 })
     }
     if (showNoteDialog) {

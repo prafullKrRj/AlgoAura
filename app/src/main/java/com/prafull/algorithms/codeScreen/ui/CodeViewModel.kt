@@ -69,14 +69,4 @@ class CodeViewModel(
             }
         }
     }
-
-    fun addToDb() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                if (algorithm != null) {
-                    codeRepo.insert(algorithm!!)
-                }
-            }
-        }
-    }
 }

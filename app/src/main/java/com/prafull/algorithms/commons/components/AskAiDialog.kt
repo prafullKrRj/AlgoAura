@@ -97,10 +97,6 @@ fun AskAiDialog(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     SuggestionChip(
-                        onClick = { onSend("Help with syntax") },
-                        label = { Text("Help with syntax") }
-                    )
-                    SuggestionChip(
                         onClick = { onSend("Optimize code") },
                         label = { Text("Optimize code") }
                     )

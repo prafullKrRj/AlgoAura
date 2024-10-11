@@ -20,7 +20,6 @@ fun ErrorComposable(exception: Exception, onRetry: () -> Unit) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val message = exception.message
         if (exception is HttpException) {
             Text(text = "No Internet Connection")
         } else {
