@@ -4,6 +4,7 @@ codeviewAndroid = "1.3.2"
 coilCompose = "2.4.0"
 commonmark = "0.18.2"
 composeShimmer = "1.3.1"
+coreSplashscreen = "1.0.1"
 generativeai = "0.8.0"
 highlights = "0.9.1"
 hiltAndroid = "2.52"
@@ -46,6 +47,7 @@ firebaseCrashlytics = "19.1.0"
 googleFirebaseCrashlytics = "3.0.2"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler" }
 androidx-hilt-lifecycle-viewmodel = { module = "androidx.hilt:hilt-lifecycle-viewmodel", version.ref = "hiltLifecycleViewmodel" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltCompiler" }

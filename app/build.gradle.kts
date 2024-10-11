@@ -117,6 +117,7 @@ dependencies {
 
     // coil
     implementation(libs.coil.compose)
+    implementation(libs.androidx.core.splashscreen)
 }
 kapt {
     correctErrorTypes = true

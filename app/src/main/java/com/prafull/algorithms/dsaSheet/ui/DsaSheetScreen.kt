@@ -80,6 +80,7 @@ import com.prafull.algorithms.commons.ui.customColors.normalSearchBarColors
 import com.prafull.algorithms.dsaSheet.DsaSheetRoutes
 import com.prafull.algorithms.dsaSheet.data.local.QuestionEntity
 import com.prafull.algorithms.dsaSheet.data.local.TopicEntity
+import com.prafull.algorithms.enrollToAi.howToCreateApiKey.goToWebsite
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -346,13 +347,7 @@ fun QuestionRow(
                 .weight(.10f)
                 .size(24.dp)
                 .clickable {
-                    // goToWebsite(context, question.link) replaced to inApp opening
-                    navController.navigate(
-                        DsaSheetRoutes.DsaQuestionScreen(
-                            question.link,
-                            question.name
-                        )
-                    )
+                    goToWebsite(context, question.link)
                 })
     }
     if (showNoteDialog) {

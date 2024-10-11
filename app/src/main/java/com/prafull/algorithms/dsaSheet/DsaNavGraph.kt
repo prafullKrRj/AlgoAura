@@ -4,7 +4,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import androidx.navigation.toRoute
 import com.prafull.algorithms.Routes
 import com.prafull.algorithms.dsaSheet.ui.DsaRevisionScreen
 import com.prafull.algorithms.dsaSheet.ui.DsaSheetScreen
@@ -23,10 +22,6 @@ fun NavGraphBuilder.dsaScreen(navController: NavController) {
             dsaVm.getRevisionQuestions()
             DsaRevisionScreen(viewModel = dsaVm, navController = navController)
         }
-        composable<DsaSheetRoutes.DsaQuestionScreen> {
-            val route = it.toRoute<DsaSheetRoutes.DsaQuestionScreen>()
-            LeetcodeQuestionOpening(route.url, navController, route.heading)
-        }
     }
 }
 
@@ -36,8 +31,5 @@ sealed interface DsaSheetRoutes {
 
     @Serializable
     data object DsaRevisionScreen : DsaSheetRoutes
-
-    @Serializable
-    data class DsaQuestionScreen(val url: String, val heading: String) : DsaSheetRoutes
 }
 
