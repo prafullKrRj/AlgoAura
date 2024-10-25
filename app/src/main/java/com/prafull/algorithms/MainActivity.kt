@@ -63,7 +63,6 @@ class MainActivity : ComponentActivity() {
         )
         setContent {
             AlgorithmsTheme {
-
                 App()
             }
         }

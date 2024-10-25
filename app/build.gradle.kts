@@ -15,8 +15,8 @@ android {
         applicationId = "com.prafull.algorithms"
         minSdk = 26
         targetSdk = 34
-        versionCode = 6
-        versionName = "1.4"
+        versionCode = 7
+        versionName = "1.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -70,7 +70,6 @@ dependencies {
     implementation(libs.androidx.room.runtime.v260)
     implementation(libs.firebase.crashlytics)
     kapt(libs.androidx.room.compiler.v260)
-
     // Room Kotlin Extensions and Coroutines support
     implementation(libs.androidx.room.ktx.v260)
 

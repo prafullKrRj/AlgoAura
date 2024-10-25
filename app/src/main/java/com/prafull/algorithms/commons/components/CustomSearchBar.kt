@@ -6,6 +6,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -56,7 +57,10 @@ fun CustomSearchBar(
         trailingIcon = {
             if (showSearchButton) {
                 IconButton(onClick = onSearch) {
-                    Icon(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = "Search Icon")
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Send,
+                        contentDescription = "Search Icon"
+                    )
                 }
             }
         }
