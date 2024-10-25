@@ -4,13 +4,16 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.toRoute
 import com.prafull.algorithms.Routes
 import com.prafull.algorithms.dsaSheet.ui.DsaRevisionScreen
 import com.prafull.algorithms.dsaSheet.ui.DsaSheetScreen
 import com.prafull.algorithms.dsaSheet.ui.DsaSheetViewModel
+import com.prafull.algorithms.dsaSheet.ui.dsa_question_Screen.DsaQuestionScreen
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 fun NavGraphBuilder.dsaScreen(navController: NavController) {
     navigation<Routes.DsaSheetRoutes>(startDestination = DsaSheetRoutes.DsaSheetScreen) {
@@ -22,6 +25,10 @@ fun NavGraphBuilder.dsaScreen(navController: NavController) {
             dsaVm.getRevisionQuestions()
             DsaRevisionScreen(viewModel = dsaVm, navController = navController)
         }
+        composable<DsaSheetRoutes.DsaQuestionScreen> {
+            val args = it.toRoute<DsaSheetRoutes.DsaQuestionScreen>()
+            DsaQuestionScreen(koinViewModel { parametersOf(args) }, navController)
+        }
     }
 }
 
@@ -31,5 +38,9 @@ sealed interface DsaSheetRoutes {
 
     @Serializable
     data object DsaRevisionScreen : DsaSheetRoutes
+
+    @Serializable
+    data class DsaQuestionScreen(val topic: String, val question: String, val link: String) :
+        DsaSheetRoutes
 }
 

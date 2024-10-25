@@ -7,7 +7,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -57,7 +56,7 @@ fun CustomSearchBar(
         trailingIcon = {
             if (showSearchButton) {
                 IconButton(onClick = onSearch) {
-                    Icon(imageVector = Icons.Default.Send, contentDescription = "Search Icon")
+                    Icon(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = "Search Icon")
                 }
             }
         }

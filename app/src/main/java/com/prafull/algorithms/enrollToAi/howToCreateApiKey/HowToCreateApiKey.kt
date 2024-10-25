@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -51,7 +50,7 @@ fun HowToCreateApiKeyScreen(navController: NavController, viewModel: HowToCreate
             Text(text = "How to create API Key")
         }, navigationIcon = {
             IconButton(onClick = navController::goBackStack) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
         })
     }) { paddingValues ->

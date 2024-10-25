@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -82,7 +81,7 @@ fun AskAiDialog(
                     trailingIcon = {
                         IconButton(onClick = { onSend(textFieldValue) }) {
                             Icon(
-                                imageVector = Icons.Default.Send,
+                                imageVector = Icons.AutoMirrored.Filled.Send,
                                 contentDescription = "Send",
                                 tint = MaterialTheme.colorScheme.primary
                             )

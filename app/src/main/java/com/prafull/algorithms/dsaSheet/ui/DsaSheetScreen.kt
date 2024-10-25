@@ -234,9 +234,10 @@ fun TopicCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors()
     ) {
-        Column(modifier = Modifier
-            .clickable { expanded = !expanded }
-            .padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -272,7 +273,7 @@ fun TopicCard(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     questions.forEach { question ->
-                        QuestionRow(question, context, viewModel, navController)
+                        QuestionRow(topic.topicName, question, context, viewModel, navController)
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
@@ -298,6 +299,7 @@ fun HeaderRow() {
 
 @Composable
 fun QuestionRow(
+    topic: String,
     question: QuestionEntity,
     context: Context,
     viewModel: DsaSheetViewModel,
@@ -308,6 +310,15 @@ fun QuestionRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable {
+                navController.navigate(
+                    DsaSheetRoutes.DsaQuestionScreen(
+                        topic = topic,
+                        question = question.name,
+                        link = question.link
+                    )
+                )
+            }
             .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

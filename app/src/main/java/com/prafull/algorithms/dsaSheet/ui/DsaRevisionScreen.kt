@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -39,7 +38,7 @@ fun DsaRevisionScreen(viewModel: DsaSheetViewModel, navController: NavController
                 Text(text = "DSA Sheet Revision")
             }, navigationIcon = {
                 IconButton(onClick = navController::goBackStack) {
-                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                    Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
             })
         }

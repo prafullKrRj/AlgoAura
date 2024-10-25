@@ -103,7 +103,7 @@ fun FavouriteScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             if (selectedAlgos.isNotEmpty()) {
-                item() {
+                item {
                     Row(
                         Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,

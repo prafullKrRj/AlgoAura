@@ -22,7 +22,8 @@ data class TopicEntity(
     )]
 )
 data class QuestionEntity(
-    @PrimaryKey(autoGenerate = true) val questionId: Long = 0,
+    @PrimaryKey(autoGenerate = true)
+    val questionId: Long = 0,
     val name: String,
     val link: String,
     val solved: Boolean = false,

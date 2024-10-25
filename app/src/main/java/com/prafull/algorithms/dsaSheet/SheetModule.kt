@@ -8,6 +8,7 @@ import com.prafull.algorithms.dsaSheet.data.local.DSASheetDao
 import com.prafull.algorithms.dsaSheet.data.local.leetcodeDSATopics
 import com.prafull.algorithms.dsaSheet.data.repo.DsaSheetRepo
 import com.prafull.algorithms.dsaSheet.ui.DsaSheetViewModel
+import com.prafull.algorithms.dsaSheet.ui.dsa_question_Screen.DsaQuestionViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -32,6 +33,9 @@ val dsaSheetModule = module {
     }
     viewModel {
         DsaSheetViewModel()
+    }
+    viewModel {
+        DsaQuestionViewModel(get())
     }
     single {
         DsaSheetRepo()

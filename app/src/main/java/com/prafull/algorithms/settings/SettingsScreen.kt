@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
@@ -60,7 +59,7 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel, navController: NavContr
             Text("Settings")
         }, navigationIcon = {
             IconButton(onClick = navController::goBackStack) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
         })
     }) { paddingValues ->

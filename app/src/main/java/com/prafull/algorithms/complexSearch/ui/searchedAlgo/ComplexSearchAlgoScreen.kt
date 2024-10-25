@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,7 +45,7 @@ fun ComplexSearchResultScreen(viewModel: ComplexSearchAlgoVM, navController: Nav
             Text(text = viewModel.algo)
         }, navigationIcon = {
             IconButton(onClick = navController::goBackStack) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
+                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
             }
         }, scrollBehavior = scrollBehavior)
     }) { paddingValues ->

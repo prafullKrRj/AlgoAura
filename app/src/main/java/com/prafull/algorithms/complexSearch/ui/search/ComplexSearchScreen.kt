@@ -23,7 +23,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,6 +46,7 @@ import com.prafull.algorithms.complexSearch.ComplexRoutes
 import com.prafull.algorithms.complexSearch.ui.main.ComplexSearchVM
 import com.prafull.algorithms.goBackStack
 import com.valentinilk.shimmer.shimmer
+import java.util.Locale
 
 @Composable
 fun ComplexSearchScreen(complexVm: ComplexSearchVM, navController: NavController) {
@@ -63,7 +63,7 @@ fun ComplexSearchScreen(complexVm: ComplexSearchVM, navController: NavController
     ) {
         item {
             CustomSearchBar(
-                leadingIcon = Icons.Default.ArrowBack,
+                leadingIcon = Icons.AutoMirrored.Filled.ArrowBack,
                 leadingIconEnabled = true, value = searchQuery, onValueChange = {
                     searchQuery = it
                 }, modifier = Modifier.padding(16.dp),
@@ -101,7 +101,8 @@ fun ComplexSearchScreen(complexVm: ComplexSearchVM, navController: NavController
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = result.replace("+", " ").replace("-", " ").capitalize(),
+                        text = result.replace("+", " ").replace("-", " ")
+                            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
                         modifier = Modifier.weight(.85f)
                     )
                     Icon(

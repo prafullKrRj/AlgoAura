@@ -76,5 +76,5 @@ sealed interface ComplexRoutes {
     @Serializable
     data class ComplexLanguageAlgoRoute(
         val algo: String, val lang: String
-    ) : ComplexRoutes {}
+    ) : ComplexRoutes
 }

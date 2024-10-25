@@ -63,6 +63,7 @@ import com.prafull.algorithms.commons.utils.getFormattedName
 import com.prafull.algorithms.commons.utils.getLanguageFromString
 import com.prafull.algorithms.search.data.local.SearchedEntity
 import com.valentinilk.shimmer.shimmer
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -302,7 +303,11 @@ fun SearchItem(fileInfo: FileInfo, navController: NavController) {
                     .weight(.85f)
             ) {
                 Text(
-                    text = getFormattedName(getFileName(fileInfo.name)).capitalize(),
+                    text = getFormattedName(getFileName(fileInfo.name)).replaceFirstChar {
+                        if (it.isLowerCase()) it.titlecase(
+                            Locale.getDefault()
+                        ) else it.toString()
+                    },
                     style = MaterialTheme.typography.titleMedium
                 )
             }
