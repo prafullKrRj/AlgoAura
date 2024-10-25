@@ -70,7 +70,7 @@ class ComplexRepoImpl : ComplexSearchRepo, KoinComponent {
                     task = document.get("task") as String,
                     languages = document.get("languages") as List<String>,
                 )
-                trySend(BaseClass.Success(algo!!))
+                trySend(BaseClass.Success(algo))
             } catch (e: Exception) {
                 trySend(BaseClass.Error(e.message ?: "Error", exception = e))
             }
@@ -84,8 +84,8 @@ class ComplexRepoImpl : ComplexSearchRepo, KoinComponent {
             try {
                 val doc = db.collection("rosettalang").document(lang).get().await()
                 val data = ComplexLanguageData(name = doc.id,
-                    extension = doc.get("extension") as String,
-                    langDescription = doc.get("language") as String,
+                    extension = doc.get("extension") as String?,
+                    langDescription = formatLanguageDescription(doc.get("language") as String?),
                     files = (doc.get("algos") as List<String>).map {
                         ComplexLanguageFiles(
                             name = it
@@ -100,6 +100,29 @@ class ComplexRepoImpl : ComplexSearchRepo, KoinComponent {
         }
     }
 
+    fun formatLanguageDescription(description: String?): String {
+        if (description == null) return ""
+        val keyWords = listOf<String>(
+            "See also",
+            "External links",
+            "References",
+            "Further reading",
+            "Bibliography",
+            "Todo",
+            "references",
+        )
+        var formattedDescription: String = description
+        for (keyword in keyWords) {
+            val index = formattedDescription.indexOf(keyword, ignoreCase = true)
+            if (index != -1) {
+                formattedDescription = formattedDescription.substring(0, index).trim()
+                break
+            }
+        }
+        formattedDescription.replace("rosetta", "our", ignoreCase = true)
+        return formattedDescription
+    }
+
     override suspend fun getComplexLanguageAlgo(
         lang: String, algo: String
     ): Flow<BaseClass<ComplexLanguageAlgo>> {
@@ -107,19 +130,17 @@ class ComplexRepoImpl : ComplexSearchRepo, KoinComponent {
             try {
                 val doc = db.collection("rosettaAlgos").document(algo).get().await()
                 val task = doc.getString("task")
-                Log.d("Bugger", "Path: Task/$algo/$lang")
                 val stRef = storage.reference.child("Task").child(algo).child(lang)
                 val codes = stRef.listAll().await()
                 val res = codes.items.map {
                     val localFile = File.createTempFile("tempFile", null)
                     it.getFile(localFile).await()
-                    Log.d("Bugger", "File: ${localFile.extension}")
                     localFile.readText()
                 }
                 trySend(
                     BaseClass.Success(
                         ComplexLanguageAlgo(
-                            algoName = algo, task = task ?: "", langCode = res
+                            algoName = algo, task = formatTask(task ?: ""), langCode = res
                         )
                     )
                 )
@@ -128,5 +149,26 @@ class ComplexRepoImpl : ComplexSearchRepo, KoinComponent {
             }
             awaitClose { }
         }
+    }
+
+    private fun formatTask(task: String): String {
+        val keywords = listOf(
+            "similar algos",
+            "similar tasks",
+            "related tasks",
+            "reference",
+            "related task",
+            "references"
+        )
+        var formattedTask = task
+        for (keyword in keywords) {
+            val index = formattedTask.indexOf(keyword, ignoreCase = true)
+            if (index != -1) {
+                formattedTask = formattedTask.substring(0, index).trim()
+                break
+            }
+        }
+        formattedTask.replace("rosetta", "our", ignoreCase = true)
+        return formattedTask
     }
 }

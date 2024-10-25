@@ -2,8 +2,8 @@ package com.prafull.algorithms.complexSearch.domain.models
 
 data class ComplexLanguageData(
     val name: String,
-    val extension: String,
-    val langDescription: String,
+    val extension: String? = "", // Optional
+    val langDescription: String? = "",
     val files: List<ComplexLanguageFiles>
 )
 

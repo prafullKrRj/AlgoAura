@@ -58,7 +58,7 @@ fun ComplexLanguageSuccess(
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         item(key = "desc") {
-            LanguageDescription(desc = data.langDescription)
+            data.langDescription?.let { LanguageDescription(desc = it) }
         }
         if (searchedResults.isEmpty()) {
             item {
