@@ -3,24 +3,25 @@ package com.prafull.algorithms.ai
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.ClipboardManager
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
@@ -65,28 +66,33 @@ fun AiMessageBubble(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(text = item.language)
-                            Row(verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.clickable {
-                                    clipboardManager.setText(AnnotatedString(item.code))
-                                    Toast.makeText(
-                                        context, "Code copied to clipboard", Toast.LENGTH_SHORT
-                                    ).show()
-                                }) {
+                            IconButton(onClick = {
+                                clipboardManager.setText(AnnotatedString(item.code))
+                                Toast.makeText(
+                                    context, "Code copied to clipboard", Toast.LENGTH_SHORT
+                                ).show()
+                            }) {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.baseline_copy_all_24),
-                                    contentDescription = null
+                                    imageVector = ImageVector.vectorResource(id = R.drawable.baseline_content_copy_24),
+                                    contentDescription = "Copy Code"
                                 )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(text = "Copy Code")
                             }
                         }
-                        CodeTextView(
-                            highlights = Highlights.Builder().code(item.code).theme(
-                                theme = SyntaxThemes.darcula()
-                            ).build(), modifier = Modifier
+                        LazyRow(
+                            Modifier
                                 .fillMaxWidth()
+                                .wrapContentHeight()
                                 .padding(8.dp)
-                        )
+                        ) {
+                            item {
+                                CodeTextView(
+                                    highlights = Highlights.Builder().code(item.code).theme(
+                                        theme = SyntaxThemes.darcula()
+                                    ).build(), modifier = Modifier
+                                        .fillMaxWidth()
+                                )
+                            }
+                        }
                     }
                 }
             }

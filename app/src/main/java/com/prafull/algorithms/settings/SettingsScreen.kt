@@ -48,7 +48,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(settingsViewModel: SettingsViewModel, navController: NavController) {
+fun SettingsScreen(
+    settingsViewModel: SettingsViewModel,
+    navController: NavController,
+    toggleKey: () -> Unit = {}
+) {
     val isKeyAdded by settingsViewModel.keyAdded.collectAsState()
     val loading by settingsViewModel.loading.collectAsState()
     var showApiDialog by remember {
@@ -70,7 +74,6 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel, navController: NavContr
             item {
                 DeleteItem(category = "Favourites") {
                     settingsViewModel.deleteFavourites()
-
                 }
             }
             item {
@@ -102,6 +105,7 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel, navController: NavContr
                     }
                     DeleteItem(category = "Api Key") {
                         settingsViewModel.deleteApiKey()
+                        toggleKey()
                     }
                 } else {
                     Row(

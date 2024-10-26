@@ -1,15 +1,19 @@
 package com.prafull.algorithms.dsaSheet.ui.dsa_question_Screen
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
 import com.prafull.algorithms.commons.utils.BaseClass
+import com.prafull.algorithms.commons.utils.Const
 import com.prafull.algorithms.dsaSheet.DsaSheetRoutes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 
 data class QuestionAbout(
@@ -22,7 +26,12 @@ data class QuestionAbout(
 
 class DsaQuestionViewModel(
     val about: DsaSheetRoutes.DsaQuestionScreen
-) : ViewModel() {
+) : ViewModel(), KoinComponent {
+    private val context: Context by inject()
+    fun isKeySaved() =
+        context.getSharedPreferences(Const.API_KEY_PREF, Context.MODE_PRIVATE)
+            .getBoolean("isKeySaved", false)
+
     private val firestore = FirebaseFirestore.getInstance()
     private val _state = MutableStateFlow<BaseClass<QuestionAbout>>(BaseClass.Loading)
     val state = _state.asStateFlow()

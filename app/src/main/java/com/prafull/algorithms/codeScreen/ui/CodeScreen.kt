@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -109,12 +110,17 @@ fun CodeScreen(viewModel: CodeViewModel, navController: NavController) {
                         shape = RoundedCornerShape(8.dp),
                         border = BorderStroke(width = 2.dp, color = Color.LightGray)
                     ) {
-                        CodeTextView(
-                            highlights = highlights,
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(12.dp))
-                                .padding(12.dp)
-                        )
+                        LazyRow(Modifier.fillMaxSize()) {
+                            item {
+                                CodeTextView(
+                                    highlights = highlights,
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .padding(12.dp)
+                                )
+                            }
+                        }
+
                     }
                 }
 

@@ -44,7 +44,10 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.prafull.algorithms.R
+import com.prafull.algorithms.Routes
+import com.prafull.algorithms.commons.components.AskAiChip
 import com.prafull.algorithms.commons.components.shareCode
+import com.prafull.algorithms.commons.models.ProgrammingLanguage
 import com.prafull.algorithms.commons.utils.BaseClass
 import com.prafull.algorithms.enrollToAi.howToCreateApiKey.ErrorScreen
 import com.prafull.algorithms.enrollToAi.howToCreateApiKey.goToWebsite
@@ -65,8 +68,7 @@ fun DsaQuestionScreen(viewModel: DsaQuestionViewModel, navController: NavControl
         }, navigationIcon = {
             IconButton(onClick = navController::goBackStack) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back"
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back"
                 )
             }
         })
@@ -90,7 +92,7 @@ fun DsaQuestionScreen(viewModel: DsaQuestionViewModel, navController: NavControl
                 }
 
                 is BaseClass.Success -> {
-                    SuccessScreen((state as BaseClass.Success).data)
+                    SuccessScreen((state as BaseClass.Success).data, navController, viewModel)
                 }
             }
         }
@@ -99,7 +101,9 @@ fun DsaQuestionScreen(viewModel: DsaQuestionViewModel, navController: NavControl
 
 
 @Composable
-private fun SuccessScreen(questionAbout: QuestionAbout) {
+private fun SuccessScreen(
+    questionAbout: QuestionAbout, navController: NavController, viewModel: DsaQuestionViewModel
+) {
     var selected by rememberSaveable { mutableStateOf(SyntaxLanguage.CPP) }
     val context = LocalContext.current
     val clipboard = LocalClipboardManager.current
@@ -133,7 +137,8 @@ private fun SuccessScreen(questionAbout: QuestionAbout) {
             },
             leadingIcon = {
                 Image(
-                    painter = painterResource(id = R.drawable.java), contentDescription = "Java",
+                    painter = painterResource(id = R.drawable.java),
+                    contentDescription = "Java",
                     modifier = Modifier.size(24.dp)
                 )
             })
@@ -143,9 +148,7 @@ private fun SuccessScreen(questionAbout: QuestionAbout) {
             .fillMaxWidth()
             .padding(8.dp)
             .border(
-                width = 1.dp,
-                color = LightGray,
-                shape = RoundedCornerShape(8.dp)
+                width = 1.dp, color = LightGray, shape = RoundedCornerShape(8.dp)
             )
     ) {
         item {
@@ -161,7 +164,8 @@ private fun SuccessScreen(questionAbout: QuestionAbout) {
                 CodeTextView(
                     highlights = Highlights.Builder(code = questionAbout.solutionCpp).theme(
                         SyntaxThemes.darcula()
-                    ).language(language = SyntaxLanguage.CPP).build(), modifier = Modifier
+                    ).language(language = SyntaxLanguage.CPP).build(),
+                    modifier = Modifier
                         .fillMaxWidth()
                         .padding(4.dp)
                 )
@@ -169,46 +173,66 @@ private fun SuccessScreen(questionAbout: QuestionAbout) {
         }
     }
     Row(
-        Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End,
-        verticalAlignment = Alignment.CenterVertically
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.leetcode),
-            contentDescription = "To Leetcode",
-            Modifier
-                .size(24.dp)
-                .clickable {
-                    goToWebsite(context, questionAbout.link)
-                }
-        )
-        IconButton(onClick = {
-            shareCode(
-                code = if (selected == SyntaxLanguage.JAVA) questionAbout.solutionJava
-                else questionAbout.solutionCpp,
-                context = context
-            )
-        }) {
-            Icon(
-                imageVector = Icons.Default.Share,
-                contentDescription = "Share",
-                Modifier.size(24.dp)
-            )
-        }
-        IconButton(onClick = {
-            clipboard.setText(
-                AnnotatedString(
-                    text = if (selected == SyntaxLanguage.JAVA) questionAbout.solutionJava
-                    else questionAbout.solutionCpp
+        AskAiChip {
+            if (viewModel.isKeySaved()) {
+                navController.navigate(
+                    Routes.AskAi(
+                        code = if (selected == SyntaxLanguage.JAVA) questionAbout.solutionJava
+                        else questionAbout.solutionCpp,
+                        programName = questionAbout.questionName,
+                        message = "Explain provided code!",
+                        language = if (selected == SyntaxLanguage.JAVA) ProgrammingLanguage.JAVA.name else ProgrammingLanguage.C_PLUS_PLUS.name
+                    )
                 )
-            )
-            Toast.makeText(context, "Code copied", Toast.LENGTH_SHORT).show()
-        }) {
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.baseline_content_copy_24),
-                contentDescription = "Copy",
-                Modifier.size(24.dp)
-            )
+            } else {
+                navController.navigate(Routes.EnrollToAiRoute)
+            }
+        }
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(painter = painterResource(id = R.drawable.leetcode),
+                contentDescription = "To Leetcode",
+                Modifier
+                    .size(24.dp)
+                    .clickable {
+                        goToWebsite(context, questionAbout.link)
+                    })
+            IconButton(onClick = {
+                shareCode(
+                    code = if (selected == SyntaxLanguage.JAVA) questionAbout.solutionJava
+                    else questionAbout.solutionCpp, context = context
+                )
+            }) {
+                Icon(
+                    imageVector = Icons.Default.Share,
+                    contentDescription = "Share",
+                    Modifier.size(24.dp)
+                )
+            }
+            IconButton(onClick = {
+                clipboard.setText(
+                    AnnotatedString(
+                        text = if (selected == SyntaxLanguage.JAVA) questionAbout.solutionJava
+                        else questionAbout.solutionCpp
+                    )
+                )
+                Toast.makeText(context, "Code copied", Toast.LENGTH_SHORT).show()
+            }) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.baseline_content_copy_24),
+                    contentDescription = "Copy",
+                    Modifier.size(24.dp)
+                )
+            }
         }
     }
 }

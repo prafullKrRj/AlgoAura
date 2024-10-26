@@ -1,5 +1,6 @@
 package com.prafull.algorithms
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,9 +15,14 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
@@ -35,6 +41,7 @@ import com.prafull.algorithms.ai.ChatViewModel
 import com.prafull.algorithms.codeScreen.ui.CodeScreen
 import com.prafull.algorithms.codeScreen.ui.CodeViewModel
 import com.prafull.algorithms.commons.ui.theme.AlgorithmsTheme
+import com.prafull.algorithms.commons.utils.Const
 import com.prafull.algorithms.complexSearch.complexNav
 import com.prafull.algorithms.complexSearch.ui.main.ComplexSearchVM
 import com.prafull.algorithms.dsaSheet.dsaScreen
@@ -77,13 +84,20 @@ fun App() {
     val searchViewModel: SearchViewModel = koinViewModel()
     val complexVM: ComplexSearchVM = koinViewModel()
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-
+    var showAi by rememberSaveable {
+        mutableStateOf(false)
+    }
+    val context = LocalContext.current
+    LaunchedEffect(key1 = Unit) {
+        showAi = context.getSharedPreferences(Const.API_KEY_PREF, Context.MODE_PRIVATE)
+            .getBoolean("isKeySaved", false)
+    }
     val selected = rememberSaveable {
         mutableIntStateOf(0)
     }
     Scaffold(modifier = Modifier.systemBarsPadding(), bottomBar = {
         if (canShowBottomBar(currentRoute.toString())) {
-            BottomNavigationBar(selected.intValue) { route, index ->
+            BottomNavigationBar(showAi = showAi, selected = selected.intValue) { route, index ->
                 navController.popBackStack()
                 navController.navigate(route)
                 selected.intValue = index
@@ -95,7 +109,6 @@ fun App() {
             navController = navController,
             startDestination = Routes.HomeRoutes
         ) {
-
             homeNav(viewModel, navController)
             complexNav(complexVM, navController)
             enrollToAi(navController)
@@ -116,7 +129,9 @@ fun App() {
                 AskAi(chatViewModel, navController)
             }
             composable<Routes.SettingsRoute> {
-                SettingsScreen(getViewModel(), navController)
+                SettingsScreen(getViewModel(), navController, toggleKey = {
+                    showAi = false
+                })
             }
             composable<Routes.Libraries> {
                 LibraryScreen(navController = navController)
@@ -155,11 +170,14 @@ enum class Screens(
         Routes.ComplexScreens,
         R.drawable.baseline_web_24,
         R.drawable.baseline_web_24
-    )
+    ),
+    /*  AI(
+          "AI", Routes.AiChatScreen, R.drawable.baseline_chat_24, R.drawable.baseline_chat_24
+      )*/
 }
 
 @Composable
-fun BottomNavigationBar(selected: Int, onClick: (Routes, Int) -> Unit) {
+fun BottomNavigationBar(showAi: Boolean, selected: Int, onClick: (Routes, Int) -> Unit) {
     NavigationBar(Modifier.fillMaxWidth()) {
         Screens.entries.forEachIndexed { index, item ->
             NavigationBarItem(icon = {

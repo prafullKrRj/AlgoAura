@@ -254,7 +254,6 @@ fun TopicCard(
                         painter = painterResource(id = if (expanded) R.drawable.baseline_expand_less_24 else R.drawable.baseline_expand_more_24),
                         contentDescription = "Expand",
                         modifier = Modifier
-                            .rotate(rotationState)
                             .weight(.15f),
                     )
                 }

@@ -36,6 +36,9 @@ sealed interface Routes {
     ) : Routes
 
     @Serializable
+    data object AiChatScreen : Routes
+
+    @Serializable
     data object EnrollToAiRoute : Routes
 
     @Serializable
