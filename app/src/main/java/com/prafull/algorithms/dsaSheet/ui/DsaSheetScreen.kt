@@ -162,28 +162,18 @@ fun DsaSheetScreen(viewModel: DsaSheetViewModel, navController: NavController) {
             ModalBottomSheet(onDismissRequest = {
                 utilExpanded = false
             }) {
-                Row(
-                    Modifier
+                Column(
+                    modifier = Modifier
                         .fillMaxWidth()
-                        .clickable {
-                            utilExpanded = false
-                            navController.navigate(DsaSheetRoutes.DsaRevisionScreen)
-                        }
-                        .padding(8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .padding(16.dp)
                 ) {
-                    Text(
-                        text = "Go to Revision", modifier = Modifier
-                            .padding(vertical = 8.dp)
-                            .padding(start = 8.dp)
-                    )
-                    IconButton(onClick = {
+                    DsaBottomSheetItems("Go to Solved") {
+                        utilExpanded = false
+                        navController.navigate(DsaSheetRoutes.DsaSolvedQuestionScreen)
+                    }
+                    DsaBottomSheetItems("Go to Revision") {
+                        utilExpanded = false
                         navController.navigate(DsaSheetRoutes.DsaRevisionScreen)
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.baseline_arrow_forward_24),
-                            contentDescription = "Expand"
-                        )
                     }
                 }
             }
@@ -211,6 +201,31 @@ fun DsaSheetScreen(viewModel: DsaSheetViewModel, navController: NavController) {
                     navController
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun DsaBottomSheetItems(text: String, onClick: () -> Unit) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .clickable {
+                onClick()
+            }
+            .padding(8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = text, modifier = Modifier
+                .padding(vertical = 8.dp)
+                .padding(start = 8.dp)
+        )
+        IconButton(onClick = onClick) {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_arrow_forward_24),
+                contentDescription = "Expand"
+            )
         }
     }
 }
@@ -272,7 +287,13 @@ fun TopicCard(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     questions.forEach { question ->
-                        QuestionRow(topic.topicName, question, context, viewModel, navController)
+                        QuestionRow(
+                            topic.topicName,
+                            question,
+                            context,
+                            viewModel,
+                            navController
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                 }

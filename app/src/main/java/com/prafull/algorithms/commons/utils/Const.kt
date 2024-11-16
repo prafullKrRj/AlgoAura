@@ -30,7 +30,7 @@ object Const {
                 "Best Practices: Offer recommendations based on industry best practices for coding and software development.\n" +
                 "Learning Resources: If a user needs further learning, suggest specific resources related to coding and development.\n" +
                 "Remember, your sole purpose is to assist with coding and technical questions. All other types of inquiries should be politely declined." +
-                "This is the code you have to revolve around this code only:"
+                "This is the code you have to revolve around this code only: (if code not provided continue with general programming but if provided then responds in accordance with code)"
 
 
 }

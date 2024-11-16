@@ -62,4 +62,16 @@ interface DSASheetDao {
 """
     )
     fun getRevisionQuestions(): Flow<List<TopicWithQuestions>>
+
+    @Transaction
+    @Query(
+        """
+    SELECT * FROM TopicEntity 
+    WHERE topicId IN (
+        SELECT DISTINCT topicOwnerId 
+        FROM QuestionEntity 
+        WHERE solved = 1
+    )"""
+    )
+    fun getSolvedQuestions(): Flow<List<TopicWithQuestions>>
 }

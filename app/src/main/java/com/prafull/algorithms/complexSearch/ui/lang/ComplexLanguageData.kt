@@ -1,7 +1,10 @@
 package com.prafull.algorithms.complexSearch.ui.lang
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -51,7 +54,12 @@ fun ComplexLanguageData(viewModel: ComplexLanguageViewModel, navController: NavC
             }
 
             BaseClass.Loading -> {
-                Text(text = "Loading")
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = androidx.compose.ui.Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
             }
 
             is BaseClass.Success -> {

@@ -38,6 +38,17 @@ class DsaSheetViewModel : ViewModel(), KoinComponent {
     private val _revisionQuestion = MutableStateFlow<List<TopicWithQuestions>>(emptyList())
     val revisionQuestion = _revisionQuestion.asStateFlow()
 
+    private val _solvedQuestion = MutableStateFlow<List<TopicWithQuestions>>(emptyList())
+    val solvedQuestion = _solvedQuestion.asStateFlow()
+
+    fun getSolvedQuestions() = viewModelScope.launch {
+        repo.getSolvedQuestions().collect { res ->
+            _solvedQuestion.update {
+                res
+            }
+        }
+    }
+
     fun getRevisionQuestions() = viewModelScope.launch {
         repo.getRevisionQuestions().collect { res ->
             _revisionQuestion.update {

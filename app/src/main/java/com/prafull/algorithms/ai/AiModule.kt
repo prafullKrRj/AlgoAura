@@ -1,6 +1,7 @@
 package com.prafull.algorithms.ai
 
 import android.content.Context
+import com.prafull.algorithms.ai.mainScreenAi.AiViewModel
 import com.prafull.algorithms.commons.utils.Const
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.koin.androidContext
@@ -14,6 +15,9 @@ val aiModule = module {
     single<ApiKey> {
         val apiKey = runBlocking { fetchApiKey(androidContext()) }
         ApiKey(apiKey)
+    }
+    viewModel {
+        AiViewModel(get())
     }
 }
 

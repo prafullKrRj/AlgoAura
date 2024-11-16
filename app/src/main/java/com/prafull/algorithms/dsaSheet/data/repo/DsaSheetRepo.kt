@@ -22,4 +22,8 @@ class DsaSheetRepo : KoinComponent {
     fun getRevisionQuestions(): Flow<List<TopicWithQuestions>> {
         return dao.getRevisionQuestions()
     }
+
+    fun getSolvedQuestions(): Flow<List<TopicWithQuestions>> {
+        return dao.getSolvedQuestions()
+    }
 }

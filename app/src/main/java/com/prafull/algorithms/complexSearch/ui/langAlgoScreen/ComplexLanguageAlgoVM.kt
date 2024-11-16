@@ -1,7 +1,6 @@
 package com.prafull.algorithms.complexSearch.ui.langAlgoScreen
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -51,7 +50,6 @@ class ComplexLanguageAlgoVM(
     fun getProblemDetails() {
         viewModelScope.launch(Dispatchers.IO) {
             complexRepo.getComplexLanguageAlgo(data.lang, data.algo).collectLatest { response ->
-                Log.d("ComplexLanguageAlgoVM", "getProblemDetails: $response")
                 _problemDetails.update { response }
             }
         }

@@ -1,6 +1,7 @@
 package com.prafull.algorithms.complexSearch.data
 
 import android.util.Log
+import coil.network.HttpException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.prafull.algorithms.commons.utils.BaseClass
@@ -12,33 +13,32 @@ import com.prafull.algorithms.complexSearch.domain.repo.ComplexSearchRepo
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.io.File
+import java.io.IOException
 
 class ComplexRepoImpl : ComplexSearchRepo, KoinComponent {
     private val db: FirebaseFirestore by inject()
     private val storage: FirebaseStorage by inject()
 
-    override suspend fun getComplexLanguages(): Flow<BaseClass<List<String>>> {
-        return callbackFlow {
-            try {
-                val response = db.collection("rosettaLists").document("languages").get().await()
-                trySend(
-                    BaseClass.Success(
-                        response.get("names") as List<String>
-                    )
-                )
-            } catch (e: Exception) {
-                trySend(BaseClass.Error(e.message ?: "Error"))
-            }
-            awaitClose { }
+    override suspend fun getComplexLanguages(): Flow<BaseClass<List<String>>> = flow {
+        try {
+            val response = db.collection("rosettaLists").document("languages").get().await()
+            emit(BaseClass.Success(response.get("names") as List<String>))
+        } catch (e: HttpException) {
+            emit(BaseClass.Error("No internet"))
+        } catch (e: IOException) {
+            emit(BaseClass.Error("No Internet Connection"))
+        } catch (e: Exception) {
+            emit(BaseClass.Error(e.message ?: "Error"))
         }
     }
 
-    override suspend fun getComplexSearchResults(query: String): Flow<BaseClass<List<String>>> {
-        return callbackFlow {
+    override suspend fun getComplexSearchResults(query: String): Flow<BaseClass<List<String>>> =
+        flow {
             try {
                 val normalizedQuery = query.replace("_", " ").lowercase()
                 val regexQuery = Regex(".*${normalizedQuery.replace(" ", ".*")}.*")
@@ -51,16 +51,18 @@ class ComplexRepoImpl : ComplexSearchRepo, KoinComponent {
                     )
                 }
 
-                trySend(BaseClass.Success(matchingNames))
+                emit(BaseClass.Success(matchingNames))
+            } catch (e: HttpException) {
+                emit(BaseClass.Error("No internet"))
+            } catch (e: IOException) {
+                emit(BaseClass.Error("No Internet Connection"))
             } catch (e: Exception) {
-                trySend(BaseClass.Error(e.message ?: "Error", exception = e))
+                emit(BaseClass.Error(e.message ?: "Error", exception = e))
             }
-            awaitClose { }
         }
-    }
 
-    override suspend fun getComplexAlgo(algoName: String): Flow<BaseClass<ComplexAlgorithm>> {
-        return callbackFlow {
+    override suspend fun getComplexAlgo(algoName: String): Flow<BaseClass<ComplexAlgorithm>> =
+        flow {
             try {
                 Log.d("Bugger", algoName)
                 val document = db.collection("rosettaAlgos").document(algoName).get().await()
@@ -70,17 +72,18 @@ class ComplexRepoImpl : ComplexSearchRepo, KoinComponent {
                     task = document.get("task") as String,
                     languages = document.get("languages") as List<String>,
                 )
-                trySend(BaseClass.Success(algo))
+                emit(BaseClass.Success(algo))
+            } catch (e: HttpException) {
+                emit(BaseClass.Error("No internet"))
+            } catch (e: IOException) {
+                emit(BaseClass.Error("No Internet Connection"))
             } catch (e: Exception) {
-                trySend(BaseClass.Error(e.message ?: "Error", exception = e))
+                emit(BaseClass.Error(e.message ?: "Error", exception = e))
             }
-
-            awaitClose { }
         }
-    }
 
-    override suspend fun getComplexLanguageData(lang: String): Flow<BaseClass<ComplexLanguageData>> {
-        return callbackFlow {
+    override suspend fun getComplexLanguageData(lang: String): Flow<BaseClass<ComplexLanguageData>> =
+        flow {
             try {
                 val doc = db.collection("rosettalang").document(lang).get().await()
                 val data = ComplexLanguageData(name = doc.id,
@@ -91,18 +94,19 @@ class ComplexRepoImpl : ComplexSearchRepo, KoinComponent {
                             name = it
                         )
                     })
-                trySend(BaseClass.Success(data))
+                emit(BaseClass.Success(data))
+            } catch (e: HttpException) {
+                emit(BaseClass.Error("No internet"))
+            } catch (e: IOException) {
+                emit(BaseClass.Error("No Internet Connection"))
             } catch (e: Exception) {
-                trySend(BaseClass.Error(e.message ?: "Error", exception = e))
+                emit(BaseClass.Error(e.message ?: "Error", exception = e))
             }
-
-            awaitClose { }
         }
-    }
 
-    fun formatLanguageDescription(description: String?): String {
+    private fun formatLanguageDescription(description: String?): String {
         if (description == null) return ""
-        val keyWords = listOf<String>(
+        val keyWords = listOf(
             "See also",
             "External links",
             "References",
@@ -144,6 +148,8 @@ class ComplexRepoImpl : ComplexSearchRepo, KoinComponent {
                         )
                     )
                 )
+            } catch (e: IOException) {
+                trySend(BaseClass.Error("No Internet Connection"))
             } catch (e: Exception) {
                 trySend(BaseClass.Error(e.message ?: "Error", exception = e))
             }
