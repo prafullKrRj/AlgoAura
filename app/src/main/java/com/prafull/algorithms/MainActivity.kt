@@ -160,12 +160,12 @@ enum class Screens(
         "Search", Routes.Search, R.drawable.baseline_search_24, R.drawable.baseline_search_24
     ),
 
-    /* AI(
-         "AI",
-         Routes.AiChatScreen,
-         R.drawable.baseline_chat_24,
-         R.drawable.baseline_chat_24
-     ),*/
+    //     AI(
+//         "AI",
+//         Routes.AiChatScreen,
+//         R.drawable.baseline_chat_24,
+//         R.drawable.baseline_chat_24
+//     ),
     DSA_SHEET(
         "DSA Sheet",
         Routes.DsaSheetRoutes,

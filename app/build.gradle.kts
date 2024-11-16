@@ -2,21 +2,22 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
-    alias(libs.plugins.kotlinx.serialization)
+    id("org.jetbrains.kotlin.plugin.serialization")
     kotlin("kapt")
     alias(libs.plugins.google.firebase.crashlytics)
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
     namespace = "com.prafull.algorithms"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.prafull.algorithms"
         minSdk = 26
         targetSdk = 34
-        versionCode = 8
-        versionName = "2.0.0"
+        versionCode = 9
+        versionName = "2.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -39,11 +40,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -63,12 +64,12 @@ android {
 }
 dependencies {
 
-
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.appcheck.playintegrity)
 
     implementation(libs.androidx.room.runtime.v260)
     implementation(libs.firebase.crashlytics)
+    //noinspection KaptUsageInsteadOfKsp
     kapt(libs.androidx.room.compiler.v260)
     // Room Kotlin Extensions and Coroutines support
     implementation(libs.androidx.room.ktx.v260)

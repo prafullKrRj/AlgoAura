@@ -114,7 +114,7 @@ class ChatUiState(
         val lastMessage = _messages.lastOrNull()
         lastMessage?.let {
             val newMessage = lastMessage.apply { isPending = false }
-            _messages.removeLast()
+            _messages.removeAt(_messages.size - 1)
             _messages.add(newMessage)
         }
     }
