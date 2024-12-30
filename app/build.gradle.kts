@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
-    id("org.jetbrains.kotlin.plugin.serialization")
+    kotlin("plugin.serialization") version "2.0.21"
     kotlin("kapt")
     alias(libs.plugins.google.firebase.crashlytics)
     id("org.jetbrains.kotlin.plugin.compose")
@@ -16,8 +16,8 @@ android {
         applicationId = "com.prafull.algorithms"
         minSdk = 26
         targetSdk = 34
-        versionCode = 9
-        versionName = "2.0.1"
+        versionCode = 11
+        versionName = "2.0.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -29,7 +29,7 @@ android {
     }
     buildTypes {
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -39,6 +39,7 @@ android {
             }
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -101,7 +102,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     implementation(libs.kotlinx.serialization.json)
-
     implementation(libs.richeditor.compose)
     implementation(libs.kodeview)
 
@@ -119,6 +119,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.androidx.core.splashscreen)
 }
+
 kapt {
     correctErrorTypes = true
 }
