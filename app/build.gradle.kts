@@ -10,14 +10,14 @@ plugins {
 
 android {
     namespace = "com.prafull.algorithms"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.prafull.algorithms"
         minSdk = 26
-        targetSdk = 34
-        versionCode = 11
-        versionName = "2.0.2"
+        targetSdk = 35
+        versionCode = 12
+        versionName = "2.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
